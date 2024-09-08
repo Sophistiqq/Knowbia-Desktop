@@ -1,0 +1,23 @@
+/* global css for variables */
+:root {
+  --background-color: #fbdbdb;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --white-color: #ffffff;
+  --accent-color: #eaffd0;
+  --active-color: #95e1d3;
+  --text-color: #292738;
+
+  --text: #2a2839;
+  --background: #fafafa;
+  --primary: #f38181;
+  --secondary: #fce38a;
+  --accent: #95e1d3;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  color: var(--text-color);
+  font-family: 'Montserrat', sans-serif;
+}
