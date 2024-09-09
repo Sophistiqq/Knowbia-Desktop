@@ -4,8 +4,8 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 // electron reload
 try {
-	require('electron-reloader')(module);
-} catch {}
+  require('electron-reloader')(module);
+} catch { }
 
 app.disableHardwareAcceleration();
 
@@ -19,7 +19,8 @@ function createWindow() {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      webSecurity: false,
     }
   })
 
