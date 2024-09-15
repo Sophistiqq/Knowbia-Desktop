@@ -1,124 +1,131 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { Classes, Quizzes, StudentsInfo } from "./pages/";
-  import NavBar from "./components/NavBar.svelte";
-  import TopBar from "./components/TopBar.svelte";
+  import { onMount } from 'svelte'
+  import Main from './pages/Main.svelte'
+  import { login, checkAuth } from './scripts/auth.js'
 
-  let currentPage = "classes";
-  let isAuthenticated = false;
-  let student_number = "";
-  let password = "";
-  let loginError = "";
+  let isAuthenticated = false
+  let loading = true // Add a loading state
+  let student_number = ''
+  let password = ''
+  let loginError = ''
 
-  const pages = {
-    classes: Classes,
-    quizzes: Quizzes,
-    studentsInfo: StudentsInfo,
-  };
-
-  // Navigation function to switch between pages
-  function navigate(page) {
-    currentPage = page;
-  }
-
-  async function login() {
-    if (!student_number || !password) {
-      loginError = "Please fill in both fields.";
-      return;
-    }
-    try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ student_number, password }),
-        credentials: "include", // Send session cookie with request
-      });
-
-      if (response.ok) {
-        isAuthenticated = true;
-        loginError = "";
-      } else {
-        const result = await response.json();
-        loginError = result.message || "Invalid credentials";
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      loginError = "An error occurred while trying to log in.";
+  async function handleLogin() {
+    const result = await login(student_number, password)
+    if (result.success) {
+      isAuthenticated = true
+      loginError = ''
+    } else {
+      showError(result.message)
     }
   }
 
   onMount(async () => {
-    try {
-      const response = await fetch("http://localhost:3000/auth/authenticate", {
-        method: "GET",
-        credentials: "include", // Ensure session cookie is included
-      });
+    const authStatus = await checkAuth()
+    isAuthenticated = authStatus.isAuthenticated
+    loading = false // Set loading to false after authentication check
+  })
 
-      if (response.ok) {
-        isAuthenticated = true;
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  });
-
-  // Logout function to clear the session
   async function logout() {
-    await fetch("http://localhost:3000/auth/logout", {
-      method: "POST",
-      credentials: "include", // This ensures the session cookie is included in the request
-    });
-    isAuthenticated = false;
-    student_number = "";
-    password = "";
+    await fetch('http://localhost:3000/auth/logout', {
+      method: 'POST',
+      credentials: 'include'
+    })
+    isAuthenticated = false
   }
 
+  function showError(message) {
+    loginError = message
+    setTimeout(() => {
+      loginError = ''
+    }, 5000)
+  }
 </script>
 
-{#if isAuthenticated}
-  <TopBar />
-  <div class="container">
-    <NavBar {navigate} />
-    <main class="screen">
-      <svelte:component this={pages[currentPage]} />
-    </main>
-    <button on:click={logout}>Logout</button>
-  </div>
+{#if loading}
+  <!-- Display a loading spinner or empty screen -->
+  <div class="loading-screen">Loading...</div>
 {:else}
-  <div class="login-form">
-    <h2>Login</h2>
-    {#if loginError}
-      <div class="error-message">{loginError}</div>
-    {/if}
-    <label for="student_number">Student Number:</label>
-    <input type="text" id="student_number" bind:value={student_number} />
-    <label for="password">Password:</label>
-    <input type="password" id="password" bind:value={password} />
-    <button on:click={login}>Login</button>
-  </div>
+  {#if loginError}
+    <div class="error-message">{loginError}</div>
+  {/if}
+
+  {#if isAuthenticated}
+    <Main {logout} />
+  {:else}
+    <div class="container">
+      <div class="login-form">
+        <h2>Login</h2>
+        <label for="student_number">
+          Student Number
+          <input type="text" id="student_number" bind:value={student_number} />
+        </label>
+        <label for="password">
+          Password
+          <input type="password" id="password" bind:value={password} />
+        </label>
+        <button on:click={handleLogin}>Login</button>
+      </div>
+    </div>
+  {/if}
 {/if}
 
-<style>
+<style lang="scss">
   .container {
-    display: flex;
-    height: calc(100vh - 4rem);
-  }
-  .screen {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    width: 100%;
   }
   .login-form {
+    border: 1px solid #ccc;
+    padding: 5rem;
+    border-radius: 1.5rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    height: 100vh;
+    gap: 0.75rem;
+    label {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      input {
+        border-radius: 0.5rem;
+        border: 1px solid #ccc;
+        padding: 0.5rem;
+      }
+    }
+    button {
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
   }
   .error-message {
-    color: red;
-    margin-bottom: 1rem;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0;
+    animation: fadeOut 5s forwards;
+    position: absolute;
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+      }
+    }
+  }
+  .loading-screen {
+    display: grid;
+    place-items: center;
+    height: 100vh;
+    font-size: 1.5rem;
+    color: #007bff;
   }
 </style>

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   export let navigate
   import { Icon } from 'svelte-icons-pack'
   import { FaSolidBook, FaSolidNotesMedical, FaAddressCard } from 'svelte-icons-pack/fa'
