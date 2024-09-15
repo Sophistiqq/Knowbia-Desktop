@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import Main from './pages/Main.svelte'
   import { login, checkAuth } from './scripts/auth.js'
-
+  import { Checkbox, Progress, Separator } from 'bits-ui'
   let isAuthenticated = false
   let loading = true // Add a loading state
   let student_number = ''
@@ -42,8 +42,7 @@
 </script>
 
 {#if loading}
-  <!-- Display a loading spinner or empty screen -->
-  <div class="loading-screen">Loading...</div>
+  <Progress.Root />
 {:else}
   {#if loginError}
     <div class="error-message">{loginError}</div>
@@ -68,6 +67,11 @@
     </div>
   {/if}
 {/if}
+
+<Checkbox.Root>
+  <Checkbox.Input />
+  <Checkbox.Indicator />
+</Checkbox.Root>
 
 <style lang="scss">
   .container {
@@ -120,12 +124,5 @@
         opacity: 0;
       }
     }
-  }
-  .loading-screen {
-    display: grid;
-    place-items: center;
-    height: 100vh;
-    font-size: 1.5rem;
-    color: #007bff;
   }
 </style>

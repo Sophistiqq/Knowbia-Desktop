@@ -1,6 +1,8 @@
 <script>
   import { Icon } from 'svelte-icons-pack'
   import { FaBell, FaUser } from 'svelte-icons-pack/fa'
+  import Profile from './Profile.svelte'
+  import { Progress } from 'bits-ui'
 </script>
 
 <!-- The top bar of the application -->
@@ -11,11 +13,8 @@
     <button class="notification">
       <Icon src={FaBell} />
     </button>
-    <button class="profile">
-      <Icon src={FaUser} />
-      <p>John Doe</p>
-    </button>
   </div>
+  <Profile />
 </header>
 
 <style lang="scss">

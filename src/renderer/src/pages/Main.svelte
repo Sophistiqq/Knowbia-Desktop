@@ -2,7 +2,6 @@
   import TopBar from '../components/TopBar.svelte'
   import NavBar from '../components/NavBar.svelte'
   import { Classes, Quizzes, StudentsInfo } from '../pages/'
-
   export let logout: () => void
 
   const pages = {
@@ -26,3 +25,6 @@
   </main>
   <button on:click={logout}>Logout</button>
 </div>
+
+<style>
+</style>
