@@ -1,21 +1,6 @@
 <script lang="ts">
-  export let logout: () => void
-  import { DropdownMenu } from 'bits-ui'
 </script>
 
-<DropdownMenu.Root>
-  <DropdownMenu.Trigger>
-    <button class="profile">Profile</button>
-  </DropdownMenu.Trigger>
-
-  <DropdownMenu.Content>
-    <DropdownMenu.Item></DropdownMenu.Item>
-    <DropdownMenu.Item></DropdownMenu.Item>
-    <DropdownMenu.Item>
-      <button on:click={logout}>Logout</button>
-    </DropdownMenu.Item>
-  </DropdownMenu.Content>
-</DropdownMenu.Root>
 
 <style lang="scss">
   .profile {
