@@ -2,7 +2,7 @@
   import { onMount } from 'svelte'
   import Main from './pages/Main.svelte'
   import { login, checkAuth } from './scripts/auth.js'
-  import { Checkbox, Progress, Separator } from 'bits-ui'
+  import { Checkbox, Progress } from 'bits-ui'
   let isAuthenticated = false
   let loading = true // Add a loading state
   let student_number = ''
