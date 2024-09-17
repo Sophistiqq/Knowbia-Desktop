@@ -21,3 +21,9 @@
   color: var(--text-color);
   font-family: 'Montserrat', sans-serif;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}

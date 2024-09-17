@@ -4,11 +4,14 @@
   import { login, checkAuth } from './scripts/auth.js'
   import { Icon } from 'svelte-icons-pack'
   import { FaSolidUser, FaSolidKey, FaSolidEyeSlash, FaSolidEye } from 'svelte-icons-pack/fa'
+  import Register from './pages/Register.svelte'
+
   let isAuthenticated = false
-  let loading = true // Add a loading state
+  let loading = true
   let student_number = ''
   let password = ''
   let loginError = ''
+  export let showRegisterPage = false
 
   async function handleLogin() {
     const result = await login(student_number, password)
@@ -20,10 +23,18 @@
     }
   }
 
+  // Handle authentication and page state loading
   onMount(async () => {
     const authStatus = await checkAuth()
     isAuthenticated = authStatus.isAuthenticated
-    loading = false // Set loading to false after authentication check
+
+    // Load the page state from localStorage
+    const savedPage = localStorage.getItem('showRegisterPage')
+    if (savedPage !== null) {
+      showRegisterPage = JSON.parse(savedPage)
+    }
+
+    loading = false
   })
 
   async function logout() {
@@ -40,7 +51,17 @@
       loginError = ''
     }, 10000)
   }
-  // reactive password visibility variable
+
+  // Toggle between login and register pages and store the state in localStorage
+  function showRegister() {
+    showRegisterPage = true
+    localStorage.setItem('showRegisterPage', JSON.stringify(showRegisterPage))
+  }
+  function showLogin() {
+    showRegisterPage = false
+    localStorage.setItem('showRegisterPage', JSON.stringify(showRegisterPage))
+  }
+  // Toggle password visibility
   let showPassword = false
   function togglePasswordVisibility() {
     showPassword = !showPassword
@@ -60,7 +81,11 @@
 
   {#if isAuthenticated}
     <Main {logout} />
-  {:else if !isAuthenticated}
+  {:else if showRegisterPage}
+    <!-- Registration Form -->
+    <Register onBackToLogin={showLogin} />
+  {:else}
+    <!-- Login Form -->
     <div class="container">
       <div class="login-form">
         <h1>Welcome to Knowbia!</h1>
@@ -77,14 +102,14 @@
           <div class="inputs">
             <Icon src={FaSolidKey} />
             <input type="password" id="password" bind:value={password} required />
-            <button on:click={togglePasswordVisibility}>
+            <button on:click={togglePasswordVisibility} tabindex="-1">
               <Icon src={showPassword ? FaSolidEye : FaSolidEyeSlash} />
             </button>
           </div>
         </div>
 
         <div class="forgot_password">
-          <button>Forgot Password?</button>
+          <button tabindex="-1">Forgot Password?</button>
         </div>
         <button on:click={handleLogin} id="loginButton">Login</button>
 
@@ -93,7 +118,7 @@
           <div class="or">or</div>
           <div class="line"></div>
         </div>
-        <button id="signUp">Sign Up</button>
+        <button on:click={showRegister} id="signUp">Sign Up</button>
       </div>
     </div>
   {/if}
@@ -105,19 +130,36 @@
       content: '';
       position: fixed;
       background-color: #e5e5f7;
-      opacity: 0.1;
-      background-image: repeating-radial-gradient(circle at 0 0, transparent 0, #e5e5f7 33px),
-        repeating-linear-gradient(#444cf755, #444cf7);
+      opacity: 0.3;
+      background-image: radial-gradient(#5c5c5c 2px, #e5e5f7 2px);
+      background-size: 40px 40px;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
       z-index: -15;
+      animation: move 5s infinite ease-in-out;
+    }
+    &:hover::before {
+      animation-play-state: paused;
     }
   }
+  @keyframes move {
+    0% {
+      background-position: 0 0;
+    }
+    50% {
+      background-position: 100px 100px;
+    }
+    100% {
+      background-position: 0 0;
+    }
+  }
+
   .container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: row;
     align-items: center;
     min-height: 100vh;
   }
@@ -129,9 +171,11 @@
     border: 2px solid rgba(255, 255, 255, 0.25);
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 60vw;
+    max-width: 600px;
     padding: 5rem;
-    border-radius: 2rem;
-    border-bottom-right-radius: 0;
     box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
     gap: 0.5rem;
   }
@@ -192,6 +236,7 @@
     text-align: center;
     margin-bottom: 1rem;
     animation: popdown 10s;
+    z-index: 100;
   }
   @keyframes popdown {
     0% {
@@ -227,6 +272,7 @@
     }
   }
   #signUp {
+    padding: 1rem 0.5rem;
     margin-top: 1rem;
     border: none;
     background-color: transparent;
