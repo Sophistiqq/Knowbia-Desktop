@@ -17,15 +17,14 @@
     FaSolidEyeSlash,
     FaSolidEye
   } from 'svelte-icons-pack/fa'
+
   let step = 1
-  // Step 1 fields
   let first_name = ''
   let last_name = ''
   let email = ''
   let password = ''
   let confirm_password = ''
 
-  // Step 2 fields
   let phone_number = ''
   let birthdate = ''
   let department = ''
@@ -54,36 +53,33 @@
     }
   }
 
-  // Reactive variables for button states
   $: isStep1Valid = validateStep1()
   $: isStep2Valid = validateStep2()
 
-  let currentButton = 'next' // Can be 'next', 'back', or 'register'
+  let currentButton = 'next'
 
-  // Update the button display logic
   $: currentButton = step === 1 ? 'next' : 'back-register'
 
   function goToPreviousStep() {
     if (step === 2) {
       step = 1
-      saveToLocalStorage() // Save state when changing steps
+      saveToSessionStorage()
     }
   }
 
   function goToNextStep() {
     if (step === 1 && isStep1Valid) {
       step = 2
-      saveToLocalStorage() // Save state when changing steps
+      saveToSessionStorage()
     } else if (step === 2 && isStep2Valid) {
       handleRegister()
     }
   }
 
-  // Input change handler
   function onInputChange() {
     isStep1Valid = validateStep1()
     isStep2Valid = validateStep2()
-    saveToLocalStorage()
+    saveToSessionStorage()
   }
 
   function validateStep1() {
@@ -94,7 +90,6 @@
     return phone_number && birthdate && department && security_question && security_answer
   }
 
-  // Handle registration
   async function handleRegister() {
     if (password !== confirm_password) {
       registrationError = 'Passwords do not match.'
@@ -115,14 +110,13 @@
 
     if (result.success) {
       registrationError = ''
-      localStorage.removeItem('registrationData') // Clear storage on success
-      // Redirect to login or show success message
+      sessionStorage.removeItem('registrationData') // Clear storage on success
     } else {
       registrationError = result.message
     }
   }
 
-  function saveToLocalStorage() {
+  function saveToSessionStorage() {
     const formData = {
       first_name,
       last_name,
@@ -137,15 +131,14 @@
       step
     }
 
-    localStorage.setItem('registrationData', JSON.stringify(formData))
+    sessionStorage.setItem('registrationData', JSON.stringify(formData))
   }
 
   onMount(() => {
-    const savedData = localStorage.getItem('registrationData')
+    const savedData = sessionStorage.getItem('registrationData')
     if (savedData) {
       const data = JSON.parse(savedData)
 
-      // Populate fields
       first_name = data.first_name || ''
       last_name = data.last_name || ''
       email = data.email || ''
@@ -157,7 +150,6 @@
       security_question = data.security_question || ''
       security_answer = data.security_answer || ''
 
-      // Restore current step
       step = data.step || 1
     }
   })
