@@ -420,7 +420,10 @@
   }
 
   .error-message {
-    position: absolute;
+    position: fixed;
+    z-index: 1000;
+    top: 1rem;
+    right: 1rem;
     background-color: #f8d7da;
     padding: 1rem;
     border-radius: 0.5rem;
@@ -428,6 +431,7 @@
     text-align: center;
     margin-bottom: 1rem;
     animation: popdown 10s;
+
   }
 
   @keyframes popdown {
