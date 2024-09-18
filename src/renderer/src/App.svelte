@@ -1,73 +1,78 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import Main from './pages/Main.svelte'
-  import { login, checkAuth } from './scripts/auth.js'
-  import { Icon } from 'svelte-icons-pack'
-  import { FaSolidUser, FaSolidKey, FaSolidEyeSlash, FaSolidEye } from 'svelte-icons-pack/fa'
-  import Register from './pages/Register.svelte'
+  import { onMount } from "svelte";
+  import Main from "./pages/Main.svelte";
+  import { login, checkAuth } from "./scripts/auth.js";
+  import { Icon } from "svelte-icons-pack";
+  import {
+    FaSolidUser,
+    FaSolidKey,
+    FaSolidEyeSlash,
+    FaSolidEye,
+  } from "svelte-icons-pack/fa";
+  import Register from "./pages/Register.svelte";
+  import { fly } from "svelte/transition"; // Import fly transition
+  import { cubicInOut, cubicOut } from "svelte/easing";
 
-  let isAuthenticated = false
-  let loading = true
-  let student_number = ''
-  let password = ''
-  let loginError = ''
-  export let showRegisterPage = false
+  let isAuthenticated = false;
+  let loading = true;
+  let student_number = "";
+  let password = "";
+  let loginError = "";
+  export let showRegisterPage = false;
 
   async function handleLogin() {
-    const result = await login(student_number, password)
+    const result = await login(student_number, password);
     if (result.success) {
-      isAuthenticated = true
-      loginError = ''
+      isAuthenticated = true;
+      loginError = "";
     } else {
-      showError(result.message)
+      showError(result.message);
     }
   }
 
-  // Handle authentication and page state loading
   onMount(async () => {
-    const authStatus = await checkAuth()
-    isAuthenticated = authStatus.isAuthenticated
+    const authStatus = await checkAuth();
+    isAuthenticated = authStatus.isAuthenticated;
 
-    // Load the page state from localStorage
-    const savedPage = localStorage.getItem('showRegisterPage')
+    const savedPage = localStorage.getItem("showRegisterPage");
     if (savedPage !== null) {
-      showRegisterPage = JSON.parse(savedPage)
+      showRegisterPage = JSON.parse(savedPage);
     }
 
-    loading = false
-  })
+    loading = false;
+  });
 
   async function logout() {
-    await fetch('http://localhost:3000/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
-    isAuthenticated = false
+    await fetch("http://localhost:3000/auth/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    isAuthenticated = false;
   }
 
   function showError(message: string) {
-    loginError = message
+    loginError = message;
     setTimeout(() => {
-      loginError = ''
-    }, 10000)
+      loginError = "";
+    }, 10000);
   }
 
-  // Toggle between login and register pages and store the state in localStorage
   function showRegister() {
-    showRegisterPage = true
-    localStorage.setItem('showRegisterPage', JSON.stringify(showRegisterPage))
+    showRegisterPage = true;
+    localStorage.setItem("showRegisterPage", JSON.stringify(showRegisterPage));
   }
+
   function showLogin() {
-    showRegisterPage = false
-    localStorage.setItem('showRegisterPage', JSON.stringify(showRegisterPage))
+    showRegisterPage = false;
+    localStorage.setItem("showRegisterPage", JSON.stringify(showRegisterPage));
   }
-  // Toggle password visibility
-  let showPassword = false
+
+  let showPassword = false;
   function togglePasswordVisibility() {
-    showPassword = !showPassword
-    const passwordInput = document.getElementById('password')
+    showPassword = !showPassword;
+    const passwordInput = document.getElementById("password");
     if (passwordInput) {
-      passwordInput.setAttribute('type', showPassword ? 'text' : 'password')
+      passwordInput.setAttribute("type", showPassword ? "text" : "password");
     }
   }
 </script>
@@ -82,11 +87,16 @@
   {#if isAuthenticated}
     <Main {logout} />
   {:else if showRegisterPage}
-    <!-- Registration Form -->
-    <Register onBackToLogin={showLogin} />
+    <!-- Registration Form with transition -->
+    <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
+      <Register onBackToLogin={showLogin} />
+    </div>
   {:else}
-    <!-- Login Form -->
-    <div class="container">
+    <!-- Login Form with transition -->
+    <div
+      class="container"
+      transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
+    >
       <div class="login-form">
         <h1>Welcome to Knowbia!</h1>
 
@@ -94,14 +104,24 @@
           <label for="student_number">Student Number</label>
           <div class="inputs">
             <Icon src={FaSolidUser} />
-            <input type="text" id="student_number" bind:value={student_number} required />
+            <input
+              type="text"
+              id="student_number"
+              bind:value={student_number}
+              required
+            />
           </div>
         </div>
         <div class="input_fields">
           <label for="password">Password</label>
           <div class="inputs">
             <Icon src={FaSolidKey} />
-            <input type="password" id="password" bind:value={password} required />
+            <input
+              type="password"
+              id="password"
+              bind:value={password}
+              required
+            />
             <button on:click={togglePasswordVisibility} tabindex="-1">
               <Icon src={showPassword ? FaSolidEye : FaSolidEyeSlash} />
             </button>
@@ -127,7 +147,7 @@
 <style lang="scss">
   :global(body) {
     &::before {
-      content: '';
+      content: "";
       position: fixed;
       background-color: #e5e5f7;
       opacity: 0.3;
@@ -196,17 +216,6 @@
       border-radius: 0.5rem;
       align-items: center;
       gap: 0.5rem;
-      input {
-        margin-left: 0.3rem;
-        flex-grow: 1;
-        background: none;
-        padding: 0.5rem;
-        border: none;
-        border-left: 1px solid #ccc;
-        &:focus {
-          outline: none;
-        }
-      }
       button {
         background: none;
         border: none;
@@ -239,7 +248,6 @@
     text-align: center;
     margin-bottom: 1rem;
     animation: popdown 10s;
-
   }
   @keyframes popdown {
     0% {
@@ -282,6 +290,19 @@
     cursor: pointer;
     &:hover {
       text-decoration: underline;
+    }
+  }
+
+  input {
+    outline: none;
+    margin-left: 0.3rem;
+    flex-grow: 1;
+    background: none;
+    padding: 0.5rem;
+    border: none;
+    border-left: 1px solid #ccc;
+    &:focus {
+      outline: none;
     }
   }
 </style>

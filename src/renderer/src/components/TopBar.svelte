@@ -1,54 +1,45 @@
-<script>
-  import { Icon } from 'svelte-icons-pack'
-  import { FaBell, FaUser } from 'svelte-icons-pack/fa'
-  import { Progress } from 'bits-ui'
+<script lang="ts">
+  import {
+    Navbar,
+    NavBrand,
+    Avatar,
+    Dropdown,
+    DropdownHeader,
+    DropdownItem,
+    DropdownDivider,
+  } from "flowbite-svelte";
+  export let logout: () => void;
+  import "../assets/tailwind.css"
 </script>
 
-<!-- The top bar of the application -->
-<header>
-  <h1>Knowbia</h1>
+<Navbar rounded color="form">
+  <NavBrand>
+    <span
+      class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"
+      >Knowbia</span
+    >
+  </NavBrand>
+  <Avatar
+    id="user-drop"
+    src="/images/profile-picture-3.webp"
+    class="cursor-pointer"
+    dot={{ color: "green" }}
+  />
+  <Dropdown triggeredBy="#user-drop">
+    <DropdownHeader>
+      <span class="block text-sm">Roi Borromeo</span>
+      <span class="block truncate text-sm font-medium"
+        >roi.for.school@gmail.com</span
+      >
+    </DropdownHeader>
+    <DropdownItem>Dashboard</DropdownItem>
+    <DropdownItem>Settings</DropdownItem>
+    <DropdownItem>Earnings</DropdownItem>
+    <DropdownDivider />
 
-  <div class="left">
-    <button class="notification">
-      <Icon src={FaBell} />
-    </button>
-  </div>
-</header>
+    <DropdownItem on:click={logout}>Sign out</DropdownItem>
+  </Dropdown>
+</Navbar>
 
-<style lang="scss">
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 4rem;
-    position: sticky;
-    padding: 0 1.5rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  }
-
-  .left {
-    display: flex;
-    gap: 0.5rem;
-    button {
-      font-weight: 600;
-      padding: 1rem;
-      border: none;
-      background-color: var(--white-color);
-      border-radius: 0.5rem;
-      cursor: pointer;
-      transition:
-        background-color 0.5s,
-        transform 0.3s;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      &:hover {
-        background-color: var(--accent-color);
-      }
-      &:active {
-        background-color: var(--active-color);
-        transform: translateY(2px);
-      }
-    }
-  }
+<style>
 </style>
