@@ -7,9 +7,18 @@
     DropdownHeader,
     DropdownItem,
     DropdownDivider,
+    DarkMode,
   } from "flowbite-svelte";
+
   export let logout: () => void;
-  import "../assets/tailwind.css"
+
+  // Retrieve user info from localStorage
+  let user = JSON.parse(localStorage.getItem("user")) || {
+    name: "",
+    email: "",
+  };
+
+  import "../assets/tailwind.css";
 </script>
 
 <Navbar rounded color="form">
@@ -27,19 +36,14 @@
   />
   <Dropdown triggeredBy="#user-drop">
     <DropdownHeader>
-      <span class="block text-sm">Roi Borromeo</span>
-      <span class="block truncate text-sm font-medium"
-        >roi.for.school@gmail.com</span
-      >
+      <span class="block text-sm">{user.firstname} {user.lastname}</span>
+      <span class="block truncate text-sm font-medium">{user.email}</span>
     </DropdownHeader>
     <DropdownItem>Dashboard</DropdownItem>
     <DropdownItem>Settings</DropdownItem>
     <DropdownItem>Earnings</DropdownItem>
     <DropdownDivider />
-
     <DropdownItem on:click={logout}>Sign out</DropdownItem>
   </Dropdown>
+  <DarkMode />
 </Navbar>
-
-<style>
-</style>

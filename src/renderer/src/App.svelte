@@ -12,16 +12,18 @@
   import Register from "./pages/Register.svelte";
   import { fly } from "svelte/transition"; // Import fly transition
   import { cubicInOut, cubicOut } from "svelte/easing";
+  import { DarkMode } from "flowbite-svelte";
+  import "./assets/main.css";
 
   let isAuthenticated = false;
   let loading = true;
-  let student_number = "";
+  let email = "";
   let password = "";
   let loginError = "";
   export let showRegisterPage = false;
 
   async function handleLogin() {
-    const result = await login(student_number, password);
+    const result = await login(email, password);
     if (result.success) {
       isAuthenticated = true;
       loginError = "";
@@ -48,6 +50,7 @@
       credentials: "include",
     });
     isAuthenticated = false;
+    localStorage.removeItem("user");
   }
 
   function showError(message: string) {
@@ -89,6 +92,7 @@
   {:else if showRegisterPage}
     <!-- Registration Form with transition -->
     <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
+      <DarkMode btnClass="fixed top-5 left-5 scale-150 z-10" />
       <Register onBackToLogin={showLogin} />
     </div>
   {:else}
@@ -98,16 +102,18 @@
       transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
     >
       <div class="login-form">
+        <DarkMode btnClass="fixed top-5 left-5 scale-150 z-10" />
         <h1>Welcome to Knowbia!</h1>
 
         <div class="input_fields">
-          <label for="student_number">Student Number</label>
+          <label for="email">Email</label>
           <div class="inputs">
             <Icon src={FaSolidUser} />
             <input
-              type="text"
-              id="student_number"
-              bind:value={student_number}
+              type="email;
+              "
+              id="email"
+              bind:value={email}
               required
             />
           </div>
@@ -145,37 +151,6 @@
 {/if}
 
 <style lang="scss">
-  :global(body) {
-    &::before {
-      content: "";
-      position: fixed;
-      background-color: #e5e5f7;
-      opacity: 0.3;
-      background-image: radial-gradient(#5c5c5c 2px, #e5e5f7 2px);
-      background-size: 40px 40px;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -15;
-      animation: move 5s infinite ease-in-out;
-    }
-    &:hover::before {
-      animation-play-state: paused;
-    }
-  }
-  @keyframes move {
-    0% {
-      background-position: 0 0;
-    }
-    50% {
-      background-position: 100px 100px;
-    }
-    100% {
-      background-position: 0 0;
-    }
-  }
-
   .container {
     display: flex;
     justify-content: flex-start;
@@ -185,10 +160,11 @@
   }
 
   .login-form {
-    background: transparent;
+    background: var(--background);
+    color: var(--text);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.25);
+    border: 2px solid var(--text);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -200,26 +176,47 @@
     gap: 0.5rem;
   }
   .login-form h1 {
+    color: var(--text);
+    font-size: 2rem;
+    font-weight: 700;
     text-align: center;
     margin-bottom: 1rem;
   }
   .input_fields {
     display: flex;
+    color: var(--text);
     flex-direction: column;
     gap: 0.5rem;
+    & label {
+      font-size: 1.2rem;
+      color: var(--text);
+    }
     .inputs {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border: 1px solid #ccc;
+      color: var(--text);
+      border: 1px solid var(--text);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
       gap: 0.5rem;
-      button {
-        background: none;
+      & button {
         border: none;
         cursor: pointer;
+      }
+      & input {
+        outline: none;
+        margin-left: 0.3rem;
+        flex-grow: 1;
+        color: var(--text);
+        background: transparent;
+        padding: 0.5rem;
+        border: none;
+        border-left: 1px solid var(--text);
+        &:focus {
+          outline: none;
+        }
       }
     }
   }
@@ -230,8 +227,10 @@
       background: none;
       border: none;
       cursor: pointer;
-      color: #007bff;
+      color: var(--text);
+      transition: color 0.5s;
       &:hover {
+        color: var(--accent);
         text-decoration: underline;
       }
     }
@@ -241,7 +240,7 @@
     z-index: 1000;
     top: 1rem;
     right: 1rem;
-    background-color: #f8d7da;
+    background-color: var(--accent);
     padding: 1rem;
     border-radius: 0.5rem;
     color: red;
@@ -261,12 +260,17 @@
     }
   }
   #loginButton {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary);
+    color: var(--background);
     border: none;
+    font-weight: 500;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
+    transition: background-color 0.5s;
+    &:hover {
+      background-color: var(--accent);
+    }
   }
   .separator {
     display: flex;
@@ -276,7 +280,7 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: #ccc;
+      background-color: var(--text);
     }
     .or {
       padding: 0.5rem;
@@ -288,21 +292,10 @@
     border: none;
     background-color: transparent;
     cursor: pointer;
+    transition: color 0.5s;
     &:hover {
       text-decoration: underline;
-    }
-  }
-
-  input {
-    outline: none;
-    margin-left: 0.3rem;
-    flex-grow: 1;
-    background: none;
-    padding: 0.5rem;
-    border: none;
-    border-left: 1px solid #ccc;
-    &:focus {
-      outline: none;
+      color: var(--accent);
     }
   }
 </style>

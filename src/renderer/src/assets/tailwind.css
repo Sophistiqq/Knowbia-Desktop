@@ -6,3 +6,23 @@
 input {
   --tw-ring-shadow: 0 0 #000 !important;
 }
+
+
+@layer base {
+  :root {
+    --text: #252525;
+    --background: #fffee9;
+    --primary: #0e1367;
+    --secondary: #de4212;
+    --accent: #a35f00;
+    --disabled: #a8a8a8;
+  }
+  .dark {
+    --text: #a8a8a8;
+    --background: #09091e;
+    --primary: #969af1;
+    --secondary: #ed5120;
+    --accent: #ffba5a;
+    --disabled: #4d4d4d;
+  }
+}

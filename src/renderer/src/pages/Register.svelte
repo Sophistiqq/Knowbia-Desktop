@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import { registerTeacher } from '../scripts/registerTeacher.js'
-  import { Icon } from 'svelte-icons-pack'
+  import { onMount } from "svelte";
+  import { registerTeacher } from "../scripts/registerTeacher.js";
+  import { Icon } from "svelte-icons-pack";
   import {
     FaSolidUser,
     FaAddressCard,
@@ -15,111 +15,155 @@
     FaEye,
     FaEyeSlash,
     FaSolidEyeSlash,
-    FaSolidEye
-  } from 'svelte-icons-pack/fa'
+    FaSolidEye,
+  } from "svelte-icons-pack/fa";
+  let step = 1;
+  let firstname = "";
+  let lastname = "";
+  let middlename = "";
+  let email = "";
+  let password = "";
+  let confirm_password = "";
 
-  let step = 1
-  let first_name = ''
-  let last_name = ''
-  let email = ''
-  let password = ''
-  let confirm_password = ''
+  let phone_number = "";
+  let birthdate = "";
+  let department = "";
+  let security_question = "";
+  let security_answer = "";
 
-  let phone_number = ''
-  let birthdate = ''
-  let department = ''
-  let security_question = ''
-  let security_answer = ''
-
-  let registrationError = ''
-  let showPassword = false
+  let registrationError = "";
+  let showPassword = false;
 
   let securityQuestions = [
-    'What was the name of your first pet?',
-    'What is your mother’s maiden name?',
-    'What was the name of your elementary school?',
-    'What is your favorite book?',
-    'What is the name of your favorite movie?'
-  ]
+    "What was the name of your first pet?",
+    "What is your mother’s maiden name?",
+    "What was the name of your elementary school?",
+    "What is your favorite book?",
+    "What is the name of your favorite movie?",
+  ];
 
   // Toggle password visibility
   function togglePasswordVisibility() {
-    showPassword = !showPassword
-    const passwordInput = document.getElementById('password')
-    const confirmPasswordInput = document.getElementById('confirm_password')
+    showPassword = !showPassword;
+    const passwordInput = document.getElementById("password");
+    const confirmPasswordInput = document.getElementById("confirm_password");
     if (passwordInput && confirmPasswordInput) {
-      passwordInput.setAttribute('type', showPassword ? 'text' : 'password')
-      confirmPasswordInput.setAttribute('type', showPassword ? 'text' : 'password')
+      passwordInput.setAttribute("type", showPassword ? "text" : "password");
+      confirmPasswordInput.setAttribute(
+        "type",
+        showPassword ? "text" : "password",
+      );
     }
   }
+function debounce(func: Function, timeout = 300) {
+  let timer: number | undefined; // Set the timer to number
 
-  $: isStep1Valid = validateStep1()
-  $: isStep2Valid = validateStep2()
+  return (...args: any[]) => {
+    if (timer) {
+      clearTimeout(timer); // Clear the existing timer
+    }
+    // Cast the setTimeout return value to number
+    timer = window.setTimeout(() => {
+      func.apply(this, args);
+    }, timeout) as unknown as number;
+  };
+}
 
-  let currentButton = 'next'
+  $: isStep1Valid = validateStep1();
+  $: isStep2Valid = validateStep2();
 
-  $: currentButton = step === 1 ? 'next' : 'back-register'
+  let currentButton = "next";
+
+  $: currentButton = step === 1 ? "next" : "back-register";
 
   function goToPreviousStep() {
     if (step === 2) {
-      step = 1
-      saveToSessionStorage()
+      step = 1;
+      saveToLocalStorage();
     }
   }
 
   function goToNextStep() {
     if (step === 1 && isStep1Valid) {
-      step = 2
-      saveToSessionStorage()
+      step = 2;
+      saveToLocalStorage();
     } else if (step === 2 && isStep2Valid) {
-      handleRegister()
+      handleRegister();
     }
   }
 
   function onInputChange() {
-    isStep1Valid = validateStep1()
-    isStep2Valid = validateStep2()
-    saveToSessionStorage()
+    isStep1Valid = validateStep1();
+    isStep2Valid = validateStep2();
+    saveToLocalStorage();
   }
 
   function validateStep1() {
-    return first_name && last_name && email && password && confirm_password
+    const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+    const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8}/;
+
+    const isValidEmail = emailPattern.test(email);
+    const isValidPassword = passwordPattern.test(password);
+    const isPasswordMatch = password === confirm_password;
+
+    return (
+      firstname.trim().length > 0 &&
+      lastname.trim().length > 0 &&
+      middlename.trim().length > 0 &&
+      isValidEmail &&
+      isValidPassword &&
+      isPasswordMatch
+    );
   }
 
   function validateStep2() {
-    return phone_number && birthdate && department && security_question && security_answer
+    const phonePattern = /^(09|\+639)\d{9}$/;
+    const isValidPhoneNumber = phonePattern.test(phone_number);
+
+    return (
+      isValidPhoneNumber &&
+      birthdate.trim().length > 0 &&
+      department.trim().length > 0 &&
+      security_question.trim().length > 0 &&
+      security_answer.trim().length > 0
+    );
   }
 
+  const debouncedInputChange = debounce(onInputChange);
+
   async function handleRegister() {
+    console.log("Registering with:", firstname, lastname, email); // Check if values are correct here
     if (password !== confirm_password) {
-      registrationError = 'Passwords do not match.'
-      return
+      registrationError = "Passwords do not match.";
+      return;
     }
 
     const result = await registerTeacher({
-      first_name,
-      last_name,
+      firstname,
+      lastname,
+      middlename,
       email,
       password,
       phone_number,
       birthdate,
       department,
       security_question,
-      security_answer
-    })
+      security_answer,
+    });
 
     if (result.success) {
-      registrationError = ''
-      sessionStorage.removeItem('registrationData') // Clear storage on success
+      registrationError = "";
+      localStorage.removeItem("registrationData"); // Clear storage on success
     } else {
-      registrationError = result.message
+      registrationError = result.message;
     }
   }
 
-  function saveToSessionStorage() {
+  function saveToLocalStorage() {
     const formData = {
-      first_name,
-      last_name,
+      firstname,
+      lastname,
+      middlename,
       email,
       password,
       confirm_password,
@@ -128,33 +172,34 @@
       department,
       security_question,
       security_answer,
-      step
-    }
+      step,
+    };
 
-    sessionStorage.setItem('registrationData', JSON.stringify(formData))
+    localStorage.setItem("registrationData", JSON.stringify(formData));
   }
 
   onMount(() => {
-    const savedData = sessionStorage.getItem('registrationData')
+    const savedData = localStorage.getItem("registrationData");
     if (savedData) {
-      const data = JSON.parse(savedData)
+      const data = JSON.parse(savedData);
 
-      first_name = data.first_name || ''
-      last_name = data.last_name || ''
-      email = data.email || ''
-      password = data.password || ''
-      confirm_password = data.confirm_password || ''
-      phone_number = data.phone_number || ''
-      birthdate = data.birthdate || ''
-      department = data.department || ''
-      security_question = data.security_question || ''
-      security_answer = data.security_answer || ''
+      firstname = data.firstname || "";
+      lastname = data.lastname || "";
+      middlename = data.middlename || "";
+      email = data.email || "";
+      password = data.password || "";
+      confirm_password = data.confirm_password || "";
+      phone_number = data.phone_number || "";
+      birthdate = data.birthdate || "";
+      department = data.department || "";
+      security_question = data.security_question || "";
+      security_answer = data.security_answer || "";
 
-      step = data.step || 1
+      step = data.step || 1;
     }
-  })
+  });
 
-  export let onBackToLogin: () => void
+  export let onBackToLogin: () => void;
 </script>
 
 {#if registrationError}
@@ -168,27 +213,43 @@
     {#if step === 1}
       <!-- Step 1 Fields -->
       <div class="input_fields">
-        <label for="first_name">First Name</label>
+        <label for="firstname">First Name</label>
         <div class="inputs">
           <Icon src={FaAddressCard} />
           <input
             type="text"
-            id="first_name"
-            bind:value={first_name}
-            on:input={onInputChange}
+            id="firstname"
+            bind:value={firstname}
+            on:input={debouncedInputChange}
+            pattern="[a-zA-Z]+"
             required
           />
         </div>
       </div>
       <div class="input_fields">
-        <label for="last_name">Last Name</label>
+        <label for="lastname">Last Name</label>
         <div class="inputs">
           <Icon src={FaAddressCard} />
           <input
             type="text"
-            id="last_name"
-            bind:value={last_name}
-            on:input={onInputChange}
+            id="lastname"
+            bind:value={lastname}
+            on:input={debouncedInputChange}
+            pattern="[a-zA-Z]+"
+            required
+          />
+        </div>
+      </div>
+      <div class="input_fields">
+        <label for="middlename">Middle Name</label>
+        <div class="inputs">
+          <Icon src={FaAddressCard} />
+          <input
+            type="text"
+            id="middlename"
+            bind:value={middlename}
+            on:input={debouncedInputChange}
+            pattern="[a-zA-Z]+"
             required
           />
         </div>
@@ -197,7 +258,14 @@
         <label for="email">Email</label>
         <div class="inputs">
           <Icon src={FaEnvelope} />
-          <input type="email" id="email" bind:value={email} on:input={onInputChange} required />
+          <input
+            type="email"
+            id="email"
+            bind:value={email}
+            on:input={debouncedInputChange}
+            pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{4}$"
+            required
+          />
         </div>
       </div>
       <div class="input_fields">
@@ -208,7 +276,8 @@
             type="password"
             id="password"
             bind:value={password}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8}"
             required
           />
           <button on:click={togglePasswordVisibility} tabindex="-1">
@@ -224,7 +293,8 @@
             type="password"
             id="confirm_password"
             bind:value={confirm_password}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
+            pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8}"
             required
           />
           <button on:click={togglePasswordVisibility} tabindex="-1">
@@ -244,7 +314,8 @@
             type="text"
             id="phone_number"
             bind:value={phone_number}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
+            pattern="^(09|\+639)\d{9}$"
             required
           />
         </div>
@@ -257,7 +328,7 @@
             type="date"
             id="birthdate"
             bind:value={birthdate}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
             required
           />
         </div>
@@ -270,7 +341,7 @@
             type="text"
             id="department"
             bind:value={department}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
             required
           />
         </div>
@@ -300,20 +371,26 @@
             type="text"
             id="security_answer"
             bind:value={security_answer}
-            on:input={onInputChange}
+            on:input={debouncedInputChange}
             required
           />
         </div>
       </div>
     {/if}
     <!-- Dynamic button rendering based on currentButton -->
-    {#if currentButton === 'next'}
-      <button on:click={goToNextStep} disabled={!isStep1Valid} id="nextButton">Next</button>
+    {#if currentButton === "next"}
+      <button on:click={goToNextStep} disabled={!isStep1Valid} id="nextButton"
+        >Next</button
+      >
     {/if}
 
-    {#if currentButton === 'back-register'}
+    {#if currentButton === "back-register"}
       <button on:click={goToPreviousStep} id="backButton">Back</button>
-      <button on:click={goToNextStep} disabled={!isStep2Valid} id="registerButton">Register</button>
+      <button
+        on:click={goToNextStep}
+        disabled={!isStep2Valid}
+        id="registerButton">Register</button
+      >
     {/if}
 
     <div class="separator">
@@ -342,14 +419,15 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: #ccc;
+      background-color: var(--text);
     }
     .or {
+      color: var(--text);
       padding: 0.5rem;
     }
   }
   .register-form {
-    background: transparent;
+    background: var(--background);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.25);
@@ -362,11 +440,16 @@
     padding: 5rem;
     box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
     gap: 0.5rem;
-  }
-
-  .register-form h1 {
-    text-align: center;
-    margin-bottom: 1rem;
+    & label {
+      color: var(--text);
+    }
+    & h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 2rem;
+      color: var(--text);
+    }
   }
 
   .input_fields {
@@ -377,6 +460,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      color: var(--text);
       border: 1px solid #ccc;
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
@@ -389,7 +473,7 @@
         background: none;
         padding: 0.5rem;
         border: none;
-        border-left: 1px solid #ccc;
+        border-left: 1px solid var(--background);
         &:focus {
           outline: none;
         }
@@ -404,18 +488,22 @@
 
   #nextButton,
   #registerButton {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary);
+    color: var(--background);
     border: none;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
     margin-top: 1rem;
+    transition: all 0.3s;
+    &:hover {
+      background-color: var(--accent);
+    }
   }
 
   #nextButton:disabled,
   #registerButton:disabled {
-    background-color: #cccccc;
+    background-color: var(--disabled);
     cursor: not-allowed;
   }
 
@@ -431,7 +519,6 @@
     text-align: center;
     margin-bottom: 1rem;
     animation: popdown 10s;
-
   }
 
   @keyframes popdown {
@@ -447,15 +534,18 @@
   }
 
   #backButton {
-    background-color: #cccccc;
+    background: var(--secondary);
     color: white;
     border: none;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
     margin-top: 1rem;
+    opacity: 0.7;
+    transition: all 0.3s;
     &:hover {
-      background-color: #0056b3;
+      opacity: 1;
+      background-color: var(--accent);
     }
   }
   #security_question {
@@ -474,8 +564,10 @@
     padding: 1rem 0.5rem;
     background-color: transparent;
     cursor: pointer;
+    color: var(--text);
     &:hover {
       text-decoration: underline;
+      color: var(--accent);
     }
   }
 </style>

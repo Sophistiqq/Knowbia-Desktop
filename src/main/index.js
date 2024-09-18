@@ -7,9 +7,7 @@ try {
   require('electron-reloader')(module);
 } catch { }
 
-app.commandLine.appendSwitch('disable-frame-rate-limit')
-app.commandLine.appendSwitch('disable-gpu-vsync')
-app.commandLine.appendSwitch('force_high_performance_gpu')
+app.allowRendererProcessReuse = true
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
