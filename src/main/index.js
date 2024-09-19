@@ -7,7 +7,7 @@ try {
   require('electron-reloader')(module);
 } catch { }
 
-app.allowRendererProcessReuse = true
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({

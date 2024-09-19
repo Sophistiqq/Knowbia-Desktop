@@ -11,11 +11,12 @@ input {
 @layer base {
   :root {
     --text: #252525;
-    --background: #fffee9;
-    --primary: #0e1367;
+    --background: #ffffff;
+    --primary: #3b43d8;
     --secondary: #de4212;
-    --accent: #a35f00;
+    --accent: #e3972d;
     --disabled: #a8a8a8;
+    --border: #AEAEAE;
   }
   .dark {
     --text: #a8a8a8;

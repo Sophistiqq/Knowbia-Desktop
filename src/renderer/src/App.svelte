@@ -13,8 +13,8 @@
   import { fly } from "svelte/transition"; // Import fly transition
   import { cubicInOut, cubicOut } from "svelte/easing";
   import { DarkMode } from "flowbite-svelte";
+  import { SunSolid, MoonSolid } from "flowbite-svelte-icons";
   import "./assets/main.css";
-
   let isAuthenticated = false;
   let loading = true;
   let email = "";
@@ -92,7 +92,12 @@
   {:else if showRegisterPage}
     <!-- Registration Form with transition -->
     <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
-      <DarkMode btnClass="fixed top-5 left-5 scale-150 z-10" />
+      <DarkMode
+        class="absolute top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
+      >
+        <SunSolid slot="lightIcon" color="yellow" />
+        <MoonSolid slot="darkIcon" />
+      </DarkMode>
       <Register onBackToLogin={showLogin} />
     </div>
   {:else}
@@ -102,7 +107,12 @@
       transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
     >
       <div class="login-form">
-        <DarkMode btnClass="fixed top-5 left-5 scale-150 z-10" />
+        <DarkMode
+          class="absolute top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
+        >
+          <SunSolid slot="lightIcon" color="yellow" />
+          <MoonSolid slot="darkIcon" />
+        </DarkMode>
         <h1>Welcome to Knowbia!</h1>
 
         <div class="input_fields">
@@ -164,7 +174,6 @@
     color: var(--text);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 2px solid var(--text);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -196,7 +205,7 @@
       justify-content: space-between;
       align-items: center;
       color: var(--text);
-      border: 1px solid var(--text);
+      border: 1px solid var(--border);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
@@ -213,7 +222,7 @@
         background: transparent;
         padding: 0.5rem;
         border: none;
-        border-left: 1px solid var(--text);
+        border-left: 1px solid var(--border);
         &:focus {
           outline: none;
         }
@@ -280,7 +289,7 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: var(--text);
+      background-color: var(--border);
     }
     .or {
       padding: 0.5rem;

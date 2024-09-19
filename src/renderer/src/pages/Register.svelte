@@ -55,19 +55,19 @@
       );
     }
   }
-function debounce(func: Function, timeout = 300) {
-  let timer: number | undefined; // Set the timer to number
+  function debounce(func: Function, timeout = 300) {
+    let timer: number | undefined; // Set the timer to number
 
-  return (...args: any[]) => {
-    if (timer) {
-      clearTimeout(timer); // Clear the existing timer
-    }
-    // Cast the setTimeout return value to number
-    timer = window.setTimeout(() => {
-      func.apply(this, args);
-    }, timeout) as unknown as number;
-  };
-}
+    return (...args: any[]) => {
+      if (timer) {
+        clearTimeout(timer); // Clear the existing timer
+      }
+      // Cast the setTimeout return value to number
+      timer = window.setTimeout(() => {
+        func.apply(this, args);
+      }, timeout) as unknown as number;
+    };
+  }
 
   $: isStep1Valid = validateStep1();
   $: isStep2Valid = validateStep2();
@@ -175,11 +175,11 @@ function debounce(func: Function, timeout = 300) {
       step,
     };
 
-    localStorage.setItem("registrationData", JSON.stringify(formData));
+    sessionStorage.setItem("registrationData", JSON.stringify(formData));
   }
 
   onMount(() => {
-    const savedData = localStorage.getItem("registrationData");
+    const savedData = sessionStorage.getItem("registrationData");
     if (savedData) {
       const data = JSON.parse(savedData);
 
@@ -430,7 +430,6 @@ function debounce(func: Function, timeout = 300) {
     background: var(--background);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.25);
     display: flex;
     flex-direction: column;
     justify-content: center;
