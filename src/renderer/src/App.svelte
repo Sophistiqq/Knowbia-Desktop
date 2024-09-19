@@ -12,8 +12,8 @@
   import Register from "./pages/Register.svelte";
   import { fly } from "svelte/transition"; // Import fly transition
   import { cubicInOut, cubicOut } from "svelte/easing";
-  import { DarkMode } from "flowbite-svelte";
-  import { SunSolid, MoonSolid } from "flowbite-svelte-icons";
+  import { DarkMode, Toast } from "flowbite-svelte";
+  import { SunSolid, MoonSolid, CloseCircleSolid } from "flowbite-svelte-icons";
   import "./assets/main.css";
   let isAuthenticated = false;
   let loading = true;
@@ -84,7 +84,13 @@
   <h1>Loading ...</h1>
 {:else}
   {#if loginError}
-    <div class="error-message">{loginError}</div>
+    <Toast color="red" position="top-right">
+      <svelte:fragment slot="icon">
+        <CloseCircleSolid class="w-5 h-5" />
+        <span class="sr-only">Error icon</span>
+      </svelte:fragment>
+      {loginError}
+    </Toast>
   {/if}
 
   {#if isAuthenticated}

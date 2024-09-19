@@ -1,16 +1,18 @@
 <script lang="ts">
   import NavBar from "../components/NavBar.svelte";
-  import { Classes, Quizzes, StudentsInfo } from "../pages/";
+  import { Classes, Quizzes, StudentsInfo, Dashboard } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
+
   const pages = {
     classes: Classes,
     quizzes: Quizzes,
     studentsInfo: StudentsInfo,
+    dashboard: Dashboard,
   };
 
   let currentPage = "classes";
-  // Navigation function to switch between pages
+
   function navigate(page: string) {
     currentPage = page;
   }
@@ -27,4 +29,13 @@
 </div>
 
 <style>
+  .container {
+    display: flex;
+    flex-direction: row;
+  }
+  .screen {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+  }
 </style>
