@@ -2,6 +2,9 @@
   import { onMount } from "svelte";
   import { registerTeacher } from "../scripts/registerTeacher.js";
   import { Icon } from "svelte-icons-pack";
+
+  import { CloseCircleSolid } from "flowbite-svelte-icons";
+  import { Toast } from "flowbite-svelte";
   import {
     FaSolidUser,
     FaAddressCard,
@@ -203,7 +206,13 @@
 </script>
 
 {#if registrationError}
-  <div class="error-message">{registrationError}</div>
+  <Toast color="red" position="top-right">
+    <svelte:fragment slot="icon">
+      <CloseCircleSolid class="w-5 h-5" />
+      <span class="sr-only">Error icon</span>
+    </svelte:fragment>
+    {registrationError}
+  </Toast>
 {/if}
 
 <div class="container">
@@ -504,20 +513,6 @@
   #registerButton:disabled {
     background-color: var(--disabled);
     cursor: not-allowed;
-  }
-
-  .error-message {
-    position: fixed;
-    z-index: 1000;
-    top: 1rem;
-    right: 1rem;
-    background-color: #f8d7da;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    color: red;
-    text-align: center;
-    margin-bottom: 1rem;
-    animation: popdown 10s;
   }
 
   @keyframes popdown {

@@ -17,6 +17,7 @@ input {
     --disabled: rgba(168, 168, 168, 1); /* #a8a8a8 */
     --border: rgba(174, 174, 174, 1); /* #AEAEAE */
     --shadow: rgba(0, 0, 0, 0.2); /* rgba(0, 0, 0, 0.2) */
+    --data-color: black; /* rgba(0, 0, 0, 0.5) */
   }
 
   .dark {
@@ -28,6 +29,7 @@ input {
     --disabled: rgba(77, 77, 77, 1); /* #4d4d4d */
     --border: rgba(77, 77, 77, 1); /* #4d4d4d */
     --shadow: rgba(255, 255, 255, 0.1); /* rgba(255, 255, 255, 0.1) */
+    --data-color: white; /* rgba(255, 255, 255, 0.5) */
   }
 }
 

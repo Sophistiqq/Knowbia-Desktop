@@ -10,11 +10,12 @@
     FaSolidEye,
   } from "svelte-icons-pack/fa";
   import Register from "./pages/Register.svelte";
-  import { fly } from "svelte/transition"; // Import fly transition
+  import { fly } from "svelte/transition";
   import { cubicInOut, cubicOut } from "svelte/easing";
   import { DarkMode, Toast } from "flowbite-svelte";
   import { SunSolid, MoonSolid, CloseCircleSolid } from "flowbite-svelte-icons";
   import "./assets/main.css";
+
   let isAuthenticated = false;
   let loading = true;
   let email = "";
@@ -23,34 +24,53 @@
   export let showRegisterPage = false;
 
   async function handleLogin() {
-    const result = await login(email, password);
-    if (result.success) {
+    const { success, message } = await login(email, password);
+    if (success) {
       isAuthenticated = true;
+      localStorage.setItem("isAuthenticated", "true");
       loginError = "";
     } else {
-      showError(result.message);
+      showError(message);
     }
   }
 
   onMount(async () => {
-    const authStatus = await checkAuth();
-    isAuthenticated = authStatus.isAuthenticated;
+    const storedAuth = localStorage.getItem("isAuthenticated");
+    isAuthenticated = storedAuth === "true" || (await checkAndSetAuth());
 
-    const savedPage = localStorage.getItem("showRegisterPage");
-    if (savedPage !== null) {
-      showRegisterPage = JSON.parse(savedPage);
-    }
-
+    showRegisterPage = JSON.parse(
+      localStorage.getItem("showRegisterPage") || "false",
+    );
     loading = false;
   });
 
+  async function checkAndSetAuth() {
+    const authStatus = await checkAuth();
+    if (authStatus.isAuthenticated) {
+      localStorage.setItem("isAuthenticated", "true");
+      return true;
+    }
+    localStorage.removeItem("isAuthenticated");
+    return false;
+  }
+
+  const API_URL =
+    window.location.hostname === "localhost"
+      ? "http://localhost:3000"
+      : "http://10.0.23.245:3000";
+
   async function logout() {
-    await fetch("http://localhost:3000/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    isAuthenticated = false;
-    localStorage.removeItem("user");
+    try {
+      await fetch(`${API_URL}/email/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Logout failed, server might be offline:", error);
+    } finally {
+      isAuthenticated = false;
+      localStorage.removeItem("isAuthenticated");
+    }
   }
 
   function showError(message: string) {
@@ -60,22 +80,19 @@
     }, 10000);
   }
 
-  function showRegister() {
-    showRegisterPage = true;
-    localStorage.setItem("showRegisterPage", JSON.stringify(showRegisterPage));
-  }
-
-  function showLogin() {
-    showRegisterPage = false;
+  function togglePage() {
+    showRegisterPage = !showRegisterPage;
     localStorage.setItem("showRegisterPage", JSON.stringify(showRegisterPage));
   }
 
   let showPassword = false;
   function togglePasswordVisibility() {
     showPassword = !showPassword;
-    const passwordInput = document.getElementById("password");
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
     if (passwordInput) {
-      passwordInput.setAttribute("type", showPassword ? "text" : "password");
+      passwordInput.type = showPassword ? "text" : "password";
     }
   }
 </script>
@@ -96,18 +113,16 @@
   {#if isAuthenticated}
     <Main {logout} />
   {:else if showRegisterPage}
-    <!-- Registration Form with transition -->
     <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
       <DarkMode
-        class="absolute top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
+        class="fixed top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
       >
         <SunSolid slot="lightIcon" color="yellow" />
         <MoonSolid slot="darkIcon" />
       </DarkMode>
-      <Register onBackToLogin={showLogin} />
+      <Register onBackToLogin={togglePage} />
     </div>
   {:else}
-    <!-- Login Form with transition -->
     <div
       class="container"
       transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
@@ -122,18 +137,18 @@
         <h1>Welcome to Knowbia!</h1>
 
         <div class="input_fields">
-          <label for="email">Email</label>
+          <label for="email_number">Email</label>
           <div class="inputs">
             <Icon src={FaSolidUser} />
             <input
-              type="email;
-              "
-              id="email"
+              type="email_number"
+              id="email_number"
               bind:value={email}
               required
             />
           </div>
         </div>
+
         <div class="input_fields">
           <label for="password">Password</label>
           <div class="inputs">
@@ -160,7 +175,7 @@
           <div class="or">or</div>
           <div class="line"></div>
         </div>
-        <button on:click={showRegister} id="signUp">Sign Up</button>
+        <button on:click={togglePage} id="signUp">Sign Up</button>
       </div>
     </div>
   {/if}
@@ -249,19 +264,6 @@
         text-decoration: underline;
       }
     }
-  }
-  .error-message {
-    position: fixed;
-    z-index: 1000;
-    top: 1rem;
-    right: 1rem;
-    background-color: var(--accent);
-    padding: 1rem;
-    border-radius: 0.5rem;
-    color: red;
-    text-align: center;
-    margin-bottom: 1rem;
-    animation: popdown 10s;
   }
   @keyframes popdown {
     0% {

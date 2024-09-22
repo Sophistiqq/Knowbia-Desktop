@@ -3,6 +3,7 @@
   import { Classes, Quizzes, StudentsInfo, Dashboard } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
+  import NotificationsSide from "../components/NotificationsSide.svelte";
 
   const pages = {
     classes: Classes,
@@ -26,6 +27,9 @@
   <main class="screen">
     <svelte:component this={pages[currentPage]} />
   </main>
+  <div class="notificationBar">
+    <NotificationsSide />
+  </div>
 </div>
 
 <style>
@@ -35,7 +39,7 @@
   }
   .screen {
     flex: 1;
-    padding: 1rem;
-    overflow-y: auto;
+    padding: 2rem;
+    width: calc(100vw - 15rem);
   }
 </style>

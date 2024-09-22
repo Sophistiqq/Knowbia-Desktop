@@ -24,7 +24,7 @@
   .class {
     display: flex;
     flex-direction: column;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(2px);
     background-color: rgba(255, 255, 255, 0.1);
     box-shadow: 2px 2px 2px var(--shadow);
     gap: 1rem;

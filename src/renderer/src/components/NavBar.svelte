@@ -11,26 +11,38 @@
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
-  // Track if sidebar is collapsed
+  // Track if sidebar is collapsed and current page
   let sidebarHidden = false;
+  let currentPage = "dashboard"; // Default page
 
-  // Load sidebar state from localStorage on component mount
+  // Load sidebar state and current page from localStorage on component mount
   onMount(() => {
     const savedState = localStorage.getItem("sidebarHidden");
     sidebarHidden = savedState === "true"; // Parse the saved state
+    const savedPage = localStorage.getItem("currentPage");
+    if (savedPage) {
+      currentPage = savedPage; // Set the current page if available
+      navigate(currentPage); // Navigate to the saved page
+    }
   });
 
-  // Save sidebar state to localStorage when it changes
+  // Save sidebar state and current page to localStorage when it changes
   function toggleSidebar() {
     sidebarHidden = !sidebarHidden;
     localStorage.setItem("sidebarHidden", sidebarHidden.toString()); // Save the state
+  }
+
+  function handleNavigation(page: string) {
+    currentPage = page; // Update current page
+    localStorage.setItem("currentPage", currentPage); // Save current page
+    navigate(currentPage); // Navigate to the selected page
   }
 </script>
 
 <div class="sidebar {sidebarHidden ? 'collapsed' : ''}">
   <div class="buttons-container">
     <div class="navigation-buttons">
-      <button on:click={() => navigate("dashboard")} id="dashboard">
+      <button on:click={() => handleNavigation("dashboard")} id="dashboard">
         <GridOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Dashboard</span>
       </button>
@@ -38,21 +50,24 @@
         >See everything!</Tooltip
       >
 
-      <button on:click={() => navigate("classes")} id="classes">
+      <button on:click={() => handleNavigation("classes")} id="classes">
         <BookOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Classes</span>
       </button>
       <Tooltip triggeredBy="#classes" placement="right">Manage classes!</Tooltip
       >
 
-      <button on:click={() => navigate("quizzes")} id="quizzes">
+      <button on:click={() => handleNavigation("quizzes")} id="quizzes">
         <FilePenOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Assessments</span>
       </button>
       <Tooltip triggeredBy="#quizzes" placement="right">Create quizzes!</Tooltip
       >
 
-      <button on:click={() => navigate("studentsInfo")} id="studentsInfo">
+      <button
+        on:click={() => handleNavigation("studentsInfo")}
+        id="studentsInfo"
+      >
         <UsersGroupOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Student's Info</span>
       </button>
@@ -76,6 +91,7 @@
 
 <style lang="scss">
   .sidebar {
+    position: sticky;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -104,7 +120,9 @@
     border-radius: 0.5rem;
     color: var(--text);
     font-weight: 600;
-    border: 0.5px solid var(--border);
+    backdrop-filter: blur(2px);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border);
     cursor: pointer;
     &:hover {
       border-color: var(--primary);
@@ -124,5 +142,8 @@
   }
   .sidebarControl {
     display: flex;
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
   }
 </style>
