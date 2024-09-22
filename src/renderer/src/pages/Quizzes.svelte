@@ -8,15 +8,11 @@
     DropdownItem,
     DropdownDivider,
   } from "flowbite-svelte";
-  import { Icon } from "svelte-icons-pack";
-  import {
-    FaSolidBold,
-    FaSolidItalic,
-    FaSolidUnderline,
-    FaSolidLink,
-  } from "svelte-icons-pack/fa";
+  import TextControls from "../components/Text-Controls.svelte";
 
-  let formModal = false;
+  export let formModal = false;
+
+  // Dynamic answers based on selected dropdown
 </script>
 
 <div class="container">
@@ -25,24 +21,7 @@
     <div class="header">
       <input type="text" placeholder="Title" />
       <input type="text" name="description" placeholder="Description" />
-      <div class="text-controls">
-        <button>
-          <Icon src={FaSolidBold} />
-          <Tooltip placement="bottom">Make text bold</Tooltip>
-        </button>
-        <button>
-          <Icon src={FaSolidItalic} />
-          <Tooltip placement="bottom">Make text italic</Tooltip>
-        </button>
-        <button>
-          <Icon src={FaSolidUnderline} />
-          <Tooltip placement="bottom">Underline text</Tooltip>
-        </button>
-        <button on:click={() => (formModal = true)}>
-          <Icon src={FaSolidLink} />
-          <Tooltip placement="bottom">Insert a link</Tooltip>
-        </button>
-      </div>
+      <TextControls {formModal} />
     </div>
   </div>
 
@@ -70,25 +49,7 @@
       </Dropdown>
     </div>
 
-    <div class="text-controls">
-      <button>
-        <Icon src={FaSolidBold} />
-        <Tooltip placement="bottom">Make text bold</Tooltip>
-      </button>
-      <button>
-        <Icon src={FaSolidItalic} />
-        <Tooltip placement="bottom">Make text italic</Tooltip>
-      </button>
-      <button>
-        <Icon src={FaSolidUnderline} />
-        <Tooltip placement="bottom">Underline text</Tooltip>
-      </button>
-      <button on:click={() => (formModal = true)}>
-        <Icon src={FaSolidLink} />
-        <Tooltip placement="bottom">Insert a link</Tooltip>
-      </button>
-    </div>
-
+    <TextControls {formModal} />
     <div class="answer-area">
       <!-- Dynamically assign the type of input based on the question type -->
     </div>
@@ -169,18 +130,6 @@
       }
     }
   }
-  .text-controls {
-    color: var(--text);
-    display: flex;
-    gap: 1.5rem;
-    & button {
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
   .question-area {
     display: flex;
     flex-direction: column;
@@ -193,11 +142,12 @@
     padding: 1.5rem;
     & .question {
       display: flex;
-      gap: 4rem;
+      gap: 0.5rem;
+      flex-direction: column;
       & input {
         padding: 0.5rem;
         border: none;
-        width: 80%;
+        width: 100%;
         border-radius: 0.3rem;
         border-bottom: 3px solid var(--border);
         background-color: var(--background);
@@ -221,18 +171,6 @@
     width: 100%;
     background: rgba(255, 255, 255, 0.2);
   }
-  .text-question-controls {
-    color: var(--text);
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-    & button {
-      transition: border-bottom 0.3 ease-in-out;
-      &:hover {
-        border-bottom: 1px solid var(--accent);
-      }
-    }
-  }
 
   .required-toggle {
     display: flex;
@@ -244,6 +182,19 @@
       border: none;
       &:checked {
         background-color: var(--accent);
+      }
+    }
+  }
+
+  .text-question-controls {
+    color: var(--text);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    & button {
+      transition: border-bottom 0.3 ease-in-out;
+      &:hover {
+        border-bottom: 1px solid var(--accent);
       }
     }
   }
