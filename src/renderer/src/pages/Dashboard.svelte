@@ -170,7 +170,6 @@
 
 <style>
   .dashboard {
-    padding: 2rem;
     color: var(--text);
     display: flex;
     flex-direction: column;
@@ -180,7 +179,6 @@
 
   .dashboard h2 {
     font-size: 2rem;
-    text-align: center;
   }
 
   .data-containers {
