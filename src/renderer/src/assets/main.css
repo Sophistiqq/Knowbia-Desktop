@@ -5,6 +5,9 @@
   font-family: "Montserrat", sans-serif;
 }
 
+html {
+  font-size: 90%;
+}
 *,
 *::before,
 *::after {

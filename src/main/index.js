@@ -8,7 +8,6 @@ try {
 } catch { }
 
 app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('disable-gpu');
 app.commandLine.appendSwitch('disable-gpu-compositing');
 
 function createWindow() {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Tooltip } from "flowbite-svelte";
+
   interface Question {
     id: number;
     type: string;
@@ -32,7 +33,11 @@
   function handleInput(event: Event, optIndex: number) {
     const input = event.target as HTMLInputElement;
     if (input) {
-      updateOption(optIndex, input.value);
+      if (optIndex >= 0) {
+        updateOption(optIndex, input.value);
+      } else {
+        question.content = input.value; // Update question content for paragraphs
+      }
     }
   }
 
@@ -47,6 +52,15 @@
       question.correctAnswers.push(optIndex);
     }
   }
+
+  let textareaRef: HTMLTextAreaElement;
+
+  function autoResize() {
+    if (textareaRef) {
+      textareaRef.style.height = "auto"; // Reset the height
+      textareaRef.style.height = `${textareaRef.scrollHeight}px`; // Set to scrollHeight
+    }
+  }
 </script>
 
 <div class="answer-field">
@@ -56,7 +70,17 @@
   {/if}
 
   {#if question.type === "Paragraph"}
-    <textarea class="paragraph" placeholder="Your answer"></textarea>
+    <textarea
+      class="paragraph"
+      bind:this={textareaRef}
+      placeholder="Your answer"
+      rows="1"
+      on:input={(e) => {
+        handleInput(e, -1);
+        autoResize();
+      }}
+      style="overflow: hidden; resize: none;"
+    ></textarea>
   {/if}
 
   {#if question.type === "Multiple Choice"}
@@ -69,13 +93,13 @@
             name="option-{question.id}"
             on:change={() => (question.correctAnswer = optIndex)}
           />
-
           <Tooltip>Select as Answer</Tooltip>
           <input
             type="text"
             bind:value={question.options[optIndex]}
             placeholder="Option {optIndex + 1}"
             on:input={(e) => handleInput(e, optIndex)}
+            style="overflow: hidden; resize: none;"
           />
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
@@ -94,13 +118,13 @@
             name="checkbox-{question.id}"
             on:change={() => toggleCorrectAnswer(optIndex)}
           />
-
           <Tooltip>Select as Answer</Tooltip>
           <input
             type="text"
             bind:value={question.options[optIndex]}
             placeholder="Option {optIndex + 1}"
             on:input={(e) => handleInput(e, optIndex)}
+            style="overflow: hidden; resize: none;"
           />
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
@@ -119,13 +143,13 @@
             name="dropdown-option-{question.id}"
             on:change={() => (question.correctAnswer = optIndex)}
           />
-
           <Tooltip>Select as Answer</Tooltip>
           <input
             type="text"
             bind:value={question.options[optIndex]}
             placeholder="Option {optIndex + 1}"
             on:input={(e) => handleInput(e, optIndex)}
+            style="overflow: hidden; resize: none;"
           />
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
@@ -163,8 +187,10 @@
   .short-answer,
   .paragraph {
     padding: 0.5rem;
+    color: var(--text);
     background-color: var(--background);
     border-radius: 0.3rem;
+    resize: none; /* Prevent manual resizing */
   }
 
   .option-item {
@@ -177,13 +203,18 @@
   .option-item input[type="radio"],
   .option-item input[type="checkbox"] {
     width: 1rem;
-    &:checked {
-      background-color: var(--secondary);
-    }
+    background-color: var(--background);
   }
 
   .option-item input[type="text"] {
     flex-grow: 1;
+    background-color: var(--background);
+    color: var(--text);
+    border: none;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    overflow: hidden; /* Prevent overflow */
+    resize: none; /* Prevent manual resizing */
   }
 
   .option-item button {

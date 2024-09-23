@@ -6,9 +6,11 @@
     FaSolidItalic,
     FaSolidUnderline,
     FaSolidLink,
+    FaSolidRepeat,
   } from "svelte-icons-pack/fa";
 
   export let formModal = false;
+  export let resetStorage: () => void; // Add this prop
 </script>
 
 <div class="text-controls">
@@ -28,6 +30,10 @@
     <Icon src={FaSolidLink} />
     <Tooltip placement="bottom">Insert a link</Tooltip>
   </button>
+  <button id="reset" on:click={resetStorage}>
+    <Icon src={FaSolidRepeat} />
+    <Tooltip placement="bottom">Reset</Tooltip>
+  </button>
 </div>
 
 <style>
@@ -42,5 +48,8 @@
         background-color: rgba(255, 255, 255, 0.1);
       }
     }
+  }
+  #reset {
+    margin-left: auto;
   }
 </style>

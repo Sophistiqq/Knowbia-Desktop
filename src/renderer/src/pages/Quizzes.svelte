@@ -93,6 +93,28 @@
       questions = JSON.parse(savedQuestions);
     }
   }
+  let showResetModal = false;
+
+  function resetStorage() {
+    localStorage.removeItem("quiz-questions");
+    questions = []; // Clear the questions array too
+    showResetModal = false; // Close the modal
+  }
+
+  function cancelReset() {
+    showResetModal = false; // Close the modal if canceled
+  }
+
+  function confirmReset() {
+    showResetModal = true; // Show the modal
+  }
+
+  function handleInput(event: Event) {
+    const target = event.target as HTMLTextAreaElement;
+    target.style.height = "auto"; // Reset height to auto to get the new scroll height
+    target.style.height = `${target.scrollHeight}px`; // Set height to the scroll height
+    saveToLocalStorage(); // Save to local storage after each input
+  }
 </script>
 
 <!-- Rest of your component -->
@@ -101,9 +123,20 @@
   <div class="create-quiz">
     <h1>Create an Assessment</h1>
     <div class="header">
-      <input type="text" placeholder="Title" />
-      <input type="text" name="description" placeholder="Description" />
-      <TextControls {formModal} />
+      <textarea
+        placeholder="Title"
+        rows="1"
+        on:input={handleInput}
+        style="overflow: hidden; resize: none;"
+      ></textarea>
+
+      <textarea
+        placeholder="Description"
+        rows="1"
+        on:input={handleInput}
+        style="overflow: hidden; resize: none;"
+      ></textarea>
+      <TextControls {formModal} resetStorage={confirmReset} />
     </div>
   </div>
 
@@ -116,14 +149,13 @@
     {#each questions as question, index (question.id)}
       <div class="question-container">
         <div class="question">
-          <input
-            type="text"
-            aria-multiline="true"
-            contenteditable="true"
+          <textarea
             bind:value={question.content}
             placeholder="Question"
-            on:input={saveToLocalStorage}
-          />
+            rows="1"
+            on:input={handleInput}
+            style="overflow: hidden; resize: none;"
+          ></textarea>
           <select
             bind:value={question.type}
             name="question-type"
@@ -191,6 +223,26 @@
   </div>
 </Modal>
 
+<!-- Reset confirmation modal -->
+<Modal
+  bind:open={showResetModal}
+  size="md"
+  autoclose={false}
+  class="custom-modal"
+>
+  <div class="custom-modal-content">
+    <h3 class="modal-title">Confirm Reset</h3>
+    <p class="modal-text">
+      Are you sure you want to clear all assessment data? This action cannot be
+      undone.
+    </p>
+    <div class="modal-buttons">
+      <button on:click={cancelReset} class="btn-cancel">Cancel</button>
+      <button on:click={resetStorage} class="btn-reset">Confirm</button>
+    </div>
+  </div>
+</Modal>
+
 <style>
   .container {
     display: flex;
@@ -246,18 +298,21 @@
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
-    & input {
-      padding: 0.5rem;
-      border: none;
-      width: 100%;
-      border-radius: 0.3rem;
-      border-bottom: 3px solid var(--border);
-      background-color: var(--background);
-      color: var(--text);
-      transition: border-bottom 0.3s;
-      &:focus {
-        border-bottom: 3px solid var(--accent);
-      }
+  }
+
+  textarea {
+    padding: 0.5rem;
+    width: 100%;
+    border: none;
+    border-radius: 0.3rem;
+    border-bottom: 3px solid var(--border);
+    background-color: var(--background);
+    color: var(--text);
+    transition: border-bottom 0.3s;
+    min-height: 2rem;
+
+    & textarea:focus {
+      border-bottom: 3px solid var(--accent);
     }
   }
 
@@ -286,8 +341,13 @@
     color: var(--text);
     margin-right: auto;
     & input[type="checkbox"] {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1rem;
+      height: 1rem;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      background-color: var(--background);
+      color: var(--text);
       &:checked {
         background-color: var(--accent);
       }
@@ -326,5 +386,52 @@
   }
   .question-container {
     transition: transform 0.3s;
+  }
+
+  .custom-modal-content {
+    backdrop-filter: blur(10px);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    color: var(--text);
+  }
+
+  .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .modal-text {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+
+  .btn-cancel {
+    background-color: var(--secondary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-reset {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.3rem;
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+
+  .btn-cancel:hover,
+  .btn-reset:hover {
+    opacity: 0.8;
   }
 </style>
