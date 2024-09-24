@@ -3,10 +3,10 @@
   import { dndzone } from "svelte-dnd-action";
   import { Tooltip, Modal, Label, Input } from "flowbite-svelte";
   import { FileCopySolid, TrashBinSolid } from "flowbite-svelte-icons";
-  import TextControls from "../components/Text-Controls.svelte";
   import DynamicAnswerField from "../components/DynamicAnswerField.svelte";
   import { debounce } from "../utils/debounce"; // Debounce utility
-
+  import Quill from "quill"; // Import Quill for the editor
+  import "quill/dist/quill.bubble.css"; // Use the Bubble theme
   export let formModal = false;
 
   // Define the structure of questions array
@@ -36,10 +36,42 @@
     },
   ];
 
+  let quill: Quill; // Reference to Quill instance
   onMount(() => {
     loadFromLocalStorage();
+    quill = new Quill("#editor", {
+      theme: "bubble", // Set the theme to Bubble
+      modules: {
+        toolbar: [
+          ["bold", "italic", "underline"],
+          ["link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+        ],
+      },
+    });
+
+    // Set the initial content from description
+    quill.root.innerHTML = description; // Ensure description is used here
+
+    // Update the content and height when the editor changes
+    quill.on("text-change", () => {
+      description = quill.root.innerHTML;
+      adjustEditorHeight(); // Call the function to adjust height
+    });
+
+    // Adjust height initially
+    adjustEditorHeight();
   });
 
+  // Function to adjust the height of the Quill editor
+  function adjustEditorHeight() {
+    const editorContainer: any = document.querySelector("#editor");
+    if (editorContainer) {
+      editorContainer.style.height = "auto"; // Reset height
+      const newHeight = editorContainer.scrollHeight; // Get the scroll height
+      editorContainer.style.height = `${newHeight}px`; // Set new height
+    }
+  }
   // Debounced save function for input fields
   const debouncedSaveToLocalStorage = debounce(() => {
     saveToLocalStorage();
@@ -124,10 +156,6 @@
     showResetModal = false;
   }
 
-  function confirmReset() {
-    showResetModal = true;
-  }
-
   function handleInput(event: Event) {
     const target = event.target as HTMLTextAreaElement;
     target.style.height = "auto";
@@ -137,11 +165,6 @@
 
   function handleTitleInput(event: Event) {
     title = (event.target as HTMLTextAreaElement).value;
-    debouncedSaveToLocalStorage();
-  }
-
-  function handleDescriptionInput(event: Event) {
-    description = (event.target as HTMLTextAreaElement).value;
     debouncedSaveToLocalStorage();
   }
 
@@ -186,28 +209,29 @@
     saveToLocalStorage(); // Save to local storage
     saveAssessmentAsFile(assessmentData); // Save as a JSON file
   }
+
+  function resetAssessment() {
+    showResetModal = true;
+  }
 </script>
 
 <div class="container">
   <div class="create-quiz">
-    <h1>Create an Assessment</h1>
-    <div class="header">
-      <textarea
-        bind:value={title}
-        placeholder="Title"
-        rows="1"
-        on:input={handleTitleInput}
-        style="overflow: hidden; resize: none;"
-      ></textarea>
-
-      <textarea
-        bind:value={description}
-        placeholder="Description"
-        rows="1"
-        on:input={handleDescriptionInput}
-        style="overflow: hidden; resize: none;"
-      ></textarea>
-      <TextControls {formModal} resetStorage={confirmReset} />
+    <div class="top">
+      <h1>Create an Assessment</h1>
+      <button on:click={resetAssessment}>Reset</button>
+    </div>
+    <textarea
+      bind:value={title}
+      placeholder="Title"
+      rows="1"
+      on:input={handleTitleInput}
+      style="overflow: hidden; resize: none;"
+    ></textarea>
+    <h2>Description</h2>
+    <div class="editor-wrapper">
+      <div id="editor" style="height: auto;"></div>
+      <!-- No fixed height -->
     </div>
   </div>
 
@@ -348,16 +372,9 @@
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     gap: 1rem;
-    font-weight: bold;
     & h1 {
       font-size: 2rem;
     }
-  }
-
-  .header {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
   }
 
   .question-container {
@@ -465,53 +482,6 @@
     transition: transform 0.3s;
   }
 
-  .custom-modal-content {
-    backdrop-filter: blur(10px);
-    border-radius: 0.5rem;
-    padding: 2rem;
-    color: var(--text);
-  }
-
-  .modal-title {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-
-  .modal-text {
-    font-size: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1rem;
-  }
-
-  .btn-cancel {
-    background-color: var(--secondary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.3rem;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-
-  .btn-reset {
-    background-color: var(--primary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.3rem;
-    transition: background-color 0.3s;
-    cursor: pointer;
-  }
-
-  .btn-cancel:hover,
-  .btn-reset:hover {
-    opacity: 0.8;
-  }
-
   .assessments-button-container {
     display: flex;
     justify-content: space-around;
@@ -531,5 +501,18 @@
         background-color: var(--primary);
       }
     }
+  }
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .editor-wrapper {
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    border-radius: 0.3rem;
+    height: auto;
   }
 </style>
