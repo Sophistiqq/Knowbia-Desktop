@@ -20,6 +20,8 @@
     answer?: string;
   };
 
+  let title = ""; // Add title variable
+  let description = ""; // Add description variable
   let questions: Question[] = [
     {
       id: 1,
@@ -81,23 +83,38 @@
     saveToLocalStorage();
   }
 
-  // Save questions to local storage
+  // Save questions and title/description to local storage
   function saveToLocalStorage() {
-    localStorage.setItem("quiz-questions", JSON.stringify(questions));
+    const assessmentData = {
+      title,
+      description,
+      questions,
+    };
+    localStorage.setItem("quiz-assessment", JSON.stringify(assessmentData));
   }
 
-  // Load questions from local storage
+  // Load questions, title, and description from local storage
   function loadFromLocalStorage() {
-    const savedQuestions = localStorage.getItem("quiz-questions");
-    if (savedQuestions) {
-      questions = JSON.parse(savedQuestions);
+    const savedData = localStorage.getItem("quiz-assessment");
+    if (savedData) {
+      const {
+        title: savedTitle,
+        description: savedDescription,
+        questions: savedQuestions,
+      } = JSON.parse(savedData);
+      title = savedTitle || ""; // Initialize title
+      description = savedDescription || ""; // Initialize description
+      questions = savedQuestions || []; // Initialize questions
     }
   }
+
   let showResetModal = false;
 
   function resetStorage() {
-    localStorage.removeItem("quiz-questions");
+    localStorage.removeItem("quiz-assessment");
     questions = []; // Clear the questions array too
+    title = ""; // Clear title
+    description = ""; // Clear description
     showResetModal = false; // Close the modal
   }
 
@@ -115,6 +132,17 @@
     target.style.height = `${target.scrollHeight}px`; // Set height to the scroll height
     saveToLocalStorage(); // Save to local storage after each input
   }
+
+  // Function to handle title and description input change
+  function handleTitleInput(event: Event) {
+    title = (event.target as HTMLTextAreaElement).value;
+    saveToLocalStorage(); // Save to local storage
+  }
+
+  function handleDescriptionInput(event: Event) {
+    description = (event.target as HTMLTextAreaElement).value;
+    saveToLocalStorage(); // Save to local storage
+  }
 </script>
 
 <div class="container">
@@ -122,16 +150,18 @@
     <h1>Create an Assessment</h1>
     <div class="header">
       <textarea
+        bind:value={title}
         placeholder="Title"
         rows="1"
-        on:input={handleInput}
+        on:input={handleTitleInput}
         style="overflow: hidden; resize: none;"
       ></textarea>
 
       <textarea
+        bind:value={description}
         placeholder="Description"
         rows="1"
-        on:input={handleInput}
+        on:input={handleDescriptionInput}
         style="overflow: hidden; resize: none;"
       ></textarea>
       <TextControls {formModal} resetStorage={confirmReset} />

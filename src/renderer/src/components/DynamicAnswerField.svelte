@@ -8,7 +8,7 @@
     required: boolean;
     options?: string[];
     correctAnswer?: number;
-    correctAnswers?: number[]; // For checkboxes
+    correctAnswers?: number[];
     answer?: string;
   }
 
@@ -36,7 +36,7 @@
       if (optIndex >= 0) {
         updateOption(optIndex, input.value);
       } else {
-        question.content = input.value; // Update question content for paragraphs
+        question.content = input.value;
       }
     }
   }
@@ -57,15 +57,20 @@
 
   function autoResize() {
     if (textareaRef) {
-      textareaRef.style.height = "auto"; // Reset the height
-      textareaRef.style.height = `${textareaRef.scrollHeight}px`; // Set to scrollHeight
+      textareaRef.style.height = "auto";
+      textareaRef.style.height = `${textareaRef.scrollHeight}px`;
     }
   }
 </script>
 
 <div class="answer-field">
   {#if question.type === "Short Answer"}
-    <input type="text" class="short-answer" placeholder="Your answer" />
+    <input
+      type="text"
+      class="short-answer"
+      placeholder="Your answer"
+      bind:value={question.answer}
+    />
     <Tooltip>Enter a short answer</Tooltip>
   {/if}
 
@@ -73,6 +78,7 @@
     <textarea
       class="paragraph"
       bind:this={textareaRef}
+      bind:value={question.answer}
       placeholder="Your answer"
       rows="1"
       on:input={(e) => {
@@ -91,7 +97,8 @@
             type="radio"
             id="option-{optIndex}"
             name="option-{question.id}"
-            on:change={() => (question.correctAnswer = optIndex)}
+            bind:group={question.correctAnswer}
+            value={optIndex}
           />
           <Tooltip>Select as Answer</Tooltip>
           <input
@@ -135,26 +142,11 @@
 
   {#if question.type === "Dropdown"}
     <div class="dropdown-options">
-      {#each question.options as _option, optIndex}
-        <div class="option-item">
-          <input
-            type="radio"
-            id="dropdown-option-{optIndex}"
-            name="dropdown-option-{question.id}"
-            on:change={() => (question.correctAnswer = optIndex)}
-          />
-          <Tooltip>Select as Answer</Tooltip>
-          <input
-            type="text"
-            bind:value={question.options[optIndex]}
-            placeholder="Option {optIndex + 1}"
-            on:input={(e) => handleInput(e, optIndex)}
-            style="overflow: hidden; resize: none;"
-          />
-          <button on:click={() => removeOption(optIndex)}>Remove</button>
-        </div>
-      {/each}
-      <button on:click={addOption}>Add Option</button>
+      <select bind:value={question.answer}>
+        {#each question.options as option, optIndex}
+          <option value={optIndex}>{option}</option>
+        {/each}
+      </select>
     </div>
   {/if}
 
@@ -190,7 +182,7 @@
     color: var(--text);
     background-color: var(--background);
     border-radius: 0.3rem;
-    resize: none; /* Prevent manual resizing */
+    resize: none;
   }
 
   .option-item {
@@ -213,8 +205,8 @@
     border: none;
     padding: 0.5rem;
     border-radius: 0.3rem;
-    overflow: hidden; /* Prevent overflow */
-    resize: none; /* Prevent manual resizing */
+    overflow: hidden;
+    resize: none;
   }
 
   .option-item button {
