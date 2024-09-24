@@ -1,13 +1,13 @@
 <script lang="ts">
   import NavBar from "../components/NavBar.svelte";
-  import { Classes, Quizzes, StudentsInfo, Dashboard } from "../pages/";
+  import { Classes, MakeAssessment, StudentsInfo, Dashboard } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
   import NotificationsSide from "../components/NotificationsSide.svelte";
 
   const pages = {
     classes: Classes,
-    quizzes: Quizzes,
+    quizzes: MakeAssessment,
     studentsInfo: StudentsInfo,
     dashboard: Dashboard,
   };

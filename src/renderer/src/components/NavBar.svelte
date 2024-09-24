@@ -8,6 +8,8 @@
     UsersGroupOutline,
     AngleLeftOutline,
     AngleRightOutline,
+    ChartOutline,
+    ShareAllSolid,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
@@ -43,25 +45,27 @@
   <div class="buttons-container">
     <div class="navigation-buttons">
       <button on:click={() => handleNavigation("dashboard")} id="dashboard">
-        <GridOutline class="w-10 h-10" />
+        <ChartOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Dashboard</span>
       </button>
       <Tooltip triggeredBy="#dashboard" placement="right"
-        >See everything!</Tooltip
+        >Dashboard here, I swear, it isn't here!</Tooltip
       >
 
       <button on:click={() => handleNavigation("classes")} id="classes">
         <BookOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Classes</span>
       </button>
-      <Tooltip triggeredBy="#classes" placement="right">Manage classes!</Tooltip
+      <Tooltip triggeredBy="#classes" placement="right"
+        >Manage Classes here, control freak.</Tooltip
       >
 
       <button on:click={() => handleNavigation("quizzes")} id="quizzes">
         <FilePenOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Assessments</span>
       </button>
-      <Tooltip triggeredBy="#quizzes" placement="right">Create quizzes!</Tooltip
+      <Tooltip triggeredBy="#quizzes" placement="right"
+        >Create Quiz, Make them suffer!</Tooltip
       >
 
       <button
@@ -72,7 +76,19 @@
         <span class="text {sidebarHidden ? 'hidden' : ''}">Student's Info</span>
       </button>
       <Tooltip triggeredBy="#studentsInfo" placement="right"
-        >View students!</Tooltip
+        >Student's Info. See them here, and all their secrets.</Tooltip
+      >
+
+      <button
+        on:click={() => handleNavigation("host-assessment")}
+        id="host-assessment"
+      >
+        <ShareAllSolid class="w-10 h-10" />
+        <span class="text {sidebarHidden ? 'hidden' : ''}">Host Assessment</span
+        >
+      </button>
+      <Tooltip triggeredBy="#host-assessment" placement="right"
+        >Host Assessment. Think again, do you actually want to do this?</Tooltip
       >
     </div>
   </div>
@@ -100,7 +116,7 @@
     height: calc(100vh - 4rem);
     color: var(--text);
     z-index: 100;
-    width: 15rem; /* Full width when expanded */
+    width: 17rem; /* Full width when expanded */
     transition: width 0.3s ease-in-out; /* Smooth transition for width */
     white-space: nowrap;
   }

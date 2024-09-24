@@ -23,7 +23,7 @@
   );
 
   // Hardcoded data
-  let totalQuizzes = 10;
+  let totalAssessments= 10;
   let registeredStudents = 50;
   let activeStudents = 35;
 
@@ -149,8 +149,8 @@
     </div>
     <div class="overview">
       <div class="card">
-        <h3>Total Quizzes</h3>
-        <p>{totalQuizzes}</p>
+        <h3>Total Assessments</h3>
+        <p>{totalAssessments}</p>
       </div>
       <div class="card">
         <h3>Registered Students</h3>

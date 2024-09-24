@@ -117,8 +117,6 @@
   }
 </script>
 
-<!-- Rest of your component -->
-
 <div class="container">
   <div class="create-quiz">
     <h1>Create an Assessment</h1>
@@ -197,6 +195,10 @@
   </div>
 
   <button on:click={addQuestion} class="add-question">Add Question</button>
+  <div class="assessments-button-container">
+    <button class="distribute-assessment">Distribute</button>
+    <button class="save-assessment">Save</button>
+  </div>
 </div>
 
 <Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
@@ -243,7 +245,7 @@
   </div>
 </Modal>
 
-<style>
+<style lang="scss">
   .container {
     display: flex;
     flex-direction: column;
@@ -257,10 +259,11 @@
     padding: 1.5rem;
     color: var(--text);
     background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(7px);
+    backdrop-filter: blur(4px);
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     gap: 1rem;
+    font-weight: bold;
     & h1 {
       font-size: 2rem;
     }
@@ -270,23 +273,11 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    & input {
-      padding: 0.5rem;
-      border: none;
-      border-radius: 0.3rem;
-      border-bottom: 3px solid var(--border);
-      background-color: var(--background);
-      color: var(--text);
-      transition: border-bottom 0.3s;
-      &:focus {
-        border-bottom: 3px solid var(--accent);
-      }
-    }
   }
 
   .question-container {
     background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(7px);
+    backdrop-filter: blur(4px);
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 1.5rem;
@@ -298,6 +289,7 @@
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
+    font-weight: bold;
   }
 
   textarea {
@@ -310,10 +302,6 @@
     color: var(--text);
     transition: border-bottom 0.3s;
     min-height: 2rem;
-
-    & textarea:focus {
-      border-bottom: 3px solid var(--accent);
-    }
   }
 
   .text-question-controls {
@@ -356,14 +344,16 @@
 
   .add-question {
     padding: 0.5rem 1rem;
-    background-color: var(--primary);
+    background-color: var(--border);
     color: var(--text);
     border: none;
     border-radius: 0.3rem;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-weight: bold;
     &:hover {
-      background-color: var(--secondary);
+      background-color: var(--accent);
+      color: var(--background);
     }
   }
 
@@ -433,5 +423,26 @@
   .btn-cancel:hover,
   .btn-reset:hover {
     opacity: 0.8;
+  }
+
+  .assessments-button-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    & .distribute-assessment,
+    .save-assessment {
+      padding: 0.5rem 1rem;
+      width: 100%;
+      background-color: var(--secondary);
+      color: var(--text);
+      font-weight: bold;
+      border: none;
+      border-radius: 0.3rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: var(--primary);
+      }
+    }
   }
 </style>
