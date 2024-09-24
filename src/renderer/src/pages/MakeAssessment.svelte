@@ -5,6 +5,7 @@
   import { FileCopySolid, TrashBinSolid } from "flowbite-svelte-icons";
   import TextControls from "../components/Text-Controls.svelte";
   import DynamicAnswerField from "../components/DynamicAnswerField.svelte";
+  import { debounce } from "../utils/debounce"; // Debounce utility
 
   export let formModal = false;
 
@@ -20,8 +21,8 @@
     answer?: string;
   };
 
-  let title = ""; // Add title variable
-  let description = ""; // Add description variable
+  let title = "";
+  let description = "";
   let questions: Question[] = [
     {
       id: 1,
@@ -38,6 +39,11 @@
   onMount(() => {
     loadFromLocalStorage();
   });
+
+  // Debounced save function for input fields
+  const debouncedSaveToLocalStorage = debounce(() => {
+    saveToLocalStorage();
+  }, 300); // Save after 300ms delay
 
   // Function to add a new question
   function addQuestion() {
@@ -57,7 +63,6 @@
     saveToLocalStorage();
   }
 
-  // Function to duplicate a question
   function duplicateQuestion(index: number) {
     const duplicatedQuestion = {
       ...questions[index],
@@ -71,13 +76,11 @@
     saveToLocalStorage();
   }
 
-  // Function to remove a question
   function removeQuestion(index: number) {
     questions = questions.filter((_, i) => i !== index);
     saveToLocalStorage();
   }
 
-  // Handle drag and drop event
   function handleDnd(event: CustomEvent<{ items: Question[] }>) {
     questions = event.detail.items;
     saveToLocalStorage();
@@ -93,7 +96,6 @@
     localStorage.setItem("quiz-assessment", JSON.stringify(assessmentData));
   }
 
-  // Load questions, title, and description from local storage
   function loadFromLocalStorage() {
     const savedData = localStorage.getItem("quiz-assessment");
     if (savedData) {
@@ -102,9 +104,9 @@
         description: savedDescription,
         questions: savedQuestions,
       } = JSON.parse(savedData);
-      title = savedTitle || ""; // Initialize title
-      description = savedDescription || ""; // Initialize description
-      questions = savedQuestions || []; // Initialize questions
+      title = savedTitle || "";
+      description = savedDescription || "";
+      questions = savedQuestions || [];
     }
   }
 
@@ -112,36 +114,77 @@
 
   function resetStorage() {
     localStorage.removeItem("quiz-assessment");
-    questions = []; // Clear the questions array too
-    title = ""; // Clear title
-    description = ""; // Clear description
-    showResetModal = false; // Close the modal
+    questions = [];
+    title = "";
+    description = "";
+    showResetModal = false;
   }
 
   function cancelReset() {
-    showResetModal = false; // Close the modal if canceled
+    showResetModal = false;
   }
 
   function confirmReset() {
-    showResetModal = true; // Show the modal
+    showResetModal = true;
   }
 
   function handleInput(event: Event) {
     const target = event.target as HTMLTextAreaElement;
-    target.style.height = "auto"; // Reset height to auto to get the new scroll height
-    target.style.height = `${target.scrollHeight}px`; // Set height to the scroll height
-    saveToLocalStorage(); // Save to local storage after each input
+    target.style.height = "auto";
+    target.style.height = `${target.scrollHeight}px`;
+    debouncedSaveToLocalStorage(); // Debounced save
   }
 
-  // Function to handle title and description input change
   function handleTitleInput(event: Event) {
     title = (event.target as HTMLTextAreaElement).value;
-    saveToLocalStorage(); // Save to local storage
+    debouncedSaveToLocalStorage();
   }
 
   function handleDescriptionInput(event: Event) {
     description = (event.target as HTMLTextAreaElement).value;
+    debouncedSaveToLocalStorage();
+  }
+
+  // New function to log assessment data
+  function distributeAssessment() {
+    const assessmentData = {
+      title,
+      description,
+      questions,
+    };
+
+    console.log("Assessment Data to Distribute:", assessmentData);
+
+    // Here you can add the logic to send `assessmentData` over the local network
+  }
+
+  // New function to save assessment data as a JSON file
+  function saveAssessmentAsFile(assessmentData: object) {
+    // Use the title for the filename, replace spaces with underscores
+    const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, ""); // Remove unsafe characters
+    const filename = `${safeTitle || "assessment"}.json`; // Default to 'assessment.json' if title is empty
+    const dataStr = JSON.stringify(assessmentData, null, 2); // Pretty-print JSON
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename; // Use the formatted filename
+    document.body.appendChild(a);
+    a.click(); // Trigger the download
+    document.body.removeChild(a); // Clean up
+    URL.revokeObjectURL(url); // Release memory
+  }
+
+  // New function to handle saving assessment data
+  function saveAssessment() {
+    const assessmentData = {
+      title,
+      description,
+      questions,
+    };
     saveToLocalStorage(); // Save to local storage
+    saveAssessmentAsFile(assessmentData); // Save as a JSON file
   }
 </script>
 
@@ -226,8 +269,10 @@
 
   <button on:click={addQuestion} class="add-question">Add Question</button>
   <div class="assessments-button-container">
-    <button class="distribute-assessment">Distribute</button>
-    <button class="save-assessment">Save</button>
+    <button on:click={distributeAssessment} class="distribute-assessment"
+      >Distribute</button
+    >
+    <button on:click={saveAssessment} class="save-assessment">Save</button>
   </div>
 </div>
 
@@ -246,31 +291,41 @@
     </Label>
     <Label class="space-y-2">
       <span>URL</span>
-      <Input type="url" name="url" placeholder="Enter the URL" />
+      <Input type="url" name="url" placeholder="Enter the link URL" />
     </Label>
-    <div class="flex justify-end space-x-2 gap-10">
-      <button on:click={() => (formModal = false)}>Cancel</button>
-      <button type="submit">Insert Link</button>
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+        on:click={() => (formModal = false)}
+      >
+        Add Link
+      </button>
     </div>
   </div>
 </Modal>
 
-<!-- Reset confirmation modal -->
-<Modal
-  bind:open={showResetModal}
-  size="md"
-  autoclose={false}
-  class="custom-modal"
->
-  <div class="custom-modal-content">
-    <h3 class="modal-title">Confirm Reset</h3>
-    <p class="modal-text">
-      Are you sure you want to clear all assessment data? This action cannot be
-      undone.
-    </p>
-    <div class="modal-buttons">
-      <button on:click={cancelReset} class="btn-cancel">Cancel</button>
-      <button on:click={resetStorage} class="btn-reset">Confirm</button>
+<Modal bind:open={showResetModal} size="xs" autoclose={false} class="w-full">
+  <div class="flex flex-col space-y-6 backdrop-blur-sm">
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+      Reset Assessment
+    </h3>
+    <p>Are you sure you want to reset the assessment?</p>
+    <div class="flex justify-between">
+      <button
+        type="button"
+        class="bg-red-500 text-white px-4 py-2 rounded"
+        on:click={resetStorage}
+      >
+        Yes, Reset
+      </button>
+      <button
+        type="button"
+        class="bg-gray-300 text-gray-900 px-4 py-2 rounded"
+        on:click={cancelReset}
+      >
+        Cancel
+      </button>
     </div>
   </div>
 </Modal>
@@ -327,11 +382,13 @@
     width: 100%;
     border: none;
     border-radius: 0.3rem;
-    border-bottom: 3px solid var(--border);
     background-color: var(--background);
     color: var(--text);
     transition: border-bottom 0.3s;
     min-height: 2rem;
+    line-height: 1.5; /* Adjust line-height if needed */
+    resize: none; /* Disable manual resizing */
+    overflow: hidden; /* Let JS handle the overflow */
   }
 
   .text-question-controls {

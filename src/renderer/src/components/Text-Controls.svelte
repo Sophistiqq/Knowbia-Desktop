@@ -10,23 +10,60 @@
   } from "svelte-icons-pack/fa";
 
   export let formModal = false;
-  export let resetStorage: () => void; // Add this prop
+  export let resetStorage: () => void;
+  export let insertLink: () => void;
+  export let contentEditableElement: HTMLElement;
+
+  // Apply bold, italic, or underline formatting
+  function wrapSelectedText(tag: string) {
+    const selection = window.getSelection();
+    if (selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      if (selectedText.length > 0) {
+        const span = document.createElement(tag);
+        span.textContent = selectedText;
+        range.deleteContents();
+        range.insertNode(span);
+        contentEditableElement.focus();
+      }
+    }
+  }
+
+  // Link insertion function
+  function insertLinkInText() {
+    const url = prompt("Enter the URL", "http://");
+    const linkText = prompt("Enter the link text", "Link");
+    if (url && linkText) {
+      const selection = window.getSelection();
+      if (selection.rangeCount > 0) {
+        const range = selection.getRangeAt(0);
+        const link = document.createElement("a");
+        link.href = url;
+        link.textContent = linkText;
+        link.target = "_blank";
+        range.deleteContents();
+        range.insertNode(link);
+        contentEditableElement.focus();
+      }
+    }
+  }
 </script>
 
 <div class="text-controls">
-  <button>
+  <button on:click={() => wrapSelectedText("b")}>
     <Icon src={FaSolidBold} />
     <Tooltip placement="bottom">Make text bold</Tooltip>
   </button>
-  <button>
+  <button on:click={() => wrapSelectedText("i")}>
     <Icon src={FaSolidItalic} />
     <Tooltip placement="bottom">Make text italic</Tooltip>
   </button>
-  <button>
+  <button on:click={() => wrapSelectedText("u")}>
     <Icon src={FaSolidUnderline} />
     <Tooltip placement="bottom">Underline text</Tooltip>
   </button>
-  <button on:click={() => (formModal = true)}>
+  <button on:click={insertLinkInText}>
     <Icon src={FaSolidLink} />
     <Tooltip placement="bottom">Insert a link</Tooltip>
   </button>
@@ -35,21 +72,3 @@
     <Tooltip placement="bottom">Reset</Tooltip>
   </button>
 </div>
-
-<style>
-  .text-controls {
-    color: var(--text);
-    display: flex;
-    gap: 1.5rem;
-    & button {
-      padding: 0.5rem;
-      border-radius: 0.5rem;
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-      }
-    }
-  }
-  #reset {
-    margin-left: auto;
-  }
-</style>
