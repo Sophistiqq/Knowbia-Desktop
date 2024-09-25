@@ -12,7 +12,16 @@
     answer?: string;
   }
 
-  export let question: Question;
+  export let question: Question = {
+    id: 0,
+    type: "",
+    content: "",
+    required: false,
+    options: [],
+    correctAnswer: undefined,
+    correctAnswers: [],
+    answer: "",
+  };
 
   function addOption() {
     question.options = question.options || [];
@@ -97,8 +106,8 @@
             type="radio"
             id="option-{optIndex}"
             name="option-{question.id}"
-            bind:group={question.correctAnswer}
             value={optIndex}
+            on:change={() => (question.correctAnswer = optIndex)}
           />
           <Tooltip>Select as Answer</Tooltip>
           <input

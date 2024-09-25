@@ -4,12 +4,12 @@
   import { Tooltip, Modal, Label, Input } from "flowbite-svelte";
   import { FileCopySolid, TrashBinSolid } from "flowbite-svelte-icons";
   import DynamicAnswerField from "../components/DynamicAnswerField.svelte";
-  import { debounce } from "../utils/debounce"; // Debounce utility
-  import Quill from "quill"; // Import Quill for the editor
-  import "quill/dist/quill.bubble.css"; // Use the Bubble theme
+  import { debounce } from "../utils/debounce";
+  import Quill from "quill";
+  import "quill/dist/quill.bubble.css";
+
   export let formModal = false;
 
-  // Define the structure of questions array
   type Question = {
     id: number;
     type: string;
@@ -17,7 +17,7 @@
     required: boolean;
     options?: string[];
     correctAnswer?: number;
-    correctAnswers?: number[]; // For checkboxes
+    correctAnswers?: number[];
     answer?: string;
   };
 
@@ -36,11 +36,12 @@
     },
   ];
 
-  let quill: Quill; // Reference to Quill instance
+  let quill: Quill;
+
   onMount(() => {
     loadFromLocalStorage();
     quill = new Quill("#editor", {
-      theme: "bubble", // Set the theme to Bubble
+      theme: "bubble",
       modules: {
         toolbar: [
           ["bold", "italic", "underline"],
@@ -50,34 +51,23 @@
       },
     });
 
-    // Set the initial content from description
-    quill.root.innerHTML = description; // Ensure description is used here
-
-    // Update the content and height when the editor changes
+    quill.root.innerHTML = description;
     quill.on("text-change", () => {
       description = quill.root.innerHTML;
-      adjustEditorHeight(); // Call the function to adjust height
+      adjustEditorHeight();
     });
 
-    // Adjust height initially
     adjustEditorHeight();
   });
 
-  // Function to adjust the height of the Quill editor
   function adjustEditorHeight() {
-    const editorContainer: any = document.querySelector("#editor");
-    if (editorContainer) {
-      editorContainer.style.height = "auto"; // Reset height
-      const newHeight = editorContainer.scrollHeight; // Get the scroll height
-      editorContainer.style.height = `${newHeight}px`; // Set new height
-    }
+    const editorContainer = document.querySelector("#editor") as HTMLElement;
+    editorContainer.style.height = "auto";
+    editorContainer.style.height = `${editorContainer.scrollHeight}px`;
   }
-  // Debounced save function for input fields
-  const debouncedSaveToLocalStorage = debounce(() => {
-    saveToLocalStorage();
-  }, 300); // Save after 300ms delay
 
-  // Function to add a new question
+  const debouncedSaveToLocalStorage = debounce(saveToLocalStorage, 300);
+
   function addQuestion() {
     questions = [
       ...questions,
@@ -92,7 +82,7 @@
         correctAnswers: [],
       },
     ];
-    saveToLocalStorage();
+    debouncedSaveToLocalStorage();
   }
 
   function duplicateQuestion(index: number) {
@@ -105,26 +95,21 @@
       duplicatedQuestion,
       ...questions.slice(index + 1),
     ];
-    saveToLocalStorage();
+    debouncedSaveToLocalStorage();
   }
 
   function removeQuestion(index: number) {
     questions = questions.filter((_, i) => i !== index);
-    saveToLocalStorage();
+    debouncedSaveToLocalStorage();
   }
 
   function handleDnd(event: CustomEvent<{ items: Question[] }>) {
     questions = event.detail.items;
-    saveToLocalStorage();
+    debouncedSaveToLocalStorage();
   }
 
-  // Save questions and title/description to local storage
   function saveToLocalStorage() {
-    const assessmentData = {
-      title,
-      description,
-      questions,
-    };
+    const assessmentData = { title, description, questions };
     localStorage.setItem("quiz-assessment", JSON.stringify(assessmentData));
   }
 
@@ -160,7 +145,7 @@
     const target = event.target as HTMLTextAreaElement;
     target.style.height = "auto";
     target.style.height = `${target.scrollHeight}px`;
-    debouncedSaveToLocalStorage(); // Debounced save
+    debouncedSaveToLocalStorage();
   }
 
   function handleTitleInput(event: Event) {
@@ -168,46 +153,31 @@
     debouncedSaveToLocalStorage();
   }
 
-  // New function to log assessment data
   function distributeAssessment() {
-    const assessmentData = {
-      title,
-      description,
-      questions,
-    };
-
+    const assessmentData = { title, description, questions };
     console.log("Assessment Data to Distribute:", assessmentData);
-
-    // Here you can add the logic to send `assessmentData` over the local network
+    // Logic to send `assessmentData` over the local network can be added here.
   }
 
-  // New function to save assessment data as a JSON file
-  function saveAssessmentAsFile(assessmentData: object) {
-    // Use the title for the filename, replace spaces with underscores
-    const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, ""); // Remove unsafe characters
-    const filename = `${safeTitle || "assessment"}.json`; // Default to 'assessment.json' if title is empty
-    const dataStr = JSON.stringify(assessmentData, null, 2); // Pretty-print JSON
+  function saveAssessmentAsFile() {
+    const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
+    const filename = `${safeTitle || "assessment"}.json`;
+    const dataStr = JSON.stringify({ title, description, questions }, null, 2);
     const blob = new Blob([dataStr], { type: "application/json" });
     const url = URL.createObjectURL(blob);
 
     const a = document.createElement("a");
     a.href = url;
-    a.download = filename; // Use the formatted filename
+    a.download = filename;
     document.body.appendChild(a);
-    a.click(); // Trigger the download
-    document.body.removeChild(a); // Clean up
-    URL.revokeObjectURL(url); // Release memory
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
-  // New function to handle saving assessment data
   function saveAssessment() {
-    const assessmentData = {
-      title,
-      description,
-      questions,
-    };
-    saveToLocalStorage(); // Save to local storage
-    saveAssessmentAsFile(assessmentData); // Save as a JSON file
+    saveToLocalStorage();
+    saveAssessmentAsFile();
   }
 
   function resetAssessment() {
@@ -232,7 +202,7 @@
           title = savedTitle || "";
           description = savedDescription || "";
           questions = savedQuestions || [];
-          saveToLocalStorage();
+          debouncedSaveToLocalStorage();
         };
         reader.readAsText(file);
       }
