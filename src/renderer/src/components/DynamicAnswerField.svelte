@@ -7,9 +7,9 @@
     content: string;
     required: boolean;
     options?: string[];
-    correctAnswer?: number;
-    correctAnswers?: number[];
-    answer?: string;
+    correctAnswer?: number; // For single-choice questions
+    correctAnswers?: number[]; // For multiple-choice questions
+    answer?: string; // For textual answers
   }
 
   export let question: Question = {
@@ -23,20 +23,30 @@
     answer: "",
   };
 
+  // Trigger saveToLocalStorage after input changes
+  export let onSave = () => {};
+
+  function resetCorrectAnswers() {
+    question.correctAnswer = undefined;
+    question.correctAnswers = [];
+  }
+
   function addOption() {
     question.options = question.options || [];
-    question.options = [
-      ...question.options,
-      `Option ${question.options.length + 1}`,
-    ];
+    question.options.push(`Option ${question.options.length + 1}`);
+    resetCorrectAnswers(); // Reset answers when adding options
+    onSave(); // Save changes
   }
 
   function removeOption(optionIndex: number) {
     question.options = question.options.filter((_, i) => i !== optionIndex);
+    resetCorrectAnswers(); // Reset answers when removing options
+    onSave(); // Save changes
   }
 
   function updateOption(optionIndex: number, value: string) {
     question.options[optionIndex] = value;
+    onSave(); // Save changes
   }
 
   function handleInput(event: Event, optIndex: number) {
@@ -48,6 +58,7 @@
         question.content = input.value;
       }
     }
+    onSave(); // Save changes on input
   }
 
   function toggleCorrectAnswer(optIndex: number) {
@@ -56,10 +67,17 @@
     }
     const index = question.correctAnswers.indexOf(optIndex);
     if (index > -1) {
-      question.correctAnswers.splice(index, 1);
+      question.correctAnswers.splice(index, 1); // Deselect answer
     } else {
-      question.correctAnswers.push(optIndex);
+      question.correctAnswers.push(optIndex); // Select answer
     }
+    onSave(); // Save changes when toggling answers
+  }
+
+  function handleAnswerInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    question.answer = input.value; // Bind answer to the question
+    onSave(); // Trigger saving when an answer changes
   }
 
   let textareaRef: HTMLTextAreaElement;
@@ -79,6 +97,7 @@
       class="short-answer"
       placeholder="Your answer"
       bind:value={question.answer}
+      on:input={handleAnswerInput}
     />
     <Tooltip>Enter a short answer</Tooltip>
   {/if}
@@ -100,14 +119,18 @@
 
   {#if question.type === "Multiple Choice"}
     <div class="multiple-choice-options">
-      {#each question.options as _option, optIndex}
+      {#each question.options as option, optIndex}
         <div class="option-item">
           <input
             type="radio"
             id="option-{optIndex}"
             name="option-{question.id}"
+            bind:group={question.correctAnswer}
             value={optIndex}
-            on:change={() => (question.correctAnswer = optIndex)}
+            on:change={() => {
+              question.correctAnswer = optIndex;
+              onSave(); // Save when selecting an answer
+            }}
           />
           <Tooltip>Select as Answer</Tooltip>
           <input
@@ -126,12 +149,14 @@
 
   {#if question.type === "Checkboxes"}
     <div class="checkbox-options">
-      {#each question.options as _option, optIndex}
+      {#each question.options as option, optIndex}
         <div class="option-item">
           <input
             type="checkbox"
             id="checkbox-{optIndex}"
             name="checkbox-{question.id}"
+            checked={question.correctAnswers &&
+              question.correctAnswers.includes(optIndex)}
             on:change={() => toggleCorrectAnswer(optIndex)}
           />
           <Tooltip>Select as Answer</Tooltip>
@@ -151,7 +176,7 @@
 
   {#if question.type === "Dropdown"}
     <div class="dropdown-options">
-      {#each question.options as _option, optIndex}
+      {#each question.options as option, optIndex}
         <div class="option-item">
           <input
             type="radio"
@@ -159,6 +184,7 @@
             name="option-{question.id}"
             bind:group={question.correctAnswer}
             value={optIndex}
+            on:change={onSave}
           />
           <Tooltip>Select as Answer</Tooltip>
           <input
@@ -180,6 +206,7 @@
       type="date"
       bind:value={question.answer}
       placeholder="Select a date"
+      on:change={handleAnswerInput}
     />
   {/if}
 
@@ -188,6 +215,7 @@
       type="time"
       bind:value={question.answer}
       placeholder="Select a time"
+      on:change={handleAnswerInput}
     />
   {/if}
 

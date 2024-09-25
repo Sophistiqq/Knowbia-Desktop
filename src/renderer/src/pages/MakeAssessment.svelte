@@ -31,7 +31,7 @@
       required: false,
       answer: "",
       options: [],
-      correctAnswer: 0,
+      correctAnswer: undefined,
       correctAnswers: [],
     },
   ];
@@ -66,22 +66,28 @@
     editorContainer.style.height = `${editorContainer.scrollHeight}px`;
   }
 
-  const debouncedSaveToLocalStorage = debounce(saveToLocalStorage, 300);
+  const debouncedSaveToLocalStorage = debounce(saveToLocalStorage, 100);
+
+  function resetQuestionData(question: Question) {
+    question.correctAnswer = undefined;
+    question.correctAnswers = [];
+    question.options = [];
+    question.answer = "";
+  }
 
   function addQuestion() {
-    questions = [
-      ...questions,
-      {
-        id: questions.length + 1,
-        type: "Short Answer",
-        content: "",
-        required: false,
-        answer: "",
-        options: [],
-        correctAnswer: 0,
-        correctAnswers: [],
-      },
-    ];
+    const newQuestion = {
+      id: questions.length + 1,
+      type: "Short Answer",
+      content: "",
+      required: false,
+      answer: "",
+      options: [],
+      correctAnswer: undefined,
+      correctAnswers: [],
+    };
+    resetQuestionData(newQuestion);
+    questions = [...questions, newQuestion];
     debouncedSaveToLocalStorage();
   }
 
@@ -90,6 +96,7 @@
       ...questions[index],
       id: questions.length + 1,
     };
+    resetQuestionData(duplicatedQuestion); // Reset duplicated question
     questions = [
       ...questions.slice(0, index + 1),
       duplicatedQuestion,
@@ -100,6 +107,12 @@
 
   function removeQuestion(index: number) {
     questions = questions.filter((_, i) => i !== index);
+    debouncedSaveToLocalStorage();
+  }
+
+  function changeQuestionType(index: number, newType: string) {
+    questions[index].type = newType;
+    resetQuestionData(questions[index]); // Reset data when changing type
     debouncedSaveToLocalStorage();
   }
 
@@ -155,7 +168,7 @@
 
   function distributeAssessment() {
     const assessmentData = { title, description, questions };
-    console.log("Assessment Data to Distribute:", assessmentData);
+    console.log("Data:", assessmentData);
     // Logic to send `assessmentData` over the local network can be added here.
   }
 
@@ -266,7 +279,7 @@
             <option value="Time">Time</option>
           </select>
 
-          <DynamicAnswerField {question} />
+          <DynamicAnswerField {question} onSave={debouncedSaveToLocalStorage} />
 
           <div class="text-question-controls">
             <div class="required-toggle">
