@@ -142,11 +142,27 @@
 
   {#if question.type === "Dropdown"}
     <div class="dropdown-options">
-      <select bind:value={question.answer}>
-        {#each question.options as option, optIndex}
-          <option value={optIndex}>{option}</option>
-        {/each}
-      </select>
+      {#each question.options as _option, optIndex}
+        <div class="option-item">
+          <input
+            type="radio"
+            id="option-{optIndex}"
+            name="option-{question.id}"
+            bind:group={question.correctAnswer}
+            value={optIndex}
+          />
+          <Tooltip>Select as Answer</Tooltip>
+          <input
+            type="text"
+            bind:value={question.options[optIndex]}
+            placeholder="Option {optIndex + 1}"
+            on:input={(e) => handleInput(e, optIndex)}
+            style="overflow: hidden; resize: none;"
+          />
+          <button on:click={() => removeOption(optIndex)}>Remove</button>
+        </div>
+      {/each}
+      <button on:click={addOption}>Add Option</button>
     </div>
   {/if}
 

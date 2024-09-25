@@ -213,13 +213,44 @@
   function resetAssessment() {
     showResetModal = true;
   }
+
+  function loadFromJsonFile() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const content = e.target.result as string;
+          const {
+            title: savedTitle,
+            description: savedDescription,
+            questions: savedQuestions,
+          } = JSON.parse(content);
+          title = savedTitle || "";
+          description = savedDescription || "";
+          questions = savedQuestions || [];
+          saveToLocalStorage();
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+  }
 </script>
 
 <div class="container">
   <div class="create-quiz">
     <div class="top">
       <h1>Create an Assessment</h1>
-      <button on:click={resetAssessment}>Reset</button>
+      <div class="reset-load">
+        <button on:click={resetAssessment}>Reset</button>
+        <Tooltip placement="left">Reset the assessment</Tooltip>
+        <button on:click={loadFromJsonFile}>Load</button>
+        <Tooltip placement="left">Load from JSON file</Tooltip>
+      </div>
     </div>
     <textarea
       bind:value={title}
@@ -231,7 +262,6 @@
     <h2>Description</h2>
     <div class="editor-wrapper">
       <div id="editor" style="height: auto;"></div>
-      <!-- No fixed height -->
     </div>
   </div>
 
@@ -514,5 +544,10 @@
     background-color: var(--background);
     border-radius: 0.3rem;
     height: auto;
+  }
+  .reset-load {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 </style>
