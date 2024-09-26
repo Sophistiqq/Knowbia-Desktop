@@ -40,6 +40,7 @@
 
   onMount(() => {
     loadFromLocalStorage();
+    loadSavedAssessments();
     quill = new Quill("#editor", {
       theme: "bubble",
       modules: {
@@ -182,9 +183,16 @@
     URL.revokeObjectURL(url);
   }
 
+  // Modify the save function to save assessments with unique keys
   function saveAssessment() {
     saveToLocalStorage();
-    saveAssessmentAsFile();
+    const assessmentData = { title, description, questions };
+    const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
+    localStorage.setItem(
+      `assessment_${safeTitle}`,
+      JSON.stringify(assessmentData),
+    );
+    loadSavedAssessments(); // Reload saved assessments after saving
   }
 
   function resetAssessment() {
@@ -215,6 +223,34 @@
       }
     };
     input.click();
+  }
+
+  // saving assessments in local local storage
+
+  let savedAssessments: {
+    title: string;
+    description: string;
+    questions: Question[];
+  }[] = [];
+
+  // Function to load all saved assessments from localStorage
+  function loadSavedAssessments() {
+    const assessments = Object.keys(localStorage)
+      .filter((key) => key.startsWith("assessment_"))
+      .map((key) => JSON.parse(localStorage.getItem(key) || "{}"));
+
+    savedAssessments = assessments;
+  }
+  // Function to load a specific assessment into the form
+  function loadAssessment(assessment: {
+    title: string;
+    description: string;
+    questions: Question[];
+  }) {
+    title = assessment.title;
+    description = assessment.description;
+    questions = assessment.questions;
+    debouncedSaveToLocalStorage();
   }
 </script>
 
