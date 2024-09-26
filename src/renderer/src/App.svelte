@@ -23,11 +23,16 @@
   let loginError = "";
   export let showRegisterPage = false;
 
+  // Check if token is expired
+  function isTokenExpired() {
+    const expiration = localStorage.getItem("tokenExpiration");
+    return expiration && Date.now() > parseInt(expiration);
+  }
+
   async function handleLogin() {
     const { success, message } = await login(email, password);
     if (success) {
       isAuthenticated = true;
-      localStorage.setItem("isAuthenticated", "true");
       loginError = "";
     } else {
       showError(message);
@@ -35,11 +40,19 @@
   }
 
   onMount(async () => {
-    const storedAuth = localStorage.getItem("isAuthenticated");
-    isAuthenticated = storedAuth === "true" || (await checkAndSetAuth());
+    // Check token expiration
+    if (isTokenExpired()) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiration");
+      isAuthenticated = false;
+    } else {
+      // If token is valid, no need to call the server
+      const storedAuth = localStorage.getItem("isAuthenticated");
+      isAuthenticated = storedAuth === "true" || (await checkAndSetAuth());
+    }
 
     showRegisterPage = JSON.parse(
-      localStorage.getItem("showRegisterPage") || "false",
+      localStorage.getItem("showRegisterPage") || "false"
     );
     loading = false;
   });
@@ -70,6 +83,8 @@
     } finally {
       isAuthenticated = false;
       localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiration");
     }
   }
 
@@ -88,9 +103,7 @@
   let showPassword = false;
   function togglePasswordVisibility() {
     showPassword = !showPassword;
-    const passwordInput = document.getElementById(
-      "password",
-    ) as HTMLInputElement;
+    const passwordInput = document.getElementById("password") as HTMLInputElement;
     if (passwordInput) {
       passwordInput.type = showPassword ? "text" : "password";
     }
@@ -137,12 +150,12 @@
         <h1>Welcome to Knowbia!</h1>
 
         <div class="input_fields">
-          <label for="email_number">Email</label>
+          <label for="email">Email</label>
           <div class="inputs">
             <Icon src={FaSolidUser} />
             <input
-              type="email_number"
-              id="email_number"
+              type="email"
+              id="email"
               bind:value={email}
               required
             />

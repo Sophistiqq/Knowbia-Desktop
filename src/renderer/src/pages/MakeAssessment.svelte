@@ -110,12 +110,6 @@
     debouncedSaveToLocalStorage();
   }
 
-  function changeQuestionType(index: number, newType: string) {
-    questions[index].type = newType;
-    resetQuestionData(questions[index]); // Reset data when changing type
-    debouncedSaveToLocalStorage();
-  }
-
   function handleDnd(event: CustomEvent<{ items: Question[] }>) {
     questions = event.detail.items;
     debouncedSaveToLocalStorage();
@@ -282,6 +276,9 @@
           <DynamicAnswerField {question} onSave={debouncedSaveToLocalStorage} />
 
           <div class="text-question-controls">
+            <div class="question-number">
+              <p>{question.id}</p>
+            </div>
             <div class="required-toggle">
               <input
                 type="checkbox"
@@ -311,6 +308,9 @@
     >
     <button on:click={saveAssessment} class="save-assessment">Save</button>
   </div>
+  <button on:click={saveAssessmentAsFile} class="add-question"
+    >Save as JSON</button
+  >
 </div>
 
 <Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
@@ -372,7 +372,6 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding-inline: clamp(10vw, 5rem, 30vw);
   }
 
   .create-quiz {
@@ -532,5 +531,12 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+  }
+  .question-number {
+    padding: 0.5rem 1rem;
+    background-color: var(--background);
+    color: var(--text);
+    border-radius: 0.3rem;
+    text-align: center;
   }
 </style>

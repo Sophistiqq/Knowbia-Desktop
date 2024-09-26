@@ -119,7 +119,7 @@
 
   {#if question.type === "Multiple Choice"}
     <div class="multiple-choice-options">
-      {#each question.options as option, optIndex}
+      {#each question.options as _option, optIndex}
         <div class="option-item">
           <input
             type="radio"
@@ -149,7 +149,7 @@
 
   {#if question.type === "Checkboxes"}
     <div class="checkbox-options">
-      {#each question.options as option, optIndex}
+      {#each question.options as _option, optIndex}
         <div class="option-item">
           <input
             type="checkbox"
@@ -176,7 +176,7 @@
 
   {#if question.type === "Dropdown"}
     <div class="dropdown-options">
-      {#each question.options as option, optIndex}
+      {#each question.options as _option, optIndex}
         <div class="option-item">
           <input
             type="radio"
