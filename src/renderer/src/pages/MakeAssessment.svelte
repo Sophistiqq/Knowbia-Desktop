@@ -1,8 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { dndzone } from "svelte-dnd-action";
-  import { Tooltip, Modal, Label, Input } from "flowbite-svelte";
-  import { FileCopySolid, TrashBinSolid } from "flowbite-svelte-icons";
+  import { Tooltip, Modal, Label, Input, Toast } from "flowbite-svelte";
+  import {
+    FileCopySolid,
+    TrashBinSolid,
+    CheckCircleSolid,
+    CloseCircleSolid,
+  } from "flowbite-svelte-icons";
   import DynamicAnswerField from "../components/DynamicAnswerField.svelte";
   import { debounce } from "../utils/debounce";
   import Quill from "quill";
@@ -10,6 +15,16 @@
 
   export let formModal = false;
 
+  let toastMessage: {
+    message: string;
+    type: "success" | "error" | "info";
+  } | null = null;
+  function showToast(message: string, type: "success" | "error" | "info") {
+    toastMessage = { message, type };
+    setTimeout(() => {
+      toastMessage = null;
+    }, 3000); // Adjust the display time as needed
+  }
   type Question = {
     id: number;
     type: string;
@@ -97,7 +112,7 @@
       ...questions[index],
       id: questions.length + 1,
     };
-    resetQuestionData(duplicatedQuestion); // Reset duplicated question
+    resetQuestionData(duplicatedQuestion);
     questions = [
       ...questions.slice(0, index + 1),
       duplicatedQuestion,
@@ -143,6 +158,7 @@
     title = "";
     description = "";
     showResetModal = false;
+    showToast("Assessment reset successfully", "success"); // Show Toast on reset
   }
 
   function cancelReset() {
@@ -193,6 +209,7 @@
       JSON.stringify(assessmentData),
     );
     loadSavedAssessments(); // Reload saved assessments after saving
+    showToast("Assessment saved successfully", "success"); // Show Toast on successful save
   }
 
   function resetAssessment() {
@@ -208,16 +225,24 @@
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          const content = e.target.result as string;
-          const {
-            title: savedTitle,
-            description: savedDescription,
-            questions: savedQuestions,
-          } = JSON.parse(content);
-          title = savedTitle || "";
-          description = savedDescription || "";
-          questions = savedQuestions || [];
-          debouncedSaveToLocalStorage();
+          try {
+            const content = e.target.result as string;
+            const {
+              title: savedTitle,
+              description: savedDescription,
+              questions: savedQuestions,
+            } = JSON.parse(content);
+            title = savedTitle || "";
+            description = savedDescription || "";
+            questions = savedQuestions || [];
+            debouncedSaveToLocalStorage();
+
+            // Trigger success Toast
+            showToast("Assessment loaded successfully", "success");
+          } catch (error) {
+            // Trigger error Toast
+            showToast("Failed to load assessment", "error");
+          }
         };
         reader.readAsText(file);
       }
@@ -240,17 +265,35 @@
       .map((key) => JSON.parse(localStorage.getItem(key) || "{}"));
 
     savedAssessments = assessments;
+    console.log("Saved assessments:", savedAssessments);
   }
-  // Function to load a specific assessment into the form
-  function loadAssessment(assessment: {
-    title: string;
-    description: string;
-    questions: Question[];
-  }) {
-    title = assessment.title;
-    description = assessment.description;
-    questions = assessment.questions;
+
+  // scripts for loading saved assessments
+
+  let showSavedAssessmentsModal = false;
+
+  function loadFromSavedAssessments() {
+    showSavedAssessmentsModal = true;
+  }
+
+  function loadSavedAssessment(index: number) {
+    const {
+      title: savedTitle,
+      description: savedDescription,
+      questions: savedQuestions,
+    } = savedAssessments[index];
+    title = savedTitle || "";
+    description = savedDescription || "";
+    questions = savedQuestions || [];
     debouncedSaveToLocalStorage();
+    showSavedAssessmentsModal = false;
+    showToast("Assessment loaded successfully", "success"); // Show Toast on successful load
+  }
+
+  function deleteSavedAssessment(index: number) {
+    const { title: savedTitle } = savedAssessments[index];
+    localStorage.removeItem(`assessment_${savedTitle}`);
+    loadSavedAssessments();
   }
 </script>
 
@@ -261,7 +304,9 @@
       <div class="reset-load">
         <button on:click={resetAssessment}>Reset</button>
         <Tooltip placement="left">Reset the assessment</Tooltip>
-        <button on:click={loadFromJsonFile}>Load</button>
+        <button on:click={loadFromSavedAssessments}>Load: List</button>
+        <Tooltip placement="left">Load from saved assessments</Tooltip>
+        <button on:click={loadFromJsonFile}>Load: File</button>
         <Tooltip placement="left">Load from JSON file</Tooltip>
       </div>
     </div>
@@ -402,6 +447,77 @@
     </div>
   </div>
 </Modal>
+
+<!-- Modal for showing saved assessments -->
+
+<Modal
+  bind:open={showSavedAssessmentsModal}
+  size="lg"
+  autoclose={false}
+  class="w-full"
+>
+  <div class="flex flex-col space-y-6 backdrop-blur-sm">
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+      Saved Assessments
+    </h3>
+    <div class="flex flex-col space-y-4">
+      {#each savedAssessments as assessment, index}
+        <div class="flex justify-between items-center">
+          <h4>{assessment.title}</h4>
+          <div class="flex gap-4">
+            <button
+              type="button"
+              class="bg-blue-500 text-white px-4 py-2 rounded"
+              on:click={() => loadSavedAssessment(index)}
+            >
+              Load
+            </button>
+            <button
+              type="button"
+              class="bg-red-500 text-white px-4 py-2 rounded"
+              on:click={() => deleteSavedAssessment(index)}
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      {/each}
+    </div>
+    <div class="flex justify-end">
+      <button
+        type="button"
+        class="bg-gray-300 text-gray-900 px-4 py-2 rounded"
+        on:click={() => (showSavedAssessmentsModal = false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</Modal>
+
+<!-- Show Toast based on toastMessage -->
+{#if toastMessage}
+  <Toast
+    color={toastMessage.type === "success"
+      ? "green"
+      : toastMessage.type === "error"
+        ? "red"
+        : "blue"}
+    position="top-right"
+    class="z-50"
+  >
+    <svelte:fragment slot="icon">
+      {#if toastMessage.type === "success"}
+        <CheckCircleSolid class="w-5 h-5" />
+      {/if}
+      {#if toastMessage.type === "error"}
+        <CloseCircleSolid class="w-5 h-5" />
+      {/if}
+      <span class="sr-only">Notification icon</span>
+    </svelte:fragment>
+    {toastMessage.message}
+  </Toast>
+{/if}
 
 <style lang="scss">
   .container {

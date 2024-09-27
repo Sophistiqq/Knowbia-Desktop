@@ -62,10 +62,12 @@
 
       <button on:click={() => handleNavigation("quizzes")} id="quizzes">
         <FilePenOutline class="w-10 h-10" />
-        <span class="text {sidebarHidden ? 'hidden' : ''}">Assessments</span>
+        <span class="text {sidebarHidden ? 'hidden' : ''}"
+          >Create Assessments</span
+        >
       </button>
       <Tooltip triggeredBy="#quizzes" placement="right"
-        >Create Quiz, Make them suffer!</Tooltip
+        >Create Assessments, Make them suffer!</Tooltip
       >
 
       <button

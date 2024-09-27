@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Main from "./pages/Main.svelte";
-  import { login, checkAuth } from "./scripts/auth.js";
+  import { login, checkAuth } from "./scripts/auth";
   import { Icon } from "svelte-icons-pack";
   import {
     FaSolidUser,

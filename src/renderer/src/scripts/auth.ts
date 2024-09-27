@@ -1,4 +1,4 @@
-export async function login(email, password) {
+export async function login(email: string, password: string) {
   if (!email || !password) {
     return { success: false, message: "Please fill in both fields." };
   }
@@ -16,7 +16,7 @@ export async function login(email, password) {
       if (result.success && result.token) {
         console.log("User:", result.user);
         // Store token and expiration in localStorage
-        const expirationTime = Date.now() + result.expiresIn * 1000; // Assuming expiresIn is in seconds
+        const expirationTime = Date.now() + result.expiresIn; // 7 days from now
         localStorage.setItem("user", JSON.stringify(result.user));
         localStorage.setItem("token", result.token);
         localStorage.setItem("tokenExpiration", String(expirationTime));
