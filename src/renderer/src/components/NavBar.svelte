@@ -60,6 +60,20 @@
         >Manage Classes here, control freak.</Tooltip
       >
 
+      <!-- Saved Assessments Page -->
+      <button
+        on:click={() => handleNavigation("savedassessments")}
+        id="saved-assessments"
+      >
+        <GridOutline class="w-10 h-10" />
+        <span class="text {sidebarHidden ? 'hidden' : ''}"
+          >Saved Assessments</span
+        >
+      </button>
+      <Tooltip triggeredBy="#saved-assessments" placement="right"
+        >Saved Assessments. You saved them, now delete them!</Tooltip
+      >
+
       <button on:click={() => handleNavigation("quizzes")} id="quizzes">
         <FilePenOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}"
@@ -117,7 +131,7 @@
     padding: 1rem;
     height: calc(100vh - 4rem);
     color: var(--text);
-    z-index: 100;
+    z-index: 50;
     width: 17rem; /* Full width when expanded */
     transition: width 0.3s ease-in-out; /* Smooth transition for width */
     white-space: nowrap;

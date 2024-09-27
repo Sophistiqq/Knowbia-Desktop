@@ -17,9 +17,9 @@
 
   let toastMessage: {
     message: string;
-    type: "success" | "error" | "info";
+    type: "success" | "error";
   } | null = null;
-  function showToast(message: string, type: "success" | "error" | "info") {
+  function showToast(message: string, type: "success" | "error") {
     toastMessage = { message, type };
     setTimeout(() => {
       toastMessage = null;
@@ -326,7 +326,7 @@
   </div>
 
   <div
-    class="questions-list"
+    class="questions-list rounded-lg"
     use:dndzone={{ items: questions, flipDurationMs: 300 }}
     on:consider={handleDnd}
     on:finalize={handleDnd}
@@ -456,7 +456,7 @@
   bind:open={showSavedAssessmentsModal}
   size="lg"
   autoclose={false}
-  class="w-full"
+  class="w-full z-100"
 >
   <h3 class="mb-4 text-xl font-medium" style="color: var(--text);">
     Saved Assessments
@@ -508,7 +508,7 @@
         ? "red"
         : "blue"}
     position="top-right"
-    class="z-50"
+    class="z-50 fixed top-4 right-4"
   >
     <svelte:fragment slot="icon">
       {#if toastMessage.type === "success"}
@@ -686,6 +686,7 @@
   .reset-load {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
     gap: 1rem;
   }
   .question-number {

@@ -1,6 +1,12 @@
 <script lang="ts">
   import NavBar from "../components/NavBar.svelte";
-  import { Classes, MakeAssessment, StudentsInfo, Dashboard } from "../pages/";
+  import {
+    Classes,
+    MakeAssessment,
+    StudentsInfo,
+    Dashboard,
+    SavedAssessments,
+  } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
   import NotificationsSide from "../components/NotificationsSide.svelte";
@@ -10,6 +16,7 @@
     quizzes: MakeAssessment,
     studentsInfo: StudentsInfo,
     dashboard: Dashboard,
+    savedassessments: SavedAssessments,
   };
 
   let currentPage = "classes";

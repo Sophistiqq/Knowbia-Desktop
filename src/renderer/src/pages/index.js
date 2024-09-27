@@ -5,3 +5,4 @@ export { default as MakeAssessment } from "./MakeAssessment.svelte";
 export { default as StudentsInfo } from "./StudentsInfo.svelte";
 export { default as Dashboard } from "./Dashboard.svelte";
 export { default as HostAssessment } from "./HostAssessment.svelte";
+export { default as SavedAssessments } from "./Saved-Assessments.svelte";
