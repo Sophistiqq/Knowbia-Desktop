@@ -96,7 +96,7 @@
       id: questions.length + 1,
       type: "Short Answer",
       content: "",
-      required: false,
+      required: true,
       answer: "",
       options: [],
       correctAnswer: undefined,
@@ -310,12 +310,14 @@
         <Tooltip placement="left">Load from JSON file</Tooltip>
       </div>
     </div>
+    <div class="separator"></div>
+    <h1>Title</h1>
     <textarea
       bind:value={title}
       placeholder="Title"
       rows="1"
       on:input={handleTitleInput}
-      style="overflow: hidden; resize: none;"
+      style="overflow: hidden; resize: none; border: 1px solid var(--border)"
     ></textarea>
     <h2>Description</h2>
     <div class="editor-wrapper">
@@ -456,45 +458,47 @@
   autoclose={false}
   class="w-full"
 >
-  <div class="flex flex-col space-y-6 backdrop-blur-sm">
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      Saved Assessments
-    </h3>
-    <div class="flex flex-col space-y-4">
-      {#each savedAssessments as assessment, index}
-        <div class="flex justify-between items-center">
-          <h4>{assessment.title}</h4>
-          <div class="flex gap-4">
-            <button
-              type="button"
-              class="bg-blue-500 text-white px-4 py-2 rounded"
-              on:click={() => loadSavedAssessment(index)}
-            >
-              Load
-            </button>
-            <button
-              type="button"
-              class="bg-red-500 text-white px-4 py-2 rounded"
-              on:click={() => deleteSavedAssessment(index)}
-            >
-              Delete
-            </button>
-          </div>
+  <h3 class="mb-4 text-xl font-medium" style="color: var(--text);">
+    Saved Assessments
+  </h3>
+
+  <div class="flex flex-col space-y-4">
+    {#each savedAssessments as assessment, index}
+      <div class="flex justify-between items-center">
+        <h4 style="color: var(--text);">{assessment.title}</h4>
+        <div class="flex gap-4">
+          <button
+            type="button"
+            class="px-4 py-2 rounded"
+            style="background-color: var(--primary); color: var(--text);"
+            on:click={() => loadSavedAssessment(index)}
+          >
+            Load
+          </button>
+          <button
+            type="button"
+            class="px-4 py-2 rounded"
+            style="background-color: var(--accent); color: var(--text);"
+            on:click={() => deleteSavedAssessment(index)}
+          >
+            Delete
+          </button>
         </div>
-      {/each}
-    </div>
-    <div class="flex justify-end">
-      <button
-        type="button"
-        class="bg-gray-300 text-gray-900 px-4 py-2 rounded"
-        on:click={() => (showSavedAssessmentsModal = false)}
-      >
-        Close
-      </button>
-    </div>
+      </div>
+    {/each}
+  </div>
+
+  <div class="flex justify-end">
+    <button
+      type="button"
+      class="px-4 py-2 rounded"
+      style="background-color: var(--secondary); color: var(--text);"
+      on:click={() => (showSavedAssessmentsModal = false)}
+    >
+      Close
+    </button>
   </div>
 </Modal>
-
 <!-- Show Toast based on toastMessage -->
 {#if toastMessage}
   <Toast
@@ -620,7 +624,7 @@
     transition: background-color 0.3s;
     font-weight: bold;
     &:hover {
-      background-color: var(--accent);
+      background-color: var(--primary);
       color: var(--background);
     }
   }
@@ -690,5 +694,9 @@
     color: var(--text);
     border-radius: 0.3rem;
     text-align: center;
+  }
+  .separator {
+    height: 1px;
+    background-color: var(--text);
   }
 </style>
