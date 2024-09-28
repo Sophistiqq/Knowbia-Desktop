@@ -177,11 +177,6 @@
     debouncedSaveToLocalStorage();
   }
 
-  function distributeAssessment() {
-    const assessmentData = { title, description, questions };
-    console.log("Data:", assessmentData);
-    // Logic to send `assessmentData` over the local network can be added here.
-  }
 
   function saveAssessmentAsFile() {
     const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
@@ -295,6 +290,20 @@
     localStorage.removeItem(`assessment_${savedTitle}`);
     loadSavedAssessments();
   }
+
+  let distributeModal = false;
+  let timeLimit = '';
+
+ function distributeNow() {
+  const assessmentData = { title, description, questions, timeLimit };
+  console.log("Distributing assessment with data:", assessmentData);
+  distributeModal = false; // Close modal after distribution
+  // Add your logic to send the assessment data over the network
+}
+  function openDistributeModal() {
+    distributeModal = true;
+  }
+
 </script>
 
 <div class="container">
@@ -386,7 +395,7 @@
 
   <button on:click={addQuestion} class="add-question">Add Question</button>
   <div class="assessments-button-container">
-    <button on:click={distributeAssessment} class="distribute-assessment"
+    <button on:click={openDistributeModal} class="distribute-assessment"
       >Distribute</button
     >
     <button on:click={saveAssessment} class="save-assessment">Save</button>
@@ -522,6 +531,41 @@
     {toastMessage.message}
   </Toast>
 {/if}
+
+
+<Modal bind:open={distributeModal} size="md" autoclose={false} class="w-full">
+  <div class="flex flex-col space-y-6 backdrop-blur-sm">
+    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+      Set Assessment Options
+    </h3>
+    <Label class="space-y-2">
+      <span>Time Limit (in minutes)</span>
+      <Input
+        type="number"
+        name="time-limit"
+        placeholder="Enter time limit"
+        bind:value={timeLimit}
+      />
+    </Label>
+    <div class="flex justify-between">
+      <button
+        type="button"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+        on:click={distributeNow}
+      >
+        Distribute Now
+      </button>
+      <button
+        type="button"
+        class="bg-gray-300 text-gray-900 px-4 py-2 rounded"
+        on:click={() => (distributeModal = false)}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+</Modal>
+
 
 <style lang="scss">
   .container {
