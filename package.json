@@ -32,7 +32,8 @@
     "svelte-chartjs": "^3.1.5",
     "svelte-dnd-action": "^0.9.50",
     "svelte-icons-pack": "^3.1.3",
-    "typescript-svelte-plugin": "^0.3.41"
+    "typescript-svelte-plugin": "^0.3.41",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@electron-toolkit/eslint-config": "^1.0.2",

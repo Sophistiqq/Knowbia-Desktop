@@ -12,7 +12,7 @@
   import { debounce } from "../utils/debounce";
   import Quill from "quill";
   import "quill/dist/quill.bubble.css";
-
+  let socket: WebSocket;
   export let formModal = false;
 
   let toastMessage: {
@@ -74,6 +74,21 @@
     });
 
     adjustEditorHeight();
+
+    const localHost = window.location.hostname;
+    socket = new WebSocket(`ws://${localHost}:8080`);
+
+    socket.onopen = function () {
+      console.log("WebSocket is open now.");
+    };
+
+    socket.onmessage = function (event: { data: any }) {
+      console.log(`Message from server: ${event.data}`);
+    };
+
+    socket.onclose = function () {
+      console.log("WebSocket is closed now.");
+    };
   });
 
   function adjustEditorHeight() {
@@ -176,7 +191,6 @@
     title = (event.target as HTMLTextAreaElement).value;
     debouncedSaveToLocalStorage();
   }
-
 
   function saveAssessmentAsFile() {
     const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
@@ -292,18 +306,27 @@
   }
 
   let distributeModal = false;
-  let timeLimit = '';
+  let timeLimit = "";
 
- function distributeNow() {
-  const assessmentData = { title, description, questions, timeLimit };
-  console.log("Distributing assessment with data:", assessmentData);
-  distributeModal = false; // Close modal after distribution
-  // Add your logic to send the assessment data over the network
-}
   function openDistributeModal() {
     distributeModal = true;
   }
 
+  function distributeAssessment() {
+    const assessmentData = {
+      type: "newAssessment",
+      assessment: { title, description, questions },
+    };
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify(assessmentData));
+      showToast("Assessment distributed successfully", "success");
+    } else {
+      showToast("Failed to distribute assessment", "error");
+    }
+
+    distributeModal = false;
+  }
 </script>
 
 <div class="container">
@@ -532,7 +555,6 @@
   </Toast>
 {/if}
 
-
 <Modal bind:open={distributeModal} size="md" autoclose={false} class="w-full">
   <div class="flex flex-col space-y-6 backdrop-blur-sm">
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
@@ -551,7 +573,7 @@
       <button
         type="button"
         class="bg-blue-500 text-white px-4 py-2 rounded"
-        on:click={distributeNow}
+        on:click={distributeAssessment}
       >
         Distribute Now
       </button>
@@ -565,7 +587,6 @@
     </div>
   </div>
 </Modal>
-
 
 <style lang="scss">
   .container {
