@@ -50,6 +50,9 @@
       correctAnswers: [],
     },
   ];
+  let shuffleQuestions = false;
+  let shuffleAnswers = false;
+  let timeLimit = "";
 
   let quill: Quill;
 
@@ -306,16 +309,41 @@
   }
 
   let distributeModal = false;
-  let timeLimit = "";
 
   function openDistributeModal() {
     distributeModal = true;
   }
 
   function distributeAssessment() {
+    // Shuffle questions if the shuffleQuestions toggle is true
+    let distributedQuestions = [...questions];
+    if (shuffleQuestions) {
+      distributedQuestions = distributedQuestions.sort(
+        () => Math.random() - 0.5,
+      );
+    }
+
+    // Shuffle answers for each question if the shuffleAnswers toggle is true
+    if (shuffleAnswers) {
+      distributedQuestions = distributedQuestions.map((question) => {
+        if (question.options && question.options.length > 0) {
+          const shuffledOptions = [...question.options].sort(
+            () => Math.random() - 0.5,
+          );
+          return { ...question, options: shuffledOptions };
+        }
+        return question;
+      });
+    }
+
     const assessmentData = {
       type: "newAssessment",
-      assessment: { title, description, questions },
+      assessment: {
+        title,
+        description,
+        questions: distributedQuestions,
+        timeLimit, // Include the time limit
+      },
     };
 
     if (socket && socket.readyState === WebSocket.OPEN) {
@@ -354,6 +382,25 @@
     <h2>Description</h2>
     <div class="editor-wrapper">
       <div id="editor" style="height: auto;"></div>
+    </div>
+    <div class="separator"></div>
+    <div class="assessment-controls">
+      <div class="shuffle-questions">
+        <input
+          type="checkbox"
+          id="shuffle-questions"
+          bind:value={shuffleQuestions}
+        />
+        <label for="shuffle-questions">Shuffle Questions</label>
+      </div>
+      <div class="shuffle-answers">
+        <input
+          type="checkbox"
+          id="shuffle-answers"
+          bind:value={shuffleAnswers}
+        />
+        <label for="shuffle-answers">Shuffle Answers</label>
+      </div>
     </div>
   </div>
 
@@ -482,8 +529,6 @@
   </div>
 </Modal>
 
-<!-- Modal for showing saved assessments -->
-
 <Modal
   bind:open={showSavedAssessmentsModal}
   size="lg"
@@ -565,7 +610,7 @@
       <Input
         type="number"
         name="time-limit"
-        placeholder="Enter time limit"
+        placeholder="limit"
         bind:value={timeLimit}
       />
     </Label>
@@ -764,5 +809,29 @@
   .separator {
     height: 1px;
     background-color: var(--text);
+  }
+
+  .assessment-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    & > div {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    & input[type="checkbox"] {
+      width: 1rem;
+      height: 1rem;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      background-color: var(--background);
+      color: var(--text);
+      &:checked {
+        background-color: var(--accent);
+      }
+    }
   }
 </style>

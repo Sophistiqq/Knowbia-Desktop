@@ -21,15 +21,19 @@ let students = {};
 
 // Function to load students from the JSON file
 function loadStudents() {
-  if (fs.existsSync(studentDataFile)) {
-    const data = fs.readFileSync(studentDataFile, 'utf-8');
-    students = JSON.parse(data);
+  try {
+    if (fs.existsSync(studentDataFile)) {
+      const data = fs.readFileSync(studentDataFile, 'utf-8');
+      students = JSON.parse(data);
+    }
+  } catch (error) {
+    console.error("Failed to load student data", error);
   }
 }
 
 // Function to store student data in the JSON file
 function saveStudentData(student) {
-  const { studentNumber, email, firstName, lastName, section } = student;
+  const { studentNumber, email, firstName, lastName, section, password } = student; // Include password
 
   if (students[studentNumber]) {
     return { success: false, message: "Student already registered" };
@@ -42,12 +46,36 @@ function saveStudentData(student) {
     firstName,
     lastName,
     section,
+    password, // Store the password
   };
 
   // Save to JSON file
-  fs.writeFileSync(studentDataFile, JSON.stringify(students, null, 2));
+  try {
+    fs.writeFileSync(studentDataFile, JSON.stringify(students, null, 2));
+  } catch (error) {
+    console.error("Failed to save student data", error);
+  }
 
   return { success: true, message: "Student registered successfully" };
+}
+
+// Function to retrieve a student by student number
+function getStudent(studentNumber) {
+  return students[studentNumber] || null; // Return student data or null if not found
+}
+
+// Function to clear all student data
+function clearAllStudents() {
+  // Clear the in-memory object
+  students = {};
+
+  // Clear the JSON file
+  try {
+    fs.writeFileSync(studentDataFile, JSON.stringify(students, null, 2));
+    console.log("All student data cleared successfully.");
+  } catch (error) {
+    console.error("Failed to clear student data", error);
+  }
 }
 
 function createWindow() {
@@ -84,7 +112,6 @@ function createWindow() {
 // Electron app ready
 app.whenReady().then(() => {
   electronApp.setAppUserModelId("com.electron");
-
   // Load existing students
   loadStudents();
 
@@ -139,6 +166,31 @@ app.whenReady().then(() => {
             if (data.data) {
               const result = saveStudentData(data.data);
               ws.send(JSON.stringify({ type: 'registerResponse', result }));
+            }
+            break;
+
+          case "login":
+            if (data.loginData) {
+              const { studentNumber, password } = data.loginData;
+              console.log("Attempting login for studentNumber:", studentNumber); // Debug log
+              const student = getStudent(studentNumber); // Use the new function to retrieve student data
+
+              if (student) {
+                console.log("Student found:", student); // Debug log
+                if (student.password === password) {
+                  // If student exists and password matches
+                  console.log("Login successful for studentNumber:", studentNumber); // Debug log
+                  ws.send(JSON.stringify({ type: "loginResponse", success: true, message: "Login successful" }));
+                } else {
+                  console.log("Incorrect password for studentNumber:", studentNumber); // Debug log
+                  // If student does not exist or password is incorrect
+                  ws.send(JSON.stringify({ type: "loginResponse", success: false, message: "Invalid credentials" }));
+                }
+              } else {
+                console.log("Student not found for studentNumber:", studentNumber); // Debug log
+                // If student does not exist
+                ws.send(JSON.stringify({ type: "loginResponse", success: false, message: "Invalid credentials" }));
+              }
             }
             break;
 
