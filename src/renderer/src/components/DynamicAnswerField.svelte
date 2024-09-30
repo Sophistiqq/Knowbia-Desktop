@@ -251,6 +251,12 @@
     background-color: var(--background);
   }
 
+  input[type="date"],
+  input[type="time"] {
+    background-color: var(--background);
+    color: var(--text);
+  }
+
   .option-item input[type="text"] {
     flex-grow: 1;
     background-color: var(--background);

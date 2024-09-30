@@ -1,10 +1,10 @@
 <script lang="ts">
   export let students: Array<{
-    id: number;
-    student_number: string;
-    firstname: string;
-    lastname: string;
+    studentNumber: string;
+    firstName: string;
+    lastName: string;
     email: string;
+    section: string;
   }> = []; // Accept students array as a prop
   export let onStudentClick; // Function to handle row clicks
 
@@ -49,13 +49,13 @@
     </tr>
   </thead>
   <tbody>
-    {#each students as student (student.id)}
+    {#each students as student (student)}
       <tr on:click={() => onStudentClick(student)}>
-        <td>{student.id}</td>
-        <td>{student.student_number}</td>
-        <td>{student.firstname}</td>
-        <td>{student.lastname}</td>
+        <td>{student.studentNumber}</td>
+        <td>{student.firstName}</td>
+        <td>{student.lastName}</td>
         <td>{student.email}</td>
+        <td>{student.section}</td>
         <td>
           <button on:click={() => onStudentClick(student)}>View Details</button>
         </td>
