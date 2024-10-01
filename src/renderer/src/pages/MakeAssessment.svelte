@@ -59,6 +59,88 @@
   onMount(() => {
     loadFromLocalStorage();
     loadSavedAssessments();
+    initializeWebSocket();
+    initializeQuillEditor();
+  });
+
+  // ---------- Distribute Assessment Functions -----------
+  function initializeWebSocket() {
+    socket = new WebSocket("ws://10.0.23.245:8080/ws");
+
+    socket.onopen = function () {
+      console.log("WebSocket is open now.");
+      showToast("WebSocket connection established", "success");
+    };
+
+    socket.onmessage = function (event) {
+      console.log(`Message from server: ${event.data}`);
+    };
+
+    socket.onclose = function () {
+      console.log("WebSocket is closed now.");
+      showToast("WebSocket connection closed", "error");
+    };
+
+    socket.onerror = function (error) {
+      console.error("WebSocket error:", error);
+      showToast("WebSocket connection error", "error");
+    };
+  }
+
+  function distributeAssessment() {
+    // Shuffle questions if the shuffleQuestions toggle is true
+    let distributedQuestions = [...questions];
+    if (shuffleQuestions) {
+      distributedQuestions = distributedQuestions.sort(
+        () => Math.random() - 0.5,
+      );
+    }
+
+    // Shuffle answers for each question if the shuffleAnswers toggle is true
+    if (shuffleAnswers) {
+      distributedQuestions = distributedQuestions.map((question) => {
+        if (question.options && question.options.length > 0) {
+          const shuffledOptions = [...question.options].sort(
+            () => Math.random() - 0.5,
+          );
+          return { ...question, options: shuffledOptions };
+        }
+        return question;
+      });
+    }
+
+    const assessmentData = {
+      type: "newAssessment",
+      assessment: {
+        title,
+        description,
+        questions: distributedQuestions,
+        timeLimit,
+      },
+    };
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      try {
+        socket.send(JSON.stringify(assessmentData));
+        showToast("Assessment distributed successfully", "success");
+        distributeModal = false; // Close modal after success
+      } catch (error) {
+        console.error("Error sending assessment:", error);
+        showToast(
+          "Failed to distribute assessment. Please try again.",
+          "error",
+        );
+      }
+    } else {
+      showToast(
+        "Failed to distribute assessment. WebSocket is not open.",
+        "error",
+      );
+    }
+  }
+
+  // Editor config
+  function initializeQuillEditor() {
     quill = new Quill("#editor", {
       theme: "bubble",
       modules: {
@@ -77,22 +159,7 @@
     });
 
     adjustEditorHeight();
-
-    const localHost = window.location.hostname;
-    socket = new WebSocket(`ws://${localHost}:8080`);
-
-    socket.onopen = function () {
-      console.log("WebSocket is open now.");
-    };
-
-    socket.onmessage = function (event: { data: any }) {
-      console.log(`Message from server: ${event.data}`);
-    };
-
-    socket.onclose = function () {
-      console.log("WebSocket is closed now.");
-    };
-  });
+  }
 
   function adjustEditorHeight() {
     const editorContainer = document.querySelector("#editor") as HTMLElement;
@@ -312,48 +379,6 @@
 
   function openDistributeModal() {
     distributeModal = true;
-  }
-
-  function distributeAssessment() {
-    // Shuffle questions if the shuffleQuestions toggle is true
-    let distributedQuestions = [...questions];
-    if (shuffleQuestions) {
-      distributedQuestions = distributedQuestions.sort(
-        () => Math.random() - 0.5,
-      );
-    }
-
-    // Shuffle answers for each question if the shuffleAnswers toggle is true
-    if (shuffleAnswers) {
-      distributedQuestions = distributedQuestions.map((question) => {
-        if (question.options && question.options.length > 0) {
-          const shuffledOptions = [...question.options].sort(
-            () => Math.random() - 0.5,
-          );
-          return { ...question, options: shuffledOptions };
-        }
-        return question;
-      });
-    }
-
-    const assessmentData = {
-      type: "newAssessment",
-      assessment: {
-        title,
-        description,
-        questions: distributedQuestions,
-        timeLimit, // Include the time limit
-      },
-    };
-
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify(assessmentData));
-      showToast("Assessment distributed successfully", "success");
-    } else {
-      showToast("Failed to distribute assessment", "error");
-    }
-
-    distributeModal = false;
   }
 </script>
 
