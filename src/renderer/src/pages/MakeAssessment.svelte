@@ -79,6 +79,7 @@
     socket.onclose = function () {
       console.log("WebSocket is closed now.");
       showToast("WebSocket connection closed", "error");
+      // Optional: Implement reconnection logic here
     };
 
     socket.onerror = function (error) {
