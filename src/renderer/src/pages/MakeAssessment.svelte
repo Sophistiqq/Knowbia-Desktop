@@ -65,7 +65,9 @@
 
   // ---------- Distribute Assessment Functions -----------
   function initializeWebSocket() {
-    socket = new WebSocket("ws://10.0.23.245:8080/ws");
+    let ip = window.location.hostname;
+    console.log("Connecting to WebSocket at:", ip);
+    socket = new WebSocket(`ws://${ip}:8080/ws`);
 
     socket.onopen = function () {
       console.log("WebSocket is open now.");
