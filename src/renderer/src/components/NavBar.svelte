@@ -52,13 +52,6 @@
         >Dashboard here, I swear, it isn't here!</Tooltip
       >
 
-      <button on:click={() => handleNavigation("classes")} id="classes">
-        <BookOutline class="w-10 h-10" />
-        <span class="text {sidebarHidden ? 'hidden' : ''}">Classes</span>
-      </button>
-      <Tooltip triggeredBy="#classes" placement="right"
-        >Manage Classes here, control freak.</Tooltip
-      >
 
       <!-- Saved Assessments Page -->
       <button
@@ -95,14 +88,6 @@
         >Student's Info. See them here, and all their secrets.</Tooltip
       >
 
-      <button
-        on:click={() => handleNavigation("host-assessment")}
-        id="host-assessment"
-      >
-        <ShareAllSolid class="w-10 h-10" />
-        <span class="text {sidebarHidden ? 'hidden' : ''}">Host Assessment</span
-        >
-      </button>
       <Tooltip triggeredBy="#host-assessment" placement="right"
         >Host Assessment. Think again, do you actually want to do this?</Tooltip
       >

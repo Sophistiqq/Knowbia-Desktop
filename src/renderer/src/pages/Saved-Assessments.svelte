@@ -67,11 +67,13 @@
         <div class="assessment-controls">
           <button
             class="description-toggle"
+            style="color: var(--text)"
             on:click={() => toggleDescription(index)}
           >
             {expandedStates[index] ? "Show Less" : "Show More"}
           </button>
           <button class="host" on:click={() => alert("Host")}> Host </button>
+          <button>Save as File</button>
         </div>
       </div>
     {/each}
@@ -144,5 +146,10 @@
     height: 1px;
     background: var(--text);
     margin-block: 1rem;
+  }
+  .assessment-controls {
+    display: flex;
+    justify-content: space-around;
+
   }
 </style>
