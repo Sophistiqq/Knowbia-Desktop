@@ -142,6 +142,9 @@
     }
   }
 
+
+  setInterval(initializeWebSocket, 30000); // Send a ping every 30 seconds
+
   // Editor config
   function initializeQuillEditor() {
     quill = new Quill("#editor", {

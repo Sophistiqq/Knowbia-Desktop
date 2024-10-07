@@ -6,7 +6,7 @@
     email: string;
     section: string;
   }> = []; // Accept students array as a prop
-  export let onStudentClick; // Function to handle row clicks
+  export let onStudentClick: any; // Function to handle row clicks
 
   // State to track sorting
   let sortKey: string = "";
@@ -40,11 +40,11 @@
 <table class="student-table">
   <thead>
     <tr>
-      <th on:click={() => sortBy("id")}>ID</th>
-      <th on:click={() => sortBy("student_number")}>Student Number</th>
-      <th on:click={() => sortBy("firstname")}>First Name</th>
-      <th on:click={() => sortBy("lastname")}>Last Name</th>
+      <th on:click={() => sortBy("studentNumber")}>Student Number</th>
+      <th on:click={() => sortBy("firstName")}>First Name</th>
+      <th on:click={() => sortBy("lastName")}>Last Name</th>
       <th on:click={() => sortBy("email")}>Email</th>
+      <th on:click={() => sortBy("section")}>Section</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -70,26 +70,24 @@
     border-collapse: collapse;
     background: var(--background);
     color: var(--text);
-    border-radius: 1rem;
     backdrop-filter: blur(10px);
   }
 
   thead {
-    background-color: var(--primary);
     color: var(--background);
   }
 
   th,
   td {
     padding: 1rem; /* Increased padding for better spacing */
-    text-align: left;
-    border: 1px solid var(--text);
+    border: 1px solid var(--border);
     cursor: pointer; /* Add cursor pointer to indicate clickable headers */
   }
 
   th {
-    background-color: var(--accent);
-    color: var(--background);
+    text-align: center;
+    background: transparent;
+    color: var(--text);
     transition: background-color 0.3s; /* Smooth transition */
   }
 
@@ -98,19 +96,15 @@
   }
 
   tbody tr:hover {
-    background-color: var(--secondary);
+    background-color: rgba(255,255,255, 0.1);
   }
 
   button {
     color: var(--text);
     border: none;
     padding: 0.5rem 1rem;
-    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
   }
 
-  button:hover {
-    background-color: var(--text);
-  }
 </style>

@@ -17,18 +17,13 @@
 
   // Function to fetch students from the WebSocket
   async function fetchStudents() {
-    const webSocket = new WebSocket("ws://localhost:8080"); // Connect to Electron WebSocket
-
-    webSocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === "STUDENT_DATA") {
-        students = message.data; // Update your local state
-      }
-    };
-
-    webSocket.onopen = () => {
-      webSocket.send(JSON.stringify({ type: "getStudents" })); // Request student data
-    };
+    // fetch students from the teacher route studentsInfo, not websocket
+    const response = await fetch("http://localhost:3000/teacher/studentsInfo");
+    if (response.ok) {
+      students = await response.json();
+    } else {
+      console.error("Failed to fetch students");
+    }
   }
 
   // Modal state
@@ -57,7 +52,7 @@
   class="modal-container"
 >
   {#if selectedStudent}
-    <div class="modal-header">
+    <div class="modal-header text-xl font-bold">
       {selectedStudent.firstName}
       {selectedStudent.lastName}
     </div>

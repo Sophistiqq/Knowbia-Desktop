@@ -29,7 +29,7 @@ body {
     width: 100%;
     height: 100%;
     z-index: -15;
-    animation: move 5s infinite ease-in-out;
+    animation: move 5s infinite cubic-bezier(0.19, 1, 0.22, 1);
   }
   &:hover::before {
     animation-play-state: paused;
@@ -42,7 +42,7 @@ body {
     background-position: 0 0;
   }
   50% {
-    background-position: 200px 200px;
+    background-position: 150px 150px;
   }
   100% {
     background-position: 0 0;
@@ -67,6 +67,7 @@ body {
  /* width */
 ::-webkit-scrollbar {
   width: 2px;
+  height: 5px;
 }
 
 /* Track */
