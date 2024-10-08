@@ -389,7 +389,6 @@
 </script>
 
 <div class="container">
-  <BgDesign />
   <div class="create-quiz">
     <div class="top">
       <h1>Create an Assessment</h1>
@@ -679,18 +678,19 @@
     color: var(--text);
     background-color: white;
     backdrop-filter: blur(4px);
-    border: 3px solid var(--border);
+    border: 3px solid var(--text);
     box-shadow: 4px 6px 0px 0px var(--text);
     border-radius: 0.5rem;
     gap: 1rem;
     & h1 {
       font-size: 2rem;
+      font-weight: bold;
     }
   }
 
   .question-container {
     background-color: white;
-    border: 3px solid var(--border);
+    border: 3px solid var(--text);
     border-radius: 0.5rem;
     box-shadow: 4px 6px 0px 0px var(--text);
     padding: 1.5rem;
@@ -730,6 +730,7 @@
       transition: background-color 0.3s;
       border-radius: 0.3rem;
       cursor: pointer;
+      border: 2px solid var(--border);
       &:hover {
         background-color: var(--accent);
       }
@@ -765,8 +766,12 @@
     cursor: pointer;
     transition: background-color 0.3s;
     font-weight: bold;
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
     &:hover {
-      background-color: var(--primary);
+      box-shadow: none;
+      transform: translate(5px, 7px);
     }
   }
 
@@ -806,9 +811,14 @@
       box-shadow: 5px 7px 0px var(--border);
       border-radius: 0.3rem;
       cursor: pointer;
-      transition: background-color 0.3s;
-      &:hover {
-        background-color: var(--primary);
+      transition:
+        background-color 0.5s,
+        transform 0.5s,
+        box-shadow 0.5s;
+      &:active {
+        background-color: var(--secondary);
+        box-shadow: none;
+        transform: translate(5px, 5px);
       }
     }
   }
@@ -836,9 +846,10 @@
     color: var(--text);
     border-radius: 0.3rem;
     text-align: center;
+    border: 2px solid var(--border);
   }
   .separator {
-    height: 1px;
+    height: 3px;
     background-color: var(--text);
   }
 

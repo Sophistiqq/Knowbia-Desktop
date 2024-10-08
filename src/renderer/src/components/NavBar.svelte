@@ -8,7 +8,6 @@
     AngleLeftOutline,
     AngleRightOutline,
     ChartOutline,
-    ShareAllSolid,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
@@ -47,9 +46,7 @@
         <ChartOutline class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Dashboard</span>
       </button>
-      <Tooltip triggeredBy="#dashboard" placement="right"
-        >Dashboard here, I swear, it isn't here!</Tooltip
-      >
+      <Tooltip triggeredBy="#dashboard" placement="right">Dashboard</Tooltip>
 
       <!-- Saved Assessments Page -->
       <button
@@ -62,7 +59,7 @@
         >
       </button>
       <Tooltip triggeredBy="#saved-assessments" placement="right"
-        >Saved Assessments. You saved them, now delete them!</Tooltip
+        >Saved Assessments</Tooltip
       >
 
       <button on:click={() => handleNavigation("quizzes")} id="quizzes">
@@ -72,7 +69,7 @@
         >
       </button>
       <Tooltip triggeredBy="#quizzes" placement="right"
-        >Create Assessments, Make them suffer!</Tooltip
+        >Create Assessments</Tooltip
       >
 
       <button
@@ -83,11 +80,11 @@
         <span class="text {sidebarHidden ? 'hidden' : ''}">Student's Info</span>
       </button>
       <Tooltip triggeredBy="#studentsInfo" placement="right"
-        >Student's Info. See them here, and all their secrets.</Tooltip
+        >Student's Info</Tooltip
       >
 
       <Tooltip triggeredBy="#host-assessment" placement="right"
-        >Host Assessment. Think again, do you actually want to do this?</Tooltip
+        >Host Assessment</Tooltip
       >
     </div>
   </div>
@@ -141,19 +138,49 @@
   }
   #dashboard {
     background-color: var(--primary);
-    color: var(--background);
+    color: var(--text);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
   }
   #saved-assessments {
     background-color: var(--secondary);
-    color: var(--background);
+    color: var(--text);
+
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
   }
   #quizzes {
-    background-color: var(--border);
-    color: var(--background-2);
+    background-color: var(--accent);
+    color: var(--text);
+
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
   }
   #studentsInfo {
-    background-color: var(--accent-blur);
-    color: var(--background);
+    background-color: var(--background);
+    color: var(--text);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
   }
 
   .text {

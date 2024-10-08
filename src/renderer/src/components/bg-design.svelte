@@ -2,12 +2,7 @@
   import { fly } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
   let colors = [
-    "#DAF5F0",
-    "#B5D2AD",
     "#FDFD96",
-    "#F8D6B3",
-    "#FCDFDF",
-    "#E3DFF2",
     "#A7DBD8",
     "#BAFCA2",
     "#FFDB58",
@@ -31,16 +26,62 @@
   let shapes = [
     { type: "triangle", color: colors[2] },
     { type: "square", color: colors[1] },
-    { type: "circle", color: colors[2] },
+    { type: "rectangle", color: colors[8] },
     { type: "rectangle", color: colors[3] },
     { type: "circle", color: colors[4] },
     { type: "smallBox", color: colors[5] },
     { type: "smallBox", color: colors[6] },
     { type: "smallBox", color: colors[7] },
-    { type: "rectangle", color: colors[8] },
+    { type: "circle", color: colors[15] },
     { type: "triangle", color: colors[9] },
-    { type: "circle", color: colors[10] },
+    { type: "smallBox", color: colors[18] },
     { type: "square", color: colors[11] },
+    { type: "hollowTriangle", color: colors[12] },
+    { type: "triangle", color: colors[13] },
+    { type: "rectangle", color: colors[14] },
+    { type: "star-five", color: colors[2] },
+    { type: "smallBox", color: colors[16] },
+    { type: "smallBox", color: colors[17] },
+    { type: "smallBox", color: colors[8] },
+    { type: "rectangle", color: colors[19] },
+    { type: "triangle", color: colors[0] },
+    { type: "circle", color: colors[1] },
+    { type: "square", color: colors[2] },
+    { type: "hollowTriangle", color: colors[3] },
+    { type: "triangle", color: colors[4] },
+    { type: "rectangle", color: colors[5] },
+    { type: "circle", color: colors[6] },
+    { type: "smallBox", color: colors[7] },
+    { type: "star-five", color: colors[7] },
+    { type: "smallBox", color: colors[9] },
+    { type: "rectangle", color: colors[10] },
+    { type: "triangle", color: colors[11] },
+    { type: "circle", color: colors[12] },
+    { type: "square", color: colors[13] },
+    { type: "hollowTriangle", color: colors[14] },
+    { type: "triangle", color: colors[15] },
+    { type: "rectangle", color: colors[16] },
+    { type: "circle", color: colors[17] },
+    { type: "smallBox", color: colors[18] },
+    { type: "smallBox", color: colors[19] },
+    { type: "smallBox", color: colors[0] },
+    { type: "rectangle", color: colors[1] },
+    { type: "triangle", color: colors[2] },
+    { type: "circle", color: colors[3] },
+    { type: "square", color: colors[4] },
+    { type: "hollowTriangle", color: colors[5] },
+    { type: "triangle", color: colors[6] },
+    { type: "rectangle", color: colors[7] },
+    { type: "circle", color: colors[8] },
+    { type: "smallBox", color: colors[9] },
+    { type: "smallBox", color: colors[10] },
+    { type: "smallBox", color: colors[11] },
+    { type: "rectangle", color: colors[12] },
+    { type: "triangle", color: colors[13] },
+    { type: "circle", color: colors[14] },
+    { type: "square", color: colors[3] },
+    { type: "grids", color: colors[4] },
+    { type: "star-five", color: colors[5] },
   ];
 
   function getRandomPosition() {
@@ -99,6 +140,24 @@
         style="top: {shape.top}; left: {shape.left}; --color: {shape.color}; --duration: {shape.duration}; --distance: {shape.distance}; --direction: {shape.direction};"
       ></div>
     {/if}
+    {#if shape.type === "hollowTriangle"}
+      <div
+        class="hollowTriangle animate"
+        style="top: {shape.top}; left: {shape.left}; --color: {shape.color}; --duration: {shape.duration}; --distance: {shape.distance}; --direction: {shape.direction};"
+      ></div>
+    {/if}
+    {#if shape.type === "grids"}
+      <div
+        class="grids"
+        style="top: {shape.top}; left: {shape.left}; --color: {shape.color}; --duration: {shape.duration}; --distance: {shape.distance}; --direction: {shape.direction};"
+      ></div>
+    {/if}
+    {#if shape.type === "star-five"}
+      <div
+        id="star-five"
+        style="top: {shape.top}; left: {shape.left}; --color: {shape.color}; --duration: {shape.duration}; --distance: {shape.distance}; --direction: {shape.direction};"
+      ></div>
+    {/if}
   {/each}
 </div>
 
@@ -154,6 +213,62 @@
     background-color: var(--color);
     border: 3px solid var(--border);
     position: absolute;
+  }
+  .hollowTriangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 75px solid transparent;
+    position: absolute;
+    border-top: 75px solid var(--color);
+  }
+  .grids {
+    width: 200px;
+    height: 200px;
+    background-color: var(--color);
+    position: absolute;
+    border: 3px solid var(--border);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  }
+  #star-five {
+    margin: 50px 0;
+    position: relative;
+    display: block;
+    color: red;
+    width: 0px;
+    height: 0px;
+    border-right: 100px solid transparent;
+    border-bottom: 70px solid var(--color);
+    border-left: 100px solid transparent;
+    transform: rotate(35deg);
+  }
+  #star-five:before {
+    border-bottom: 80px solid var(--color);
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    position: absolute;
+    height: 0;
+    width: 0;
+    top: -45px;
+    left: -65px;
+    display: block;
+    content: "";
+    transform: rotate(-35deg);
+  }
+  #star-five:after {
+    position: absolute;
+    display: block;
+    color: red;
+    top: 3px;
+    left: -105px;
+    width: 0px;
+    height: 0px;
+    border-right: 100px solid transparent;
+    border-bottom: 70px solid var(--color);
+    border-left: 100px solid transparent;
+    transform: rotate(-70deg);
+    content: "";
   }
 
   /* Animations */

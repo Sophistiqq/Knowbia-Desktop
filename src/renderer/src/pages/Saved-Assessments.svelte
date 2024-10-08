@@ -47,7 +47,6 @@
 </script>
 
 <div class="container">
-  <BgDesign />
   <h1>Saved Assessments</h1>
 
   <div class="saved-assessments">
@@ -90,6 +89,12 @@
       color: var(--text);
       font-size: 1.5rem;
       font-weight: bold;
+      background: var(--secondary);
+      width: fit-content;
+      padding: 1rem;
+      border: 2px solid var(--text);
+      border-radius: 0.5rem;
+      box-shadow: 6px 8px 0px 0px var(--border);
     }
   }
   .saved-assessments {

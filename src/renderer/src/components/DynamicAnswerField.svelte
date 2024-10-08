@@ -143,7 +143,7 @@
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
       {/each}
-      <button on:click={addOption}>Add Option</button>
+      <button class="add-option-btn" on:click={addOption}>Add Option</button>
     </div>
   {/if}
 
@@ -170,7 +170,7 @@
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
       {/each}
-      <button on:click={addOption}>Add Option</button>
+      <button class="add-option-btn" on:click={addOption}>Add Option</button>
     </div>
   {/if}
 
@@ -197,7 +197,7 @@
           <button on:click={() => removeOption(optIndex)}>Remove</button>
         </div>
       {/each}
-      <button on:click={addOption}>Add Option</button>
+      <button class="add-option-btn" on:click={addOption}>Add Option</button>
     </div>
   {/if}
 
@@ -277,6 +277,17 @@
     padding: 0.3rem 0.6rem;
     border-radius: 0.3rem;
     cursor: pointer;
+    transition:
+      background-color 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
+    &:hover {
+      background-color: var(--primary);
+    }
+    &:active {
+      transform: translate(4px, 3px);
+      box-shadow: none;
+    }
   }
 
   button {
@@ -289,6 +300,25 @@
 
   button:hover {
     background-color: var(--secondary);
+  }
+
+  .add-option-btn {
+    border: 2px solid var(--text);
+    color: var(--text);
+    box-shadow: 4px 3px 0px 0px var(--border);
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    transition:
+      background-color 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
+    &:hover {
+      background-color: var(--primary);
+    }
+    &:active {
+      transform: translate(4px, 3px);
+      box-shadow: none;
+    }
   }
 
   .separator {

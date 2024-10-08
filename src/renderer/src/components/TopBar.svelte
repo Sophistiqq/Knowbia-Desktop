@@ -54,6 +54,7 @@
   .dropdown {
     display: none;
     position: absolute;
+    z-index: 1;
     top: 4rem;
     padding: 1rem;
     right: 2rem;

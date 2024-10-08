@@ -294,7 +294,7 @@
       background-color 0.5s,
       transform 0.5s,
       box-shadow 0.5s;
-    &:hover {
+    &:active {
       background-color: var(--secondary);
       box-shadow: none;
       transform: translate(5px, 5px);
