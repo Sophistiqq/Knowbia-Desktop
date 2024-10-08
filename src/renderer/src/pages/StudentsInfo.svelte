@@ -2,6 +2,7 @@
   import CustomTable from "../components/StudentTable.svelte"; // Import the custom table component
   import { Modal, Button } from "flowbite-svelte";
   import { onMount } from "svelte";
+  import BgDesign from "../components/bg-design.svelte";
 
   // Define Student type
   type Student = {
@@ -40,6 +41,8 @@
     fetchStudents();
   });
 </script>
+
+<BgDesign />
 
 <div class="table-container">
   <CustomTable {students} onStudentClick={openModal} />

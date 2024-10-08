@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { TrashBinSolid } from "flowbite-svelte-icons";
   import { Tooltip } from "flowbite-svelte";
+  import BgDesign from "../components/bg-design.svelte";
 
   type Assessment = {
     title: string;
@@ -46,6 +47,7 @@
 </script>
 
 <div class="container">
+  <BgDesign />
   <h1>Saved Assessments</h1>
 
   <div class="saved-assessments">
@@ -93,16 +95,16 @@
   .saved-assessments {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2rem;
   }
   .assessment-card {
     padding: 1.5rem;
     color: var(--text);
-    background: transparent;
-    border: 1px solid var(--border);
+    background: white;
+    border: 2px solid var(--text);
     backdrop-filter: blur(4px);
     border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 6px 8px 0px 0px var(--border);
     & .description {
       height: 2.5rem;
       overflow-y: auto; /* Prevent scroll when collapsed */
@@ -122,14 +124,6 @@
     height: auto !important; /* Allow auto height when expanded */
   }
 
-  .description-toggle {
-    margin-top: 0.5rem;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.3rem;
-    cursor: pointer;
-  }
   .delete {
     background: none;
     border: none;
@@ -150,6 +144,12 @@
   .assessment-controls {
     display: flex;
     justify-content: space-around;
-
+    & button {
+      padding: 0.5rem 1rem;
+      background-color: var(--background);
+      border-radius: 0.2rem;
+      border: 1px solid var(--text);
+      box-shadow: 4px 4px 0px var(--border);
+    }
   }
 </style>

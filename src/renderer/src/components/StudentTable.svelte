@@ -54,7 +54,7 @@
         <td>{student.studentNumber}</td>
         <td>{student.firstName}</td>
         <td>{student.lastName}</td>
-        <td>{student.email}</td>
+        <td class="email">{student.email}</td>
         <td>{student.section}</td>
         <td>
           <button on:click={() => onStudentClick(student)}>View Details</button>
@@ -70,11 +70,13 @@
     border-collapse: collapse;
     background: var(--background);
     color: var(--text);
+    font-size: 90%;
     backdrop-filter: blur(10px);
   }
 
   thead {
-    color: var(--background);
+    color: var(--secondary);
+    background-color: var(--accent);
   }
 
   th,
@@ -82,6 +84,21 @@
     padding: 1rem; /* Increased padding for better spacing */
     border: 1px solid var(--border);
     cursor: pointer; /* Add cursor pointer to indicate clickable headers */
+  }
+
+  td {
+    background-color: var(--background-2);
+    padding: 1rem;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-wrap: wrap; /* Ensure text wraps */
+  }
+
+  td.email {
+    max-width: 200px; /* Adjust this value as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   th {
@@ -96,15 +113,13 @@
   }
 
   tbody tr:hover {
-    background-color: rgba(255,255,255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   button {
     color: var(--text);
     border: none;
-    padding: 0.5rem 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
   }
-
 </style>

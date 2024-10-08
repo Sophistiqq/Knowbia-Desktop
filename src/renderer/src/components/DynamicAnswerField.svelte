@@ -227,13 +227,17 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    & input {
+      margin-block: 0.5rem;
+      border: 2px solid var(--text);
+      box-shadow: 4px 4px 0px var(--border);
+    }
   }
 
   .short-answer,
   .paragraph {
     padding: 0.5rem;
     color: var(--text);
-    background-color: var(--background);
     border-radius: 0.3rem;
     resize: none;
   }
@@ -248,20 +252,17 @@
   .option-item input[type="radio"],
   .option-item input[type="checkbox"] {
     width: 1rem;
-    background-color: var(--background);
   }
 
   input[type="date"],
   input[type="time"] {
-    background-color: var(--background);
     color: var(--text);
   }
 
   .option-item input[type="text"] {
     flex-grow: 1;
-    background-color: var(--background);
     color: var(--text);
-    border: none;
+    box-shadow: 4px 3px 0px 0px var(--border);
     padding: 0.5rem;
     border-radius: 0.3rem;
     overflow: hidden;
@@ -269,21 +270,17 @@
   }
 
   .option-item button {
-    background-color: red;
+    border: 3px solid var(--border);
+    background-color: var(--secondary);
+    box-shadow: 4px 3px 0px 0px var(--border);
     color: white;
-    border: none;
     padding: 0.3rem 0.6rem;
     border-radius: 0.3rem;
     cursor: pointer;
   }
 
-  .option-item button:hover {
-    background-color: darkred;
-  }
-
   button {
     padding: 0.4rem 0.8rem;
-    border: none;
     background-color: var(--primary);
     color: white;
     cursor: pointer;

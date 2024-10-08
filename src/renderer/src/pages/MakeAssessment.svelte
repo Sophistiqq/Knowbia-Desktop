@@ -12,6 +12,7 @@
   import { debounce } from "../utils/debounce";
   import Quill from "quill";
   import "quill/dist/quill.bubble.css";
+  import BgDesign from "../components/bg-design.svelte";
   let socket: WebSocket;
   export let formModal = false;
 
@@ -141,7 +142,6 @@
       );
     }
   }
-
 
   setInterval(initializeWebSocket, 30000); // Send a ping every 30 seconds
 
@@ -389,6 +389,7 @@
 </script>
 
 <div class="container">
+  <BgDesign />
   <div class="create-quiz">
     <div class="top">
       <h1>Create an Assessment</h1>
@@ -410,7 +411,7 @@
       on:input={handleTitleInput}
       style="overflow: hidden; resize: none; border: 1px solid var(--border)"
     ></textarea>
-    <h2>Description</h2>
+    <h2 class="font-bold">Description</h2>
     <div class="editor-wrapper">
       <div id="editor" style="height: auto;"></div>
     </div>
@@ -641,7 +642,7 @@
       <Input
         type="number"
         name="time-limit"
-        placeholder="limit"
+        placeholder="60 Minutes"
         bind:value={timeLimit}
       />
     </Label>
@@ -676,9 +677,10 @@
     flex-direction: column;
     padding: 1.5rem;
     color: var(--text);
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: white;
     backdrop-filter: blur(4px);
-    border: 1px solid var(--border);
+    border: 3px solid var(--border);
+    box-shadow: 4px 6px 0px 0px var(--text);
     border-radius: 0.5rem;
     gap: 1rem;
     & h1 {
@@ -687,10 +689,10 @@
   }
 
   .question-container {
-    background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(4px);
-    border: 1px solid var(--border);
+    background-color: white;
+    border: 3px solid var(--border);
     border-radius: 0.5rem;
+    box-shadow: 4px 6px 0px 0px var(--text);
     padding: 1.5rem;
     margin-bottom: 1rem;
   }
@@ -700,15 +702,15 @@
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
-    font-weight: bold;
   }
 
   textarea {
     padding: 0.5rem;
     width: 100%;
-    border: none;
+    border: 2px solid var(--text);
+    box-shadow: 4px 3px 0px 0px var(--border);
+    margin-bottom: 0.5rem;
     border-radius: 0.3rem;
-    background-color: var(--background);
     color: var(--text);
     transition: border-bottom 0.3s;
     min-height: 2rem;
@@ -724,7 +726,6 @@
     & button {
       padding: 0.3rem 0.5rem;
       border: none;
-      background-color: var(--background);
       color: var(--text);
       transition: background-color 0.3s;
       border-radius: 0.3rem;
@@ -747,7 +748,6 @@
       border: none;
       outline: none;
       cursor: pointer;
-      background-color: var(--background);
       color: var(--text);
       &:checked {
         background-color: var(--accent);
@@ -757,16 +757,16 @@
 
   .add-question {
     padding: 0.5rem 1rem;
-    background-color: var(--border);
+    background-color: var(--accent);
+    box-shadow: 5px 7px 0px var(--border);
     color: var(--text);
-    border: none;
+    border: 2px solid var(--text);
     border-radius: 0.3rem;
     cursor: pointer;
     transition: background-color 0.3s;
     font-weight: bold;
     &:hover {
       background-color: var(--primary);
-      color: var(--background);
     }
   }
 
@@ -774,11 +774,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 2px solid var(--text);
+    box-shadow: 4px 3px 0px 0px var(--border);
     gap: 1rem;
-    background-color: var(--background);
     color: var(--text);
-    border: none;
-    border-bottom: 3px solid var(--border);
+    border: 2px solid var(--text);
     border-radius: 0.3rem;
   }
 
@@ -802,7 +802,8 @@
       background-color: var(--secondary);
       color: var(--text);
       font-weight: bold;
-      border: none;
+      border: 2px solid var(--text);
+      box-shadow: 5px 7px 0px var(--border);
       border-radius: 0.3rem;
       cursor: pointer;
       transition: background-color 0.3s;
@@ -819,8 +820,7 @@
   }
 
   .editor-wrapper {
-    border: 1px solid var(--border);
-    background-color: var(--background);
+    border: 2px solid var(--border);
     border-radius: 0.3rem;
     height: auto;
   }
@@ -855,10 +855,9 @@
     & input[type="checkbox"] {
       width: 1rem;
       height: 1rem;
-      border: none;
+      border: 2px solid var(--border);
       outline: none;
       cursor: pointer;
-      background-color: var(--background);
       color: var(--text);
       &:checked {
         background-color: var(--accent);

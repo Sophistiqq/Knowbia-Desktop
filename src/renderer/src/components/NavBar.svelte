@@ -4,7 +4,6 @@
   import {
     GridOutline,
     FilePenOutline,
-    BookOutline,
     UsersGroupOutline,
     AngleLeftOutline,
     AngleRightOutline,
@@ -51,7 +50,6 @@
       <Tooltip triggeredBy="#dashboard" placement="right"
         >Dashboard here, I swear, it isn't here!</Tooltip
       >
-
 
       <!-- Saved Assessments Page -->
       <button
@@ -117,38 +115,47 @@
     height: calc(100vh - 4rem);
     color: var(--text);
     z-index: 50;
-    width: 17rem; /* Full width when expanded */
+    width: 22rem; /* Full width when expanded */
     transition: width 0.3s ease-in-out; /* Smooth transition for width */
     white-space: nowrap;
   }
   .collapsed {
-    width: 5.6rem; /* Collapsed width */
+    width: 6rem; /* Collapsed width */
   }
   .navigation-buttons {
     display: flex;
     flex-direction: column;
     gap: 1rem;
   }
+
   button {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 0.5rem;
     border-radius: 0.5rem;
-    color: var(--text);
-    font-weight: 600;
-    backdrop-filter: blur(2px);
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid var(--border);
+    font-weight: 400;
+    border: 3px solid var(--border);
+    box-shadow: 5px 7px 0px 0px var(--text);
     cursor: pointer;
-    &:hover {
-      border-color: var(--primary);
-      background-color: rgba(255, 255, 255, 0.1);
-    }
-    &:active {
-      background-color: var(--accent-blur);
-    }
   }
+  #dashboard {
+    background-color: var(--primary);
+    color: var(--background);
+  }
+  #saved-assessments {
+    background-color: var(--secondary);
+    color: var(--background);
+  }
+  #quizzes {
+    background-color: var(--border);
+    color: var(--background-2);
+  }
+  #studentsInfo {
+    background-color: var(--accent-blur);
+    color: var(--background);
+  }
+
   .text {
     transition: opacity 0.3s ease;
   }

@@ -414,7 +414,7 @@
 <style lang="scss">
   .container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     flex-direction: row;
     align-items: center;
     min-height: 100vh;
@@ -436,17 +436,20 @@
     }
   }
   .register-form {
-    background: var(--background);
+    color: var(--text);
+    background: var(--background-2);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     display: flex;
+    border: 2px solid var(--text);
     flex-direction: column;
     justify-content: center;
+    border-radius: 1rem;
     height: 100vh;
     width: 60vw;
     max-width: 600px;
     padding: 5rem;
-    box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 6px 0px 0px var(--text);
     gap: 0.5rem;
     & label {
       color: var(--text);
@@ -462,50 +465,63 @@
 
   .input_fields {
     display: flex;
+    color: var(--text);
     flex-direction: column;
     gap: 0.5rem;
+    & label {
+      font-size: 1.2rem;
+      color: var(--text);
+    }
     .inputs {
       display: flex;
       justify-content: space-between;
       align-items: center;
       color: var(--text);
-      border: 1px solid #ccc;
+      border: 2px solid var(--text);
+      box-shadow: 5px 5px 0 1px var(--text);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
-      width: 100%;
       gap: 0.5rem;
-      input {
+      & button {
+        border: none;
+        cursor: pointer;
+      }
+      & input {
+        outline: none;
         margin-left: 0.3rem;
         flex-grow: 1;
-        background: none;
+        color: var(--text);
+        background: transparent;
         padding: 0.5rem;
         border: none;
-        border-left: 1px solid var(--background);
+        border-left: 1px solid var(--border);
         &:focus {
           outline: none;
         }
-      }
-      button {
-        background: none;
-        border: none;
-        cursor: pointer;
       }
     }
   }
 
   #nextButton,
   #registerButton {
-    background-color: var(--primary);
-    color: var(--background);
+    background-color: var(--accent);
+    margin-top: 2rem;
+    color: var(--text);
     border: none;
+    box-shadow: 5px 5px 0 1px var(--text);
+    font-weight: 500;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    margin-top: 1rem;
-    transition: all 0.3s;
+    transition:
+      background-color 0.5s,
+      transform 0.5s,
+      box-shadow 0.5s;
     &:hover {
-      background-color: var(--accent);
+      background-color: var(--secondary);
+      box-shadow: none;
+      transform: translate(5px, 5px);
     }
   }
 
@@ -528,18 +544,23 @@
   }
 
   #backButton {
-    background: var(--secondary);
-    color: white;
+    background: var(--primary);
+    margin-top: 2rem;
+    color: var(--text);
     border: none;
+    box-shadow: 5px 5px 0 1px var(--text);
+    font-weight: 500;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    margin-top: 1rem;
-    opacity: 0.7;
-    transition: all 0.3s;
+    transition:
+      background-color 0.5s,
+      transform 0.5s,
+      box-shadow 0.5s;
     &:hover {
-      opacity: 1;
-      background-color: var(--accent);
+      background-color: var(--secondary);
+      box-shadow: none;
+      transform: translate(5px, 5px);
     }
   }
   #security_question {
@@ -561,7 +582,7 @@
     color: var(--text);
     &:hover {
       text-decoration: underline;
-      color: var(--accent);
+      color: var(--secondary);
     }
   }
 </style>

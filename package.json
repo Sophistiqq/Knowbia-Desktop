@@ -21,6 +21,9 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
+    "@fontsource/archivo": "^5.1.0",
+    "@fontsource/lexend": "^5.1.1",
+    "@fontsource/lexend-mega": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",
     "@types/quill": "^2.0.14",
     "bits-ui": "^0.21.15",

@@ -3,6 +3,7 @@
   import Main from "./pages/Main.svelte";
   import { login, checkAuth } from "./scripts/auth";
   import { Icon } from "svelte-icons-pack";
+  import BgDesign from "./components/bg-design.svelte";
   import {
     FaSolidUser,
     FaSolidKey,
@@ -12,7 +13,7 @@
   import Register from "./pages/Register.svelte";
   import { fly } from "svelte/transition";
   import { cubicInOut, cubicOut } from "svelte/easing";
-  import { DarkMode, Toast } from "flowbite-svelte";
+  import { Toast } from "flowbite-svelte";
   import { SunSolid, MoonSolid, CloseCircleSolid } from "flowbite-svelte-icons";
   import "./assets/main.css";
 
@@ -52,7 +53,7 @@
     }
 
     showRegisterPage = JSON.parse(
-      localStorage.getItem("showRegisterPage") || "false"
+      localStorage.getItem("showRegisterPage") || "false",
     );
     loading = false;
   });
@@ -103,7 +104,9 @@
   let showPassword = false;
   function togglePasswordVisibility() {
     showPassword = !showPassword;
-    const passwordInput = document.getElementById("password") as HTMLInputElement;
+    const passwordInput = document.getElementById(
+      "password",
+    ) as HTMLInputElement;
     if (passwordInput) {
       passwordInput.type = showPassword ? "text" : "password";
     }
@@ -126,13 +129,8 @@
   {#if isAuthenticated}
     <Main {logout} />
   {:else if showRegisterPage}
+    <BgDesign />
     <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
-      <DarkMode
-        class="fixed top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
-      >
-        <SunSolid slot="lightIcon" color="yellow" />
-        <MoonSolid slot="darkIcon" />
-      </DarkMode>
       <Register onBackToLogin={togglePage} />
     </div>
   {:else}
@@ -140,25 +138,15 @@
       class="container"
       transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
     >
+      <BgDesign />
       <div class="login-form">
-        <DarkMode
-          class="absolute top-5 left-5 dark:text-primary-600 border dark:border-gray-800 z-50"
-        >
-          <SunSolid slot="lightIcon" color="yellow" />
-          <MoonSolid slot="darkIcon" />
-        </DarkMode>
         <h1>Welcome to Knowbia!</h1>
 
         <div class="input_fields">
           <label for="email">Email</label>
           <div class="inputs">
             <Icon src={FaSolidUser} />
-            <input
-              type="email"
-              id="email"
-              bind:value={email}
-              required
-            />
+            <input type="email" id="email" bind:value={email} required />
           </div>
         </div>
 
@@ -197,25 +185,27 @@
 <style lang="scss">
   .container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     flex-direction: row;
     align-items: center;
     min-height: 100vh;
   }
 
   .login-form {
-    background: var(--background);
     color: var(--text);
+    background: var(--background-2);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     display: flex;
+    border: 2px solid var(--text);
     flex-direction: column;
     justify-content: center;
-    height: 100vh;
+    border-radius: 1rem;
+    height: 70vh;
     width: 60vw;
     max-width: 600px;
     padding: 5rem;
-    box-shadow: 5px 5px 10px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: 4px 6px 0px 0px var(--text);
     gap: 0.5rem;
   }
   .login-form h1 {
@@ -239,7 +229,8 @@
       justify-content: space-between;
       align-items: center;
       color: var(--text);
-      border: 1px solid var(--border);
+      border: 2px solid var(--text);
+      box-shadow: 5px 5px 0 1px var(--text);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
@@ -266,6 +257,7 @@
   .forgot_password {
     display: flex;
     justify-content: flex-end;
+    margin-block: 0.5rem;
     button {
       background: none;
       border: none;
@@ -273,7 +265,7 @@
       color: var(--text);
       transition: color 0.5s;
       &:hover {
-        color: var(--accent);
+        color: var(--secondary);
         text-decoration: underline;
       }
     }
@@ -290,16 +282,22 @@
     }
   }
   #loginButton {
-    background-color: var(--primary);
-    color: var(--background);
+    background-color: var(--accent);
+    color: var(--text);
     border: none;
+    box-shadow: 5px 5px 0 1px var(--text);
     font-weight: 500;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.5s;
+    transition:
+      background-color 0.5s,
+      transform 0.5s,
+      box-shadow 0.5s;
     &:hover {
-      background-color: var(--accent);
+      background-color: var(--secondary);
+      box-shadow: none;
+      transform: translate(5px, 5px);
     }
   }
   .separator {
@@ -310,7 +308,7 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: var(--border);
+      background-color: var(--text);
     }
     .or {
       padding: 0.5rem;
@@ -325,7 +323,7 @@
     transition: color 0.5s;
     &:hover {
       text-decoration: underline;
-      color: var(--accent);
+      color: var(--secondary);
     }
   }
 </style>
