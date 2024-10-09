@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { TrashBinSolid } from "flowbite-svelte-icons";
   import { Tooltip } from "flowbite-svelte";
-  import BgDesign from "../components/bg-design.svelte";
 
   type Assessment = {
     title: string;
@@ -83,7 +82,6 @@
 
 <style>
   .container {
-    padding: 1rem;
     & h1 {
       margin-bottom: 1rem;
       color: var(--text);
@@ -101,6 +99,7 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    margin-top: 2rem;
   }
   .assessment-card {
     padding: 1.5rem;

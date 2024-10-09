@@ -101,7 +101,7 @@
   </div>
 </div>
 
-<style lang="scss">
+<style>
   .sidebar {
     position: sticky;
     display: flex;
@@ -135,10 +135,21 @@
     border: 3px solid var(--border);
     box-shadow: 5px 7px 0px 0px var(--text);
     cursor: pointer;
+
   }
+
+  #saved-assessments,
+  #quizzes,
+  #studentsInfo,
+  #dashboard {
+    & span {
+      color: var(--text);
+    }
+  }
+
   #dashboard {
     background-color: var(--primary);
-    color: var(--text);
+    color: var(--border);
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;
@@ -146,10 +157,11 @@
       box-shadow: none;
       transform: translate(5px, 7px);
     }
+
   }
   #saved-assessments {
     background-color: var(--secondary);
-    color: var(--text);
+    color: var(--border);
 
     transition:
       transform 0.3s ease,
@@ -161,7 +173,7 @@
   }
   #quizzes {
     background-color: var(--accent);
-    color: var(--text);
+    color: var(--border);
 
     transition:
       transform 0.3s ease,
@@ -173,7 +185,7 @@
   }
   #studentsInfo {
     background-color: var(--background);
-    color: var(--text);
+    color: var(--border);
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;

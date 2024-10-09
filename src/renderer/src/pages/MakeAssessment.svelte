@@ -408,7 +408,7 @@
       placeholder="Title"
       rows="1"
       on:input={handleTitleInput}
-      style="overflow: hidden; resize: none; border: 1px solid var(--border)"
+      style="overflow: hidden; resize: none; border: 2px solid var(--text)"
     ></textarea>
     <h2 class="font-bold">Description</h2>
     <div class="editor-wrapper">
@@ -631,7 +631,12 @@
   </Toast>
 {/if}
 
-<Modal bind:open={distributeModal} size="md" autoclose={false} class="w-full">
+<Modal
+  bind:open={distributeModal}
+  size="md"
+  autoclose={false}
+  class="w-full border-2 border-[--text] bg-[--background-2]"
+>
   <div class="flex flex-col space-y-6 backdrop-blur-sm">
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
       Set Assessment Options
@@ -642,20 +647,23 @@
         type="number"
         name="time-limit"
         placeholder="60 Minutes"
+        class="border-2 border-[--text]"
         bind:value={timeLimit}
       />
     </Label>
     <div class="flex justify-between">
       <button
         type="button"
-        class="bg-blue-500 text-white px-4 py-2 rounded"
+        class="bg-blue-500 text-white px-4 py-2 rounded border-2 border-[--text]"
+        style="box-shadow: 4px 4px 0px var(--border);"
         on:click={distributeAssessment}
       >
         Distribute Now
       </button>
       <button
         type="button"
-        class="bg-gray-300 text-gray-900 px-4 py-2 rounded"
+        class="bg-[--secondary] text-gray-900 px-4 py-2 rounded"
+        style="box-shadow: 4px 4px 0px var(--border);"
         on:click={() => (distributeModal = false)}
       >
         Close
@@ -664,7 +672,7 @@
   </div>
 </Modal>
 
-<style lang="scss">
+<style>
   .container {
     display: flex;
     flex-direction: column;
@@ -744,9 +752,9 @@
     color: var(--text);
     margin-right: auto;
     & input[type="checkbox"] {
-      width: 1rem;
-      height: 1rem;
-      border: none;
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 2px solid var(--border);
       outline: none;
       cursor: pointer;
       color: var(--text);
@@ -769,7 +777,7 @@
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;
-    &:hover {
+    &:active{
       box-shadow: none;
       transform: translate(5px, 7px);
     }
@@ -830,11 +838,10 @@
   }
 
   .editor-wrapper {
-    border: 2px solid var(--border);
-    border-radius: 0.3rem;
     height: auto;
   }
   .reset-load {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -874,5 +881,10 @@
         background-color: var(--accent);
       }
     }
+  }
+  #editor {
+    border: 2px solid var(--text);
+    border-radius: 0.3rem;
+    box-shadow: 4px 3px 0px 0px var(--border);
   }
 </style>
