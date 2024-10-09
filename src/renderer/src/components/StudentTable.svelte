@@ -64,7 +64,7 @@
   </tbody>
 </table>
 
-<style lang="scss">
+<style>
   .student-table {
     width: 100%;
     border-collapse: collapse;
@@ -82,14 +82,14 @@
   th,
   td {
     padding: 1rem; /* Increased padding for better spacing */
-    border: 1px solid var(--border);
+    border: 3px solid var(--border);
     cursor: pointer; /* Add cursor pointer to indicate clickable headers */
   }
 
   td {
     background-color: var(--background-2);
     padding: 1rem;
-    border: 1px solid var(--border);
+    border: 3px solid var(--border);
     cursor: pointer;
     text-wrap: wrap; /* Ensure text wraps */
   }

@@ -2,7 +2,8 @@
   import CustomTable from "../components/StudentTable.svelte"; // Import the custom table component
   import { Modal, Button } from "flowbite-svelte";
   import { onMount } from "svelte";
-
+  import { slide } from "svelte/transition";
+  import { cubicInOut } from "svelte/easing";
   // Define Student type
   type Student = {
     studentNumber: string;
@@ -41,10 +42,12 @@
   });
 </script>
 
-<div class="table-container">
-  <CustomTable {students} onStudentClick={openModal} />
+<div class="container" transition:slide={{ easing: cubicInOut, duration: 400 }}>
+  <h1>Students Information</h1>
+  <div class="table-container">
+    <CustomTable {students} onStudentClick={openModal} />
+  </div>
 </div>
-
 <Modal
   title="Student Details"
   bind:open={modalOpen}
@@ -66,6 +69,18 @@
 </Modal>
 
 <style>
+  h1 {
+    margin-bottom: 2rem;
+    color: var(--text);
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: var(--background);
+    width: fit-content;
+    padding: 1rem;
+    border: 2px solid var(--text);
+    border-radius: 0.5rem;
+    box-shadow: 6px 8px 0px 0px var(--border);
+  }
   .table-container {
     max-height: 70vh;
     overflow-y: auto;

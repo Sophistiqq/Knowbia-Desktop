@@ -2,6 +2,8 @@
   import { onMount } from "svelte";
   import { TrashBinSolid } from "flowbite-svelte-icons";
   import { Tooltip } from "flowbite-svelte";
+  import { slide } from "svelte/transition";
+  import { cubicInOut } from "svelte/easing";
 
   type Assessment = {
     title: string;
@@ -45,7 +47,7 @@
   }
 </script>
 
-<div class="container">
+<div class="container" transition:slide={{ easing: cubicInOut, delay: 250 }}>
   <h1>Saved Assessments</h1>
 
   <div class="saved-assessments">

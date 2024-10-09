@@ -12,7 +12,8 @@
   import { debounce } from "../utils/debounce";
   import Quill from "quill";
   import "quill/dist/quill.bubble.css";
-  import BgDesign from "../components/bg-design.svelte";
+  import { slide } from "svelte/transition";
+  import { cubicInOut } from "svelte/easing";
   let socket: WebSocket;
   export let formModal = false;
 
@@ -388,7 +389,7 @@
   }
 </script>
 
-<div class="container">
+<div class="container" transition:slide={{ duration: 500, easing: cubicInOut }}>
   <div class="create-quiz">
     <div class="top">
       <h1>Create an Assessment</h1>
@@ -777,7 +778,7 @@
     transition:
       transform 0.3s ease,
       box-shadow 0.3s ease;
-    &:active{
+    &:active {
       box-shadow: none;
       transform: translate(5px, 7px);
     }

@@ -1,10 +1,13 @@
-<script>
+<script lang='ts'>
+  import { slide } from 'svelte/transition';
+  import {cubicInOut} from 'svelte/easing';
+
   let savedAssessments = 145;
 </script>
 
 <h1 id="page-title">Dashboard</h1>
 
-<div class="statistics">
+<div class="statistics" transition:slide={{easing: cubicInOut, delay: 0}}>
   <h4>Statistics</h4>
   <div class="overview-wrapper">
     <div class="total-assessments">
@@ -22,7 +25,7 @@
   </div>
 </div>
 
-<div class="student-activity-overview">
+<div class="student-activity-overview" transition:slide={{easing: cubicInOut, delay: 300}}>
   <h4>Student Activity Overview</h4>
   <div class="overview-wrapper">
     <div class="connected-students">
