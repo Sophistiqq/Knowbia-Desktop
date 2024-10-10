@@ -8,6 +8,8 @@
     AngleLeftOutline,
     AngleRightOutline,
     ChartOutline,
+    GlobeSolid,
+    AdjustmentsVerticalSolid,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
@@ -73,6 +75,19 @@
       >
 
       <button
+        on:click={() => handleNavigation("manageAssessments")}
+        id="manage-assessments"
+      >
+        <AdjustmentsVerticalSolid class="w-10 h-10" />
+        <span class="text {sidebarHidden ? 'hidden' : ''}"
+          >Manage Assessments</span
+        >
+      </button>
+      <Tooltip triggeredBy="#manage-assessments" placement="right"
+        >Manage Assessments</Tooltip
+      >
+
+      <button
         on:click={() => handleNavigation("studentsInfo")}
         id="studentsInfo"
       >
@@ -83,8 +98,11 @@
         >Student's Info</Tooltip
       >
 
-      <Tooltip triggeredBy="#host-assessment" placement="right"
-        >Host Assessment</Tooltip
+      <button on:click={() => handleNavigation("manageData")} id="manage-data">
+        <GlobeSolid class="w-10 h-10" />
+        <span class="text {sidebarHidden ? 'hidden' : ''}">Manage Data</span>
+      </button>
+      <Tooltip triggeredBy="#manage-data" placement="right">Manage Data</Tooltip
       >
     </div>
   </div>
@@ -135,13 +153,14 @@
     border: 3px solid var(--border);
     box-shadow: 5px 7px 0px 0px var(--text);
     cursor: pointer;
-
   }
 
   #saved-assessments,
   #quizzes,
   #studentsInfo,
-  #dashboard {
+  #dashboard,
+  #manage-data,
+  #manage-assessments {
     & span {
       color: var(--text);
     }
@@ -157,7 +176,6 @@
       box-shadow: none;
       transform: translate(5px, 7px);
     }
-
   }
   #saved-assessments {
     background-color: var(--secondary);
@@ -194,6 +212,29 @@
       transform: translate(5px, 7px);
     }
   }
+  #manage-data {
+    background-color: #c4a1ff;
+    color: var(--border);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
+  }
+
+  #manage-assessments {
+    background-color: #ffc0cb;
+    color: var(--border);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease;
+    &:active {
+      box-shadow: none;
+      transform: translate(5px, 7px);
+    }
+  }
 
   .text {
     transition: opacity 0.3s ease;
@@ -206,6 +247,7 @@
   .sidebarControl {
     display: flex;
     position: fixed;
+    background-color: var(--background);
     bottom: 1rem;
     left: 1rem;
   }

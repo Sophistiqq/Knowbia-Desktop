@@ -93,25 +93,14 @@
   }
 
   function distributeAssessment() {
+    // Create a deep copy of the questions
+    let distributedQuestions = JSON.parse(JSON.stringify(questions));
+
     // Shuffle questions if the shuffleQuestions toggle is true
-    let distributedQuestions = [...questions];
     if (shuffleQuestions) {
       distributedQuestions = distributedQuestions.sort(
         () => Math.random() - 0.5,
       );
-    }
-
-    // Shuffle answers for each question if the shuffleAnswers toggle is true
-    if (shuffleAnswers) {
-      distributedQuestions = distributedQuestions.map((question) => {
-        if (question.options && question.options.length > 0) {
-          const shuffledOptions = [...question.options].sort(
-            () => Math.random() - 0.5,
-          );
-          return { ...question, options: shuffledOptions };
-        }
-        return question;
-      });
     }
 
     const assessmentData = {
@@ -148,24 +137,41 @@
 
   // Editor config
   function initializeQuillEditor() {
-    quill = new Quill("#editor", {
-      theme: "bubble",
-      modules: {
-        toolbar: [
-          ["bold", "italic", "underline"],
-          ["link"],
-          [{ list: "ordered" }, { list: "bullet" }],
-        ],
-      },
-    });
+    setTimeout(() => {
+      quill = new Quill("#editor", {
+        theme: "bubble",
+        modules: {
+          toolbar: [
+            ["bold", "italic", "underline"],
+            ["link"],
+            [{ list: "ordered" }, { list: "bullet" }],
+          ],
+        },
+      });
 
-    quill.root.innerHTML = description;
-    quill.on("text-change", () => {
-      description = quill.root.innerHTML;
+      quill.root.innerHTML = description;
+
+      const debouncedAdjustEditorHeight = debounce(adjustEditorHeight, 100);
+      const debouncedSaveDescription = debounce((content: string) => {
+        description = content;
+        saveToLocalStorage();
+      }, 300);
+
+      quill.on("text-change", () => {
+        const content = quill.root.innerHTML;
+        debouncedSaveDescription(content);
+        debouncedAdjustEditorHeight();
+      });
+
       adjustEditorHeight();
-    });
-
-    adjustEditorHeight();
+    }, 0);
+  }
+  function updateQuillContent(content: string) {
+    if (quill) {
+      quill.root.innerHTML = content;
+      adjustEditorHeight();
+      saveToLocalStorage();
+    }
   }
 
   function adjustEditorHeight() {
@@ -223,8 +229,13 @@
     debouncedSaveToLocalStorage();
   }
 
+  // Modify the saveToLocalStorage function to include the current description
   function saveToLocalStorage() {
-    const assessmentData = { title, description, questions };
+    const assessmentData = {
+      title,
+      description: quill ? quill.root.innerHTML : description,
+      questions,
+    };
     localStorage.setItem("quiz-assessment", JSON.stringify(assessmentData));
   }
 
@@ -372,8 +383,13 @@
     description = savedDescription || "";
     questions = savedQuestions || [];
     debouncedSaveToLocalStorage();
+    updateQuillContent(savedDescription);
     showSavedAssessmentsModal = false;
     showToast("Assessment loaded successfully", "success"); // Show Toast on successful load
+  }
+  // Update the reactive statement
+  $: if (quill && description !== quill.root.innerHTML) {
+    updateQuillContent(description);
   }
 
   function deleteSavedAssessment(index: number) {
@@ -424,14 +440,6 @@
           bind:value={shuffleQuestions}
         />
         <label for="shuffle-questions">Shuffle Questions</label>
-      </div>
-      <div class="shuffle-answers">
-        <input
-          type="checkbox"
-          id="shuffle-answers"
-          bind:value={shuffleAnswers}
-        />
-        <label for="shuffle-answers">Shuffle Answers</label>
       </div>
     </div>
   </div>
