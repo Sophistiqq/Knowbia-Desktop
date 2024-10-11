@@ -53,7 +53,6 @@
     },
   ];
   let shuffleQuestions = false;
-  let shuffleAnswers = false;
   let timeLimit = "";
 
   let quill: Quill;
@@ -106,6 +105,7 @@
     const assessmentData = {
       type: "newAssessment",
       assessment: {
+        id: Date.now(),
         title,
         description,
         questions: distributedQuestions,
@@ -299,7 +299,7 @@
   // Modify the save function to save assessments with unique keys
   function saveAssessment() {
     saveToLocalStorage();
-    const assessmentData = { title, description, questions };
+    const assessmentData = { id: Date.now(), title, description, questions };
     const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
     localStorage.setItem(
       `assessment_${safeTitle}`,
@@ -350,6 +350,7 @@
   // saving assessments in local local storage
 
   let savedAssessments: {
+    id: number;
     title: string;
     description: string;
     questions: Question[];
@@ -375,6 +376,7 @@
 
   function loadSavedAssessment(index: number) {
     const {
+      id: savedId,
       title: savedTitle,
       description: savedDescription,
       questions: savedQuestions,
@@ -696,7 +698,7 @@
     background-color: white;
     backdrop-filter: blur(4px);
     border: 3px solid var(--text);
-    box-shadow: 4px 6px 0px 0px var(--text);
+    box-shadow: 4px 6px 0px 0px var(--border);
     border-radius: 0.5rem;
     gap: 1rem;
     & h1 {
@@ -709,7 +711,7 @@
     background-color: white;
     border: 3px solid var(--text);
     border-radius: 0.5rem;
-    box-shadow: 4px 6px 0px 0px var(--text);
+    box-shadow: 4px 6px 0px 0px var(--border);
     padding: 1.5rem;
     margin-bottom: 1rem;
   }
