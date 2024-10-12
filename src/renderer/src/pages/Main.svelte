@@ -6,6 +6,7 @@
     StudentsInfo,
     Dashboard,
     SavedAssessments,
+    ManageAssessments,
   } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
@@ -17,6 +18,8 @@
     studentsInfo: StudentsInfo,
     dashboard: Dashboard,
     savedassessments: SavedAssessments,
+    makeassessment: MakeAssessment,
+    manageassessments: ManageAssessments,
   };
 
   let currentPage = "classes";

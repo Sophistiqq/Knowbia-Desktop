@@ -15,7 +15,6 @@
   import { slide } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
   let socket: WebSocket;
-  export let formModal = false;
 
   let toastMessage: {
     message: string;
@@ -38,6 +37,7 @@
     answer?: string;
   };
 
+  let assessmentId: number | null = null;
   let title = "";
   let description = "";
   let questions: Question[] = [
@@ -58,7 +58,6 @@
   let quill: Quill;
 
   onMount(() => {
-    loadFromLocalStorage();
     loadSavedAssessments();
     initializeWebSocket();
     initializeQuillEditor();
@@ -297,16 +296,40 @@
   }
 
   // Modify the save function to save assessments with unique keys
-  function saveAssessment() {
-    saveToLocalStorage();
-    const assessmentData = { id: Date.now(), title, description, questions };
-    const safeTitle = title.replace(/\s+/g, "_").replace(/[<>:"/\\|?*]/g, "");
-    localStorage.setItem(
-      `assessment_${safeTitle}`,
-      JSON.stringify(assessmentData),
-    );
-    loadSavedAssessments(); // Reload saved assessments after saving
-    showToast("Assessment saved successfully", "success"); // Show Toast on successful save
+  async function saveAssessment() {
+    const assessmentData = { title, description, questions };
+    console.log("Saving assessment:", assessmentData);
+    try {
+      let response: Response;
+      if (assessmentId) {
+        response = await fetch(
+          `http://localhost:3000/assessments/assessments/${assessmentId}`,
+          {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(assessmentData),
+          },
+        );
+      } else {
+        response = await fetch(
+          "http://localhost:3000/assessments/assessments",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(assessmentData),
+          },
+        );
+      }
+      const result = await response.json();
+      if (!assessmentId) {
+        assessmentId = result.id;
+      }
+      showToast("Assessment saved successfully", "success");
+      loadSavedAssessments();
+    } catch (error) {
+      console.error("Error saving assessment:", error);
+      showToast("Failed to save assessment", "error");
+    }
   }
 
   function resetAssessment() {
@@ -357,13 +380,16 @@
   }[] = [];
 
   // Function to load all saved assessments from localStorage
-  function loadSavedAssessments() {
-    const assessments = Object.keys(localStorage)
-      .filter((key) => key.startsWith("assessment_"))
-      .map((key) => JSON.parse(localStorage.getItem(key) || "{}"));
-
-    savedAssessments = assessments;
-    console.log("Saved assessments:", savedAssessments);
+  async function loadSavedAssessments() {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/assessments/assessments/`,
+      );
+      savedAssessments = await response.json();
+    } catch (error) {
+      console.error("Error loading saved assessments:", error);
+      showToast("Failed to load saved assessments", "error");
+    }
   }
 
   // scripts for loading saved assessments
@@ -374,30 +400,40 @@
     showSavedAssessmentsModal = true;
   }
 
-  function loadSavedAssessment(index: number) {
-    const {
-      id: savedId,
-      title: savedTitle,
-      description: savedDescription,
-      questions: savedQuestions,
-    } = savedAssessments[index];
-    title = savedTitle || "";
-    description = savedDescription || "";
-    questions = savedQuestions || [];
-    debouncedSaveToLocalStorage();
-    updateQuillContent(savedDescription);
-    showSavedAssessmentsModal = false;
-    showToast("Assessment loaded successfully", "success"); // Show Toast on successful load
+  async function loadSavedAssessment(id: number) {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/assessments/assessments/${id}`,
+      );
+      const assessment = await response.json();
+      assessmentId = assessment.id;
+      title = assessment.title;
+      description = assessment.description;
+      questions = assessment.questions;
+      updateQuillContent(description);
+      showSavedAssessmentsModal = false;
+      showToast("Assessment loaded successfully", "success");
+    } catch (error) {
+      console.error("Error loading assessment:", error);
+      showToast("Failed to load assessment", "error");
+    }
   }
   // Update the reactive statement
   $: if (quill && description !== quill.root.innerHTML) {
     updateQuillContent(description);
   }
 
-  function deleteSavedAssessment(index: number) {
-    const { title: savedTitle } = savedAssessments[index];
-    localStorage.removeItem(`assessment_${savedTitle}`);
-    loadSavedAssessments();
+  async function deleteSavedAssessment(id: number) {
+    try {
+      await fetch(`http://localhost:3000/assessments/assessments/${id}`, {
+        method: "DELETE",
+      });
+      loadSavedAssessments();
+      showToast("Assessment deleted successfully", "success");
+    } catch (error) {
+      console.error("Error deleting assessment:", error);
+      showToast("Failed to delete assessment", "error");
+    }
   }
 
   let distributeModal = false;
@@ -517,35 +553,6 @@
   >
 </div>
 
-<Modal bind:open={formModal} size="xs" autoclose={false} class="w-full">
-  <div class="flex flex-col space-y-6 backdrop-blur-sm">
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      Add a link
-    </h3>
-    <Label class="space-y-2">
-      <span>Text to display</span>
-      <Input
-        type="text"
-        name="display-text"
-        placeholder="Enter the text to display"
-      />
-    </Label>
-    <Label class="space-y-2">
-      <span>URL</span>
-      <Input type="url" name="url" placeholder="Enter the link URL" />
-    </Label>
-    <div class="flex justify-end">
-      <button
-        type="button"
-        class="bg-blue-500 text-white px-4 py-2 rounded"
-        on:click={() => (formModal = false)}
-      >
-        Add Link
-      </button>
-    </div>
-  </div>
-</Modal>
-
 <Modal bind:open={showResetModal} size="xs" autoclose={false} class="w-full">
   <div class="flex flex-col space-y-6 backdrop-blur-sm">
     <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
@@ -580,9 +587,8 @@
   <h3 class="mb-4 text-xl font-medium" style="color: var(--text);">
     Saved Assessments
   </h3>
-
   <div class="flex flex-col space-y-4">
-    {#each savedAssessments as assessment, index}
+    {#each savedAssessments as assessment (assessment.id)}
       <div class="flex justify-between items-center">
         <h4 style="color: var(--text);">{assessment.title}</h4>
         <div class="flex gap-4">
@@ -590,7 +596,7 @@
             type="button"
             class="px-4 py-2 rounded"
             style="background-color: var(--primary); color: var(--text);"
-            on:click={() => loadSavedAssessment(index)}
+            on:click={() => loadSavedAssessment(assessment.id)}
           >
             Load
           </button>
@@ -598,7 +604,7 @@
             type="button"
             class="px-4 py-2 rounded"
             style="background-color: var(--accent); color: var(--text);"
-            on:click={() => deleteSavedAssessment(index)}
+            on:click={() => deleteSavedAssessment(assessment.id)}
           >
             Delete
           </button>
@@ -606,7 +612,6 @@
       </div>
     {/each}
   </div>
-
   <div class="flex justify-end">
     <button
       type="button"
