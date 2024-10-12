@@ -1,4 +1,5 @@
 <script lang="ts">
+  // TODO: NEED TO FIX THE FETCHING OF ASSESSMENTS AND STUDENT RESULTS
   import { onMount } from "svelte";
   import { Card, Table } from "flowbite-svelte";
 
@@ -8,15 +9,21 @@
 
   onMount(async () => {
     // Fetch assessments from the server
-    const response = await fetch("/api/assessments");
+    const response = await fetch(
+      "http://localhost:3000/assessments/assessments",
+    );
     assessments = await response.json();
+    console.log(assessments);
   });
 
-  async function fetchStudentResults(assessmentId) {
+  async function fetchStudentResults(assessmentId: any) {
     // Fetch student results for the selected assessment
-    const response = await fetch(`/api/assessment-results/${assessmentId}`);
+    const response = await fetch(
+      `http://localhost:3000/assessments/assessments/${assessmentId}`,
+    );
     studentResults = await response.json();
     selectedAssessment = assessments.find((a) => a.id === assessmentId);
+    console.log(studentResults);
   }
 </script>
 
@@ -48,25 +55,23 @@
           <h2 class="text-xl font-semibold mb-2">
             {selectedAssessment.title} Results
           </h2>
-          <Table striped={true}>
-            <Table.Head>
-              <Table.HeadCell>Student Number</Table.HeadCell>
-              <Table.HeadCell>Name</Table.HeadCell>
-              <Table.HeadCell>Score</Table.HeadCell>
-              <Table.HeadCell>Date Taken</Table.HeadCell>
-            </Table.Head>
-            <Table.Body class="divide-y">
+          <Table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
               {#each studentResults as result}
-                <Table.Row>
-                  <Table.Cell>{result.studentNumber}</Table.Cell>
-                  <Table.Cell>{result.firstName} {result.lastName}</Table.Cell>
-                  <Table.Cell>{result.score}</Table.Cell>
-                  <Table.Cell
-                    >{new Date(result.dateTaken).toLocaleString()}</Table.Cell
-                  >
-                </Table.Row>
+                <tr>
+                  <td>{result.studentId}</td>
+                  <td>{result.studentName}</td>
+                  <td>{result.score}</td>
+                </tr>
               {/each}
-            </Table.Body>
+            </tbody>
           </Table>
         </Card>
       {:else}

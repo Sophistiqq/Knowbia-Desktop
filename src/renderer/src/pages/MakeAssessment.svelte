@@ -238,20 +238,6 @@
     localStorage.setItem("quiz-assessment", JSON.stringify(assessmentData));
   }
 
-  function loadFromLocalStorage() {
-    const savedData = localStorage.getItem("quiz-assessment");
-    if (savedData) {
-      const {
-        title: savedTitle,
-        description: savedDescription,
-        questions: savedQuestions,
-      } = JSON.parse(savedData);
-      title = savedTitle || "";
-      description = savedDescription || "";
-      questions = savedQuestions || [];
-    }
-  }
-
   let showResetModal = false;
 
   function resetStorage() {
@@ -379,7 +365,6 @@
     questions: Question[];
   }[] = [];
 
-  // Function to load all saved assessments from localStorage
   async function loadSavedAssessments() {
     try {
       const response = await fetch(

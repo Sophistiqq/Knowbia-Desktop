@@ -75,7 +75,7 @@
       >
 
       <button
-        on:click={() => handleNavigation("manageAssessments")}
+        on:click={() => handleNavigation("manageassessments")}
         id="manage-assessments"
       >
         <AdjustmentsVerticalSolid class="w-10 h-10" />
