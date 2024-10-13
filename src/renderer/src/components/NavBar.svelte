@@ -9,7 +9,7 @@
     AngleRightOutline,
     ChartOutline,
     GlobeSolid,
-    AdjustmentsVerticalSolid,
+    ArchiveSolid,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
@@ -78,13 +78,13 @@
         on:click={() => handleNavigation("manageassessments")}
         id="manage-assessments"
       >
-        <AdjustmentsVerticalSolid class="w-10 h-10" />
+        <ArchiveSolid class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}"
-          >Manage Assessments</span
+          >Assessments Result</span
         >
       </button>
       <Tooltip triggeredBy="#manage-assessments" placement="right"
-        >Manage Assessments</Tooltip
+        >Assessments Result</Tooltip
       >
 
       <button

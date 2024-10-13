@@ -1,4 +1,5 @@
 <script lang="ts">
+  // TODO: SAVE THE ASSESSMENT WHEN THE DISTRIBUTION IS SUCCESSFUL
   import { onMount } from "svelte";
   import { dndzone } from "svelte-dnd-action";
   import { Tooltip, Modal, Label, Input, Toast } from "flowbite-svelte";

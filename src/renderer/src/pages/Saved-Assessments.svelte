@@ -6,6 +6,7 @@
   import { cubicInOut } from "svelte/easing";
 
   type Assessment = {
+    id: number;
     title: string;
     description: string;
     questions: {
@@ -20,30 +21,47 @@
     }[];
   };
 
-  let savedAssessments: Assessment[] = [];
+  let assessments: Assessment[] = [];
   let expandedStates: boolean[] = []; // Track expanded states
+  let showDeletePopup = false;
+  let selectedAssessmentIndex: number | null = null;
 
   onMount(() => {
     loadSavedAssessments();
   });
 
-  function loadSavedAssessments() {
-    const assessments = Object.keys(localStorage)
-      .filter((key) => key.startsWith("assessment_"))
-      .map((key) => JSON.parse(localStorage.getItem(key) || "{}"));
-
-    savedAssessments = assessments;
-    expandedStates = new Array(savedAssessments.length).fill(false); // Initialize all to collapsed
+  async function loadSavedAssessments() {
+    const response = await fetch(
+      "http://localhost:3000/assessments/assessments",
+    );
+    assessments = await response.json();
+    expandedStates = new Array(assessments.length).fill(false); // Initialize all to collapsed
   }
 
-  function deleteSavedAssessment(index: number) {
-    const { title: savedTitle } = savedAssessments[index];
-    localStorage.removeItem(`assessment_${savedTitle}`);
-    loadSavedAssessments();
+  async function deleteSavedAssessment() {
+    if (selectedAssessmentIndex !== null) {
+      const response = await fetch(
+        `http://localhost:3000/assessments/assessments/${assessments[selectedAssessmentIndex].id}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (response.ok) {
+        assessments.splice(selectedAssessmentIndex, 1);
+        expandedStates.splice(selectedAssessmentIndex, 1);
+        loadSavedAssessments(); // Reload the assessments
+        toggleDeletePopup(null); // Close the popup after deleting
+      }
+    }
   }
 
   function toggleDescription(index: number) {
     expandedStates[index] = !expandedStates[index]; // Toggle the state
+  }
+
+  function toggleDeletePopup(index: number | null) {
+    selectedAssessmentIndex = index;
+    showDeletePopup = !showDeletePopup;
   }
 </script>
 
@@ -51,36 +69,55 @@
   <h1>Saved Assessments</h1>
 
   <div class="saved-assessments">
-    {#each savedAssessments as assessment, index}
-      <div class="assessment-card">
+    {#each assessments as assessment, index}
+      <div class="assessment-card" class:expand={expandedStates[index]}>
         <div class="header">
           <h2>{assessment.title}</h2>
-          <button class="delete" on:click={() => deleteSavedAssessment(index)}>
-            <TrashBinSolid size="md" />
+          <button class="delete" on:click={() => toggleDeletePopup(index)}>
+            <TrashBinSolid />
           </button>
-          <Tooltip>Remove</Tooltip>
+          <Tooltip>Delete Assessment</Tooltip>
         </div>
-        <div class="separator"></div>
-        <div class="description {expandedStates[index] ? 'expand' : ''}">
+        <div class="description">
           {@html assessment.description}
         </div>
-
         <div class="separator"></div>
         <div class="assessment-controls">
-          <button
-            class="description-toggle"
-            style="color: var(--text)"
-            on:click={() => toggleDescription(index)}
-          >
-            {expandedStates[index] ? "Show Less" : "Show More"}
+          <button on:click={() => toggleDescription(index)}>
+            {expandedStates[index] ? "Collapse" : "Expand"}
           </button>
-          <button class="host" on:click={() => alert("Host")}> Host </button>
-          <button>Save as File</button>
+          <button>Start Assessment</button>
         </div>
       </div>
     {/each}
   </div>
 </div>
+
+{#if showDeletePopup}
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+  >
+    <div class="bg-white p-4 rounded-lg">
+      <h2 class="text-xl font-bold">
+        Are you sure you want to delete this assessment?
+      </h2>
+      <div class="flex justify-center gap-4 mt-4">
+        <button
+          class="bg-red-500 text-white px-4 py-2 rounded-lg"
+          on:click={deleteSavedAssessment}
+        >
+          Yes
+        </button>
+        <button
+          class="bg-gray-500 text-white px-4 py-2 rounded-lg"
+          on:click={() => toggleDeletePopup(null)}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style>
   .container {
