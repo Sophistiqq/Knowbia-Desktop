@@ -70,7 +70,7 @@
 
   <div class="saved-assessments">
     {#each assessments as assessment, index}
-      <div class="assessment-card" class:expand={expandedStates[index]}>
+      <div class="assessment-card">
         <div class="header">
           <h2>{assessment.title}</h2>
           <button class="delete" on:click={() => toggleDeletePopup(index)}>
@@ -78,13 +78,18 @@
           </button>
           <Tooltip>Delete Assessment</Tooltip>
         </div>
-        <div class="description">
-          {@html assessment.description}
-        </div>
+
+        {#if expandedStates[index]}
+          <!-- Conditional rendering -->
+          <div class="description">
+            {@html assessment.description}
+          </div>
+        {/if}
+
         <div class="separator"></div>
         <div class="assessment-controls">
           <button on:click={() => toggleDescription(index)}>
-            {expandedStates[index] ? "Collapse" : "Expand"}
+            {expandedStates[index] ? "Hide Details" : "Show Details"}
           </button>
           <button>Start Assessment</button>
         </div>
@@ -119,9 +124,9 @@
   </div>
 {/if}
 
-<style>
+<style lang="scss">
   .container {
-    & h1 {
+    h1 {
       margin-bottom: 1rem;
       color: var(--text);
       font-size: 1.5rem;
@@ -149,24 +154,18 @@
     border-radius: 0.5rem;
     box-shadow: 6px 8px 0px 0px var(--border);
     & .description {
-      height: 2.5rem;
-      overflow-y: auto; /* Prevent scroll when collapsed */
+      max-height: none; /* Allow full height when expanded */
     }
   }
   .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    & h2 {
+    h2 {
       font-size: 1.2rem;
       font-weight: bold;
     }
   }
-
-  .expand {
-    height: auto !important; /* Allow auto height when expanded */
-  }
-
   .delete {
     background: none;
     border: none;
@@ -178,7 +177,6 @@
       background: var(--secondary);
     }
   }
-
   .separator {
     height: 1px;
     background: var(--text);
@@ -187,7 +185,7 @@
   .assessment-controls {
     display: flex;
     justify-content: space-around;
-    & button {
+    button {
       padding: 0.5rem 1rem;
       background-color: var(--background);
       border-radius: 0.2rem;

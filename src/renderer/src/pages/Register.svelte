@@ -206,10 +206,8 @@
 </script>
 
 {#if registrationError}
-  <Toast color="red" position="top-right">
+  <Toast position="top-right" class="z-30">
     <svelte:fragment slot="icon">
-      <CloseCircleSolid class="w-5 h-5" />
-      <span class="sr-only">Error icon</span>
     </svelte:fragment>
     {registrationError}
   </Toast>
@@ -346,13 +344,18 @@
         <label for="department">Department</label>
         <div class="inputs">
           <Icon src={FaSolidPeopleGroup} />
-          <input
-            type="text"
+          <select
             id="department"
             bind:value={department}
-            on:input={debouncedInputChange}
-            required
-          />
+            on:change={onInputChange}
+            placeholder="Select a department"
+            required >
+            <option value="" disabled>Select a department</option>
+            <option value="IT">ICS</option>
+            <option value="HR">IDK</option>
+            <option value="Finance">IDC</option>
+            <option value="Marketing">IDGAF</option>
+          </select>
         </div>
       </div>
       <div class="input_fields">
@@ -563,7 +566,8 @@
       transform: translate(5px, 5px);
     }
   }
-  #security_question {
+  #security_question,
+  #department {
     width: 100%;
     padding: 0.5rem;
     border: none;

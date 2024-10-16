@@ -68,14 +68,10 @@
     return false;
   }
 
-  const API_URL =
-    window.location.hostname === "localhost"
-      ? "http://localhost:3000"
-      : "http://10.0.23.245:3000";
 
   async function logout() {
     try {
-      await fetch(`${API_URL}/email/logout`, {
+      await fetch(`http://localhost:3000/email/logout`, {
         method: "POST",
         credentials: "include",
       });
