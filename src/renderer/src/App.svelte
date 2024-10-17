@@ -3,7 +3,6 @@
   import Main from "./pages/Main.svelte";
   import { login, checkAuth } from "./scripts/auth";
   import { Icon } from "svelte-icons-pack";
-  import BgDesign from "./components/bg-design.svelte";
   import {
     FaSolidUser,
     FaSolidKey,
@@ -125,7 +124,6 @@
   {#if isAuthenticated}
     <Main {logout} />
   {:else if showRegisterPage}
-    <BgDesign />
     <div transition:fly={{ x: -200, duration: 500, easing: cubicOut }}>
       <Register onBackToLogin={togglePage} />
     </div>
@@ -134,7 +132,6 @@
       class="container"
       transition:fly={{ x: -200, duration: 500, easing: cubicInOut }}
     >
-      <BgDesign />
       <div class="login-form">
         <h1>Welcome to Knowbia!</h1>
 
