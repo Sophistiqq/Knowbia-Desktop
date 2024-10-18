@@ -25,6 +25,7 @@
     "@fontsource/lexend": "^5.1.1",
     "@fontsource/lexend-mega": "^5.1.0",
     "@fontsource/montserrat": "^5.1.0",
+    "@fontsource/rubik": "^5.1.0",
     "@types/quill": "^2.0.14",
     "bits-ui": "^0.21.15",
     "chart.js": "^4.4.4",

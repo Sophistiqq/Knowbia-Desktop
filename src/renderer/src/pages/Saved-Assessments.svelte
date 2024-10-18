@@ -131,12 +131,12 @@
       color: var(--text);
       font-size: 1.5rem;
       font-weight: bold;
-      background: var(--secondary);
+      background: var(--background);
       width: fit-content;
       padding: 1rem;
-      border: 2px solid var(--text);
+      border: 1px solid var(--border);
       border-radius: 0.5rem;
-      box-shadow: 6px 8px 0px 0px var(--border);
+      box-shadow: var(--shadow);
     }
   }
   .saved-assessments {
@@ -148,11 +148,11 @@
   .assessment-card {
     padding: 1.5rem;
     color: var(--text);
-    background: white;
-    border: 2px solid var(--text);
+    background: var(--background);
+    border: 1px solid var(--border);
     backdrop-filter: blur(4px);
     border-radius: 0.5rem;
-    box-shadow: 6px 8px 0px 0px var(--border);
+    box-shadow: var(--shadow);
     & .description {
       max-height: none; /* Allow full height when expanded */
     }
@@ -189,8 +189,7 @@
       padding: 0.5rem 1rem;
       background-color: var(--background);
       border-radius: 0.2rem;
-      border: 1px solid var(--text);
-      box-shadow: 4px 4px 0px var(--border);
+      border: 1px solid var(--border);
     }
   }
 </style>

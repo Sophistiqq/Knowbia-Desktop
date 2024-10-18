@@ -449,7 +449,7 @@
       placeholder="Title"
       rows="1"
       on:input={handleTitleInput}
-      style="overflow: hidden; resize: none; border: 2px solid var(--text)"
+      style="overflow: hidden; resize: none;"
     ></textarea>
     <h2 class="font-bold">Description</h2>
     <div class="editor-wrapper">
@@ -462,6 +462,7 @@
           type="checkbox"
           id="shuffle-questions"
           bind:value={shuffleQuestions}
+          class="p-2"
         />
         <label for="shuffle-questions">Shuffle Questions</label>
       </div>
@@ -686,10 +687,10 @@
     flex-direction: column;
     padding: 1.5rem;
     color: var(--text);
-    background-color: white;
+    background-color: var(--background);
     backdrop-filter: blur(4px);
-    border: 3px solid var(--text);
-    box-shadow: 4px 6px 0px 0px var(--border);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
     border-radius: 0.5rem;
     gap: 1rem;
     & h1 {
@@ -699,10 +700,9 @@
   }
 
   .question-container {
-    background-color: white;
-    border: 3px solid var(--text);
+    background-color: var(--background);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
-    box-shadow: 4px 6px 0px 0px var(--border);
     padding: 1.5rem;
     margin-bottom: 1rem;
   }
@@ -717,9 +717,9 @@
   textarea {
     padding: 0.5rem;
     width: 100%;
-    border: 2px solid var(--text);
-    box-shadow: 4px 3px 0px 0px var(--border);
+    background-color: var(--background);
     margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
     border-radius: 0.3rem;
     color: var(--text);
     transition: border-bottom 0.3s;
@@ -761,7 +761,7 @@
       cursor: pointer;
       color: var(--text);
       &:checked {
-        background-color: var(--accent);
+        background-color: var(--secondary);
       }
     }
   }
@@ -859,7 +859,8 @@
   }
   .separator {
     height: 3px;
-    background-color: var(--text);
+    background-color: var(--border);
+    margin-block: 1rem;
   }
 
   .assessment-controls {
@@ -885,8 +886,7 @@
     }
   }
   #editor {
-    border: 2px solid var(--text);
+    border: 1px solid var(--border);
     border-radius: 0.3rem;
-    box-shadow: 4px 3px 0px 0px var(--border);
   }
 </style>

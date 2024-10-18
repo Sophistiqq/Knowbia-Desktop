@@ -13,8 +13,7 @@
   import { fly } from "svelte/transition";
   import { cubicInOut, cubicOut } from "svelte/easing";
   import { Toast } from "flowbite-svelte";
-  import { SunSolid, MoonSolid, CloseCircleSolid } from "flowbite-svelte-icons";
-  import "./assets/main.css";
+  import { CloseCircleSolid } from "flowbite-svelte-icons";
 
   let isAuthenticated = false;
   let loading = true;
@@ -66,7 +65,6 @@
     localStorage.removeItem("isAuthenticated");
     return false;
   }
-
 
   async function logout() {
     try {
@@ -186,11 +184,13 @@
 
   .login-form {
     color: var(--text);
-    background: var(--background-2);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: var(--background);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
     display: flex;
-    border: 2px solid var(--text);
     flex-direction: column;
     justify-content: center;
     border-radius: 1rem;
@@ -198,11 +198,9 @@
     width: 60vw;
     max-width: 600px;
     padding: 5rem;
-    box-shadow: 4px 6px 0px 0px var(--text);
     gap: 0.5rem;
   }
   .login-form h1 {
-    color: var(--text);
     font-size: 2rem;
     font-weight: 700;
     text-align: center;
@@ -210,20 +208,17 @@
   }
   .input_fields {
     display: flex;
-    color: var(--text);
     flex-direction: column;
     gap: 0.5rem;
     & label {
       font-size: 1.2rem;
-      color: var(--text);
     }
     .inputs {
       display: flex;
       justify-content: space-between;
+      background: rgba(255, 255, 255, 0.3);
       align-items: center;
-      color: var(--text);
-      border: 2px solid var(--text);
-      box-shadow: 5px 5px 0 1px var(--text);
+      border: 1px solid var(--border);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
@@ -275,22 +270,18 @@
     }
   }
   #loginButton {
-    background-color: var(--accent);
-    color: var(--text);
-    border: none;
-    box-shadow: 5px 5px 0 1px var(--text);
-    font-weight: 500;
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    background-color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition:
-      background-color 0.5s,
-      transform 0.5s,
-      box-shadow 0.5s;
+    transition: background-color 0.5s;
     &:active {
-      background-color: var(--secondary);
-      box-shadow: none;
-      transform: translate(5px, 5px);
+      background-color: var(--active);
     }
   }
   .separator {
@@ -301,7 +292,7 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: var(--text);
+      background-color: var(--border);
     }
     .or {
       padding: 0.5rem;
@@ -313,10 +304,8 @@
     border: none;
     background-color: transparent;
     cursor: pointer;
-    transition: color 0.5s;
     &:hover {
       text-decoration: underline;
-      color: var(--secondary);
     }
   }
 </style>

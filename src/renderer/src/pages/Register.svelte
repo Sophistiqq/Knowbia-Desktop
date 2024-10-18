@@ -207,8 +207,7 @@
 
 {#if registrationError}
   <Toast position="top-right" class="z-30">
-    <svelte:fragment slot="icon">
-    </svelte:fragment>
+    <svelte:fragment slot="icon"></svelte:fragment>
     {registrationError}
   </Toast>
 {/if}
@@ -349,7 +348,8 @@
             bind:value={department}
             on:change={onInputChange}
             placeholder="Select a department"
-            required >
+            required
+          >
             <option value="" disabled>Select a department</option>
             <option value="IT">ICS</option>
             <option value="HR">IDK</option>
@@ -431,7 +431,7 @@
     .line {
       flex: 1;
       height: 1px;
-      background-color: var(--text);
+      background-color: var(--border);
     }
     .or {
       color: var(--text);
@@ -440,19 +440,20 @@
   }
   .register-form {
     color: var(--text);
-    background: var(--background-2);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    background: var(--background);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(8px);
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 10px;
     display: flex;
-    border: 2px solid var(--text);
     flex-direction: column;
     justify-content: center;
     border-radius: 1rem;
-    height: 100vh;
+    height: 95vh;
     width: 60vw;
     max-width: 600px;
     padding: 5rem;
-    box-shadow: 4px 6px 0px 0px var(--text);
     gap: 0.5rem;
     & label {
       color: var(--text);
@@ -468,20 +469,17 @@
 
   .input_fields {
     display: flex;
-    color: var(--text);
     flex-direction: column;
     gap: 0.5rem;
     & label {
       font-size: 1.2rem;
-      color: var(--text);
     }
     .inputs {
       display: flex;
       justify-content: space-between;
+      background: rgba(255, 255, 255, 0.3);
       align-items: center;
-      color: var(--text);
-      border: 2px solid var(--text);
-      box-shadow: 5px 5px 0 1px var(--text);
+      border: 1px solid var(--border);
       padding: 0.3rem 1rem;
       border-radius: 0.5rem;
       align-items: center;
@@ -508,29 +506,28 @@
 
   #nextButton,
   #registerButton {
-    background-color: var(--accent);
-    margin-top: 2rem;
     color: var(--text);
-    border: none;
-    box-shadow: 5px 5px 0 1px var(--text);
-    font-weight: 500;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(50px) zoom(1.1);
+    font-weight: 700;
     padding: 1rem 0.5rem;
+    margin-top: 1.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition:
-      background-color 0.5s,
-      transform 0.5s,
-      box-shadow 0.5s;
+    transition: background-color 0.2s;
     &:hover {
-      background-color: var(--secondary);
-      box-shadow: none;
-      transform: translate(5px, 5px);
+      background-color: var(--border);
+    }
+    &:active {
+      border: 1px solid var(--active);
+      background-color: var(--active);
     }
   }
 
   #nextButton:disabled,
   #registerButton:disabled {
-    background-color: var(--disabled);
+    background-color: var(--active);
+    border: none;
     cursor: not-allowed;
   }
 
@@ -547,23 +544,20 @@
   }
 
   #backButton {
-    background: var(--primary);
-    margin-top: 2rem;
     color: var(--text);
-    border: none;
-    box-shadow: 5px 5px 0 1px var(--text);
-    font-weight: 500;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    font-weight: 700;
     padding: 1rem 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition:
-      background-color 0.5s,
-      transform 0.5s,
-      box-shadow 0.5s;
+    margin-top: 1.5rem;
+    transition: background-color 0.5s;
     &:hover {
-      background-color: var(--secondary);
-      box-shadow: none;
-      transform: translate(5px, 5px);
+      background-color: var(--border);
+    }
+    &:active {
+      background-color: var(--active);
     }
   }
   #security_question,
@@ -586,7 +580,7 @@
     color: var(--text);
     &:hover {
       text-decoration: underline;
-      color: var(--secondary);
+      color: var(--border);
     }
   }
 </style>

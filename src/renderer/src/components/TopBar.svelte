@@ -29,12 +29,11 @@
     align-items: center;
     padding: 1rem 2rem;
     height: 4rem;
-    background-color: white;
-    border: 2px solid var(--text);
-    color: var(--text);
-    margin: 0.5rem;
-    border-radius: 0.5rem;
-    box-shadow: 4px 6px 0px 0px var(--text);
+    background-color: var(--background);
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--border);
+    border-bottom-right-radius: 1rem;
+    margin-right: 1rem;
   }
   .brand {
     font-size: 2rem;

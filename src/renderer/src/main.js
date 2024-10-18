@@ -1,7 +1,6 @@
 import "./assets/main.css";
 import "@fontsource/montserrat";
-import "@fontsource/lexend-mega";
-import "@fontsource/archivo"
+import "@fontsource/rubik";
 import App from "./App.svelte";
 
 const app = new App({

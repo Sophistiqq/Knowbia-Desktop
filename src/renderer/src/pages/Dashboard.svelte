@@ -1,13 +1,13 @@
-<script lang='ts'>
-  import { slide } from 'svelte/transition';
-  import {cubicInOut} from 'svelte/easing';
+<script lang="ts">
+  import { slide } from "svelte/transition";
+  import { cubicInOut } from "svelte/easing";
 
   let savedAssessments = 145;
 </script>
 
 <h1 id="page-title">Dashboard</h1>
 
-<div class="statistics" transition:slide={{easing: cubicInOut, delay: 0}}>
+<div class="statistics" transition:slide={{ easing: cubicInOut, delay: 0 }}>
   <h4>Statistics</h4>
   <div class="overview-wrapper">
     <div class="total-assessments">
@@ -25,7 +25,10 @@
   </div>
 </div>
 
-<div class="student-activity-overview" transition:slide={{easing: cubicInOut, delay: 300}}>
+<div
+  class="student-activity-overview"
+  transition:slide={{ easing: cubicInOut, delay: 300 }}
+>
   <h4>Student Activity Overview</h4>
   <div class="overview-wrapper">
     <div class="connected-students">
@@ -49,12 +52,13 @@
     color: var(--text);
     font-size: 1.5rem;
     font-weight: bold;
-    background: var(--primary);
+    background: var(--background);
     width: fit-content;
     padding: 1rem;
-    border: 2px solid var(--text);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
     border-radius: 0.5rem;
-    box-shadow: 6px 8px 0px 0px var(--border);
+    box-shadow: var(--shadow);
   }
   .statistics,
   .student-activity-overview {
@@ -64,6 +68,7 @@
     flex-direction: column;
     margin-top: 2rem;
     gap: 1rem;
+    color: var(--text);
     & h4 {
       font-size: 1.5rem;
       font-weight: 700;
@@ -84,17 +89,16 @@
       padding: 1rem;
       border-radius: 0.5rem;
       background-color: var(--background);
-      border: 2px solid var(--text);
-      box-shadow: 4px 4px 0px var(--border);
+      backdrop-filter: blur(10px);
+      color: var(--text);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
       & > p {
         font-size: 1.5rem;
         font-weight: 700;
-        background: var(--accent);
         border-radius: 0.5rem;
         padding: 0.5rem;
       }
     }
   }
-
-
 </style>
