@@ -146,9 +146,9 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    color: var(--text);
     background-color: var(--background);
-    border: 3px solid var(--border);
-    box-shadow: 6px 8px 0px 0px var(--border);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 1rem;
     h2 {
@@ -166,13 +166,13 @@
 
   thead {
     color: var(--secondary);
-    background-color: var(--accent);
+    background-color: var(--background);
   }
 
   th,
   td {
     padding: 1rem; /* Increased padding for better spacing */
-    border: 3px solid var(--border);
+    border: 1px solid var(--border);
     cursor: pointer; /* Add cursor pointer to indicate clickable headers */
   }
 

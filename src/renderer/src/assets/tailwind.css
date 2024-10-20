@@ -11,7 +11,7 @@ input {
     --text: rgba(255, 255, 255, 1);
     --text-dark: rgba(0, 0, 0, 0.8);
     --text-hover: rgba(50, 50, 50, 1);
-    --background: rgba(8, 8, 44, 0.3);
+    --background: rgba(20, 8, 50, 0.3);
     --background-2: rgba(255, 255, 217, 0.5);
     --primary: #a7dbd8;
     --secondary: #ff7a5c;

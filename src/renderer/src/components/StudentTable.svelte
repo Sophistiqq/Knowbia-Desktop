@@ -75,19 +75,19 @@
   }
 
   thead {
-    color: var(--secondary);
-    background-color: var(--accent);
+    color: var(--text);
+    background-color: var(--hover);
   }
 
   th,
   td {
     padding: 1rem; /* Increased padding for better spacing */
-    border: 3px solid var(--border);
+    border: 1px solid var(--border);
     cursor: pointer; /* Add cursor pointer to indicate clickable headers */
   }
 
   td {
-    background-color: var(--background-2);
+    background-color: var(--background);
     padding: 1rem;
     border: 3px solid var(--border);
     cursor: pointer;
@@ -104,16 +104,16 @@
   th {
     text-align: center;
     background: transparent;
-    color: var(--text);
+    color: var(--text-dark);
     transition: background-color 0.3s; /* Smooth transition */
   }
 
   th:hover {
-    background-color: var(--primary); /* Highlight on hover */
+    background-color: var(--hover); /* Highlight on hover */
   }
 
   tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--active); /* Highlight on hover */
   }
 
   button {

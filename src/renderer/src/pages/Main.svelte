@@ -51,5 +51,16 @@
     flex: 1;
     padding: 2rem;
     width: calc(100vw - 15rem);
+    position: relative;
+    &::before {
+      content: "";
+      position: absolute;
+      top: 2rem;
+      left: 0;
+      width: 1px;
+      height: 100%;
+      background-color: var(--border);
+      z-index: -1;
+    }
   }
 </style>

@@ -45,6 +45,16 @@
 <div class="sidebar {sidebarHidden ? 'collapsed' : ''}">
   <div class="buttons-container">
     <div class="navigation-buttons">
+      <div class="sidebarControl">
+        <button id="sidebarControl" on:click={toggleSidebar}>
+          {#if sidebarHidden}
+            <CaretRightSolid />
+          {:else}
+            <CaretLeftSolid />
+          {/if}
+        </button>
+        <Tooltip placement="right">Toggle Sidebar</Tooltip>
+      </div>
       <button on:click={() => handleNavigation("dashboard")} id="dashboard">
         <ChartPieSolid class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}">Dashboard</span>
@@ -107,17 +117,6 @@
       >
     </div>
   </div>
-
-  <div class="sidebarControl">
-    <button id="sidebarControl" on:click={toggleSidebar}>
-      {#if sidebarHidden}
-        <CaretRightSolid />
-      {:else}
-        <CaretLeftSolid />
-      {/if}
-    </button>
-    <Tooltip placement="right">Toggle Sidebar</Tooltip>
-  </div>
 </div>
 
 <style>
@@ -126,18 +125,17 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background-color: var(--background);
+    height: clamp(100vh, 100%, 100vh);
     gap: 1rem;
-    height: calc(100vh - 4rem);
     color: var(--text);
     z-index: 50;
     width: 20rem; /* Full width when expanded */
     transition: width 0.3s ease-in-out; /* Smooth transition for width */
     white-space: nowrap;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     --webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     padding-top: 2rem;
+    transition: all 0.3s ease;
   }
   .collapsed {
     width: 5rem; /* Collapsed width */
@@ -157,13 +155,18 @@
     cursor: pointer;
     transition:
       background-color 0.3s ease,
+      transform 0.3s ease,
+      border-radius 0.3s ease,
       box-shadow 0.3s ease;
     font-weight: 700;
     padding: 1rem;
+    border-left: 4px solid var(--text);
     &:hover {
       background-color: var(--hover);
       color: var(--text-hover);
       box-shadow: 0 0 10px 10px rgba(100, 100, 100, 0.1);
+      transform: scale(1.1);
+      border-radius: 0 1rem 1rem 0;
     }
     &:active {
       box-shadow: none;
@@ -181,9 +184,8 @@
   }
   .sidebarControl {
     display: flex;
-    position: fixed;
-    bottom: 1rem;
-    left: 1rem;
+    position: block;
+    padding: 2rem 1rem;
     color: var(--border);
     & button {
       background-color: var(--background);

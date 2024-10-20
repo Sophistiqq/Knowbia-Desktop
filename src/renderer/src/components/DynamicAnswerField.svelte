@@ -229,14 +229,14 @@
     gap: 0.5rem;
     & input {
       margin-block: 0.5rem;
-      border: 2px solid var(--text);
-      box-shadow: 4px 4px 0px var(--border);
+      border: 1px solid var(--border);
     }
   }
 
   .short-answer,
   .paragraph {
     padding: 0.5rem;
+    background-color: var(--background);
     color: var(--text);
     border-radius: 0.3rem;
     resize: none;
@@ -252,17 +252,20 @@
   .option-item input[type="radio"],
   .option-item input[type="checkbox"] {
     width: 1rem;
+    background-color: var(--background);
+    color: var(--text);
   }
 
   input[type="date"],
   input[type="time"] {
+    background-color: var(--background);
     color: var(--text);
   }
 
   .option-item input[type="text"] {
     flex-grow: 1;
+    background-color: var(--background);
     color: var(--text);
-    box-shadow: 4px 3px 0px 0px var(--border);
     padding: 0.5rem;
     border-radius: 0.3rem;
     overflow: hidden;
@@ -270,29 +273,29 @@
   }
 
   .option-item button {
-    border: 3px solid var(--border);
-    background-color: var(--secondary);
-    box-shadow: 4px 3px 0px 0px var(--border);
-    color: white;
+    border: 1px solid var(--border);
+    background-color: var(--background);
     padding: 0.3rem 0.6rem;
     border-radius: 0.3rem;
     cursor: pointer;
     transition:
       background-color 0.2s,
       transform 0.2s,
-      box-shadow 0.2s;
+      box-shadow 0.2s,
+      color 0.2s;
     &:hover {
-      background-color: var(--primary);
+      background-color: var(--hover);
+      color: var(--text-dark);
     }
     &:active {
-      transform: translate(4px, 3px);
-      box-shadow: none;
+      background-color: var(--active);
+      color: var(--text-dark);
     }
   }
 
   button {
     padding: 0.4rem 0.8rem;
-    background-color: var(--primary);
+    background-color: var(--background);
     color: white;
     cursor: pointer;
     border-radius: 0.3rem;
@@ -303,9 +306,9 @@
   }
 
   .add-option-btn {
-    border: 2px solid var(--text);
+    border: 1px solid var(--border);
     color: var(--text);
-    box-shadow: 4px 3px 0px 0px var(--border);
+    background-color: var(--background);
     padding: 0.5rem;
     border-radius: 0.3rem;
     transition:
@@ -313,11 +316,12 @@
       transform 0.2s,
       box-shadow 0.2s;
     &:hover {
-      background-color: var(--primary);
+      background-color: var(--hover);
+      color: var(--text-dark);
     }
     &:active {
-      transform: translate(4px, 3px);
-      box-shadow: none;
+      background-color: var(--active);
+      color: var(--text-dark);
     }
   }
 

@@ -77,9 +77,8 @@
     background: var(--background);
     width: fit-content;
     padding: 1rem;
-    border: 2px solid var(--text);
+    border: 1px solid var(--text);
     border-radius: 0.5rem;
-    box-shadow: 6px 8px 0px 0px var(--border);
   }
   .table-container {
     max-height: 70vh;

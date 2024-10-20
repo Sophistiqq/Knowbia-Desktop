@@ -54,7 +54,7 @@
     },
   ];
   let shuffleQuestions = false;
-  let timeLimit = "";
+  let timeLimit = "60";
 
   let quill: Quill;
 
@@ -540,11 +540,14 @@
   >
 </div>
 
-<Modal bind:open={showResetModal} size="xs" autoclose={false} class="w-full">
-  <div class="flex flex-col space-y-6 backdrop-blur-sm">
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
-      Reset Assessment
-    </h3>
+<Modal
+  bind:open={showResetModal}
+  size="xs"
+  autoclose={false}
+  class="w-full bg-[--background] border-2 border-[--border] backdrop-blur-md"
+>
+  <div class="flex flex-col space-y-6 p-6">
+    <h3 class="mb-4 text-xl font-medium text-[--text]">Reset Assessment</h3>
     <p>Are you sure you want to reset the assessment?</p>
     <div class="flex justify-between">
       <button
@@ -569,7 +572,7 @@
   bind:open={showSavedAssessmentsModal}
   size="lg"
   autoclose={false}
-  class="w-full z-100"
+  class="w-full z-100 bg-[--background] border-2 border-[--border] backdrop-blur-md"
 >
   <h3 class="mb-4 text-xl font-medium" style="color: var(--text);">
     Saved Assessments
@@ -581,16 +584,14 @@
         <div class="flex gap-4">
           <button
             type="button"
-            class="px-4 py-2 rounded"
-            style="background-color: var(--primary); color: var(--text);"
+            class="px-4 py-2 rounded bg-transparent border-2 border-[--border] text-[--text] load-assessment-buttons"
             on:click={() => loadSavedAssessment(assessment.id)}
           >
             Load
           </button>
           <button
             type="button"
-            class="px-4 py-2 rounded"
-            style="background-color: var(--accent); color: var(--text);"
+            class="px-4 py-2 rounded bg-transparent border-2 border-[--border] text-[--text] load-assessment-buttons"
             on:click={() => deleteSavedAssessment(assessment.id)}
           >
             Delete
@@ -598,16 +599,6 @@
         </div>
       </div>
     {/each}
-  </div>
-  <div class="flex justify-end">
-    <button
-      type="button"
-      class="px-4 py-2 rounded"
-      style="background-color: var(--secondary); color: var(--text);"
-      on:click={() => (showSavedAssessmentsModal = false)}
-    >
-      Close
-    </button>
   </div>
 </Modal>
 <!-- Show Toast based on toastMessage -->
@@ -638,35 +629,33 @@
   bind:open={distributeModal}
   size="md"
   autoclose={false}
-  class="w-full border-2 border-[--text] bg-[--background-2]"
+  class="w-full border-2 border-[--border] bg-[--background] backdrop-blur-md"
 >
-  <div class="flex flex-col space-y-6 backdrop-blur-sm">
-    <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-white">
+  <div class="flex flex-col space-y-6 border-1 border-[--border]">
+    <h3 class="mb-4 text-xl font-medium text-[--text]">
       Set Assessment Options
     </h3>
     <Label class="space-y-2">
-      <span>Time Limit (in minutes)</span>
+      <span class="text-[--text]">Time Limit (in minutes)</span>
       <Input
         type="number"
         name="time-limit"
         placeholder="60 Minutes"
-        class="border-2 border-[--text]"
+        class="bg-[--background] text-[--text]"
         bind:value={timeLimit}
       />
     </Label>
     <div class="flex justify-between">
       <button
         type="button"
-        class="bg-blue-500 text-white px-4 py-2 rounded border-2 border-[--text]"
-        style="box-shadow: 4px 4px 0px var(--border);"
+        class="bg- text-white px-4 py-2 rounded border-2 border-[--border] modal-distribute-buttons"
         on:click={distributeAssessment}
       >
         Distribute Now
       </button>
       <button
         type="button"
-        class="bg-[--secondary] text-gray-900 px-4 py-2 rounded"
-        style="box-shadow: 4px 4px 0px var(--border);"
+        class="bg- text-white px-4 py-2 rounded border-2 border-[--border] modal-distribute-buttons"
         on:click={() => (distributeModal = false)}
       >
         Close
@@ -688,9 +677,8 @@
     padding: 1.5rem;
     color: var(--text);
     background-color: var(--background);
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(10px);
     border: 1px solid var(--border);
-    box-shadow: var(--shadow);
     border-radius: 0.5rem;
     gap: 1rem;
     & h1 {
@@ -737,12 +725,15 @@
       padding: 0.3rem 0.5rem;
       border: none;
       color: var(--text);
-      transition: background-color 0.3s;
+      transition:
+        background-color 0.3s,
+        color 0.3s;
       border-radius: 0.3rem;
       cursor: pointer;
       border: 2px solid var(--border);
       &:hover {
-        background-color: var(--accent);
+        background-color: var(--hover);
+        color: var(--text-hover);
       }
     }
   }
@@ -756,8 +747,9 @@
     & input[type="checkbox"] {
       width: 1.5rem;
       height: 1.5rem;
-      border: 2px solid var(--border);
-      outline: none;
+      background-color: var(--background);
+      border-radius: 0.3rem;
+      border: 1px solid var(--border);
       cursor: pointer;
       color: var(--text);
       &:checked {
@@ -768,20 +760,22 @@
 
   .add-question {
     padding: 0.5rem 1rem;
-    background-color: var(--accent);
-    box-shadow: 5px 7px 0px var(--border);
+    background-color: var(--background);
+    border: none;
     color: var(--text);
-    border: 2px solid var(--text);
+    transition:
+      background-color 0.3s,
+      color 0.3s;
     border-radius: 0.3rem;
     cursor: pointer;
-    transition: background-color 0.3s;
-    font-weight: bold;
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
+    border: 2px solid var(--border);
+    &:hover {
+      background-color: var(--hover);
+      color: var(--text-hover);
+    }
     &:active {
-      box-shadow: none;
-      transform: translate(5px, 7px);
+      background-color: var(--active);
+      color: var(--text-dark);
     }
   }
 
@@ -789,12 +783,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 2px solid var(--text);
-    box-shadow: 4px 3px 0px 0px var(--border);
+    border: 1px solid var(--border);
+    border-radius: 0.3rem;
     gap: 1rem;
     color: var(--text);
-    border: 2px solid var(--text);
-    border-radius: 0.3rem;
+    background-color: var(--background);
   }
 
   .questions-list {
@@ -814,21 +807,23 @@
     .save-assessment {
       padding: 0.5rem 1rem;
       width: 100%;
-      background-color: var(--secondary);
+      background-color: var(--background);
+      backdrop-filter: blur(4px);
       color: var(--text);
       font-weight: bold;
-      border: 2px solid var(--text);
-      box-shadow: 5px 7px 0px var(--border);
+      border: 1px solid var(--border);
       border-radius: 0.3rem;
       cursor: pointer;
       transition:
-        background-color 0.5s,
-        transform 0.5s,
-        box-shadow 0.5s;
+        color 0.5s,
+        background-color 0.5s;
       &:active {
-        background-color: var(--secondary);
-        box-shadow: none;
-        transform: translate(5px, 5px);
+        background-color: var(--active);
+        color: var(--text-dark);
+      }
+      &:hover {
+        background-color: var(--hover);
+        color: var(--text-dark);
       }
     }
   }
@@ -888,5 +883,35 @@
   #editor {
     border: 1px solid var(--border);
     border-radius: 0.3rem;
+  }
+  .shuffle-questions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--text);
+    & input[type="checkbox"] {
+      width: 1.5rem;
+      height: 1.5rem;
+      border: 1px solid var(--border);
+      background-color: var(--background);
+      outline: none;
+      cursor: pointer;
+      color: var(--text);
+      &:checked {
+        background-color: var(--secondary);
+      }
+    }
+  }
+  .modal-distribute-buttons,
+  .load-assessment-buttons {
+    transition:
+      background-color 0.3s,
+      transform 0.3s,
+      color 0.3s;
+    &:hover {
+      transform: scale(1.1);
+      background-color: var(--hover);
+      color: var(--text-hover);
+    }
   }
 </style>

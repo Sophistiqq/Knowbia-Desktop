@@ -45,9 +45,13 @@
     padding: 0.5rem 1rem;
     cursor: pointer;
     font-weight: bold;
-    transition: background-color 0.3s;
+    transition:
+      background-color 0.3s,
+      transform 0.3s;
+    border-radius: 0.2rem;
     &:hover {
-      background-color: var(--accent);
+      background-color: var(--hover);
+      transform: scale(1.1);
     }
   }
   .dropdown {
@@ -57,13 +61,26 @@
     top: 4rem;
     padding: 1rem;
     right: 2rem;
-    background-color: var(--accent);
-    box-shadow: 2px 3px 0px 0px var(--text);
+    background-color: var(--background);
+    backdrop-filter: blur(5px);
+    box-shadow: var(--shadow);
+    border-radius: 0 0 1rem 1rem;
+    animation: show 0.3s;
     button {
       color: var(--text);
       padding: 0.5rem 1rem;
       border-radius: 0.5rem;
       cursor: pointer;
+    }
+  }
+  @keyframes show {
+    from {
+      opacity: 0;
+      transform: translateY(-1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
   .show {
