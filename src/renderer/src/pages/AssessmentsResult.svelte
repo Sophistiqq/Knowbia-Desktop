@@ -40,6 +40,7 @@
   }
 
   // Fetch assessment results from backend
+
   async function fetchStudentResults(assessmentId: number) {
     try {
       const response = await fetch(
@@ -47,7 +48,8 @@
       );
       studentResults = await response.json();
       selectedAssessment = assessments.find((a) => a.id === assessmentId);
-      console.log("Student Results: ", studentResults);
+      console.log("Student Results: ", studentResults, assessmentId);
+      console.log("Selected Assessment: ", selectedAssessment);
     } catch (error) {
       console.error("Failed to fetch student results: ", error);
     }

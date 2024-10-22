@@ -51,7 +51,7 @@ html {
 
 body {
   position: relative;
-  background: url(/background2.webp);
+  background: url(/background.webp);
   background-size: cover;
   background-attachment: fixed;
   background-repeat: no-repeat;

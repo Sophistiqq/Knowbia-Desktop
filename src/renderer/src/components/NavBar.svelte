@@ -91,11 +91,11 @@
       >
         <ArchiveSolid class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}"
-          >Assessments Result</span
+          >Manage Assessments</span
         >
       </button>
       <Tooltip triggeredBy="#manage-assessments" placement="right"
-        >Assessments Result</Tooltip
+        >Manage Assessments</Tooltip
       >
 
       <button
@@ -132,8 +132,6 @@
     width: 20rem; /* Full width when expanded */
     transition: width 0.3s ease-in-out; /* Smooth transition for width */
     white-space: nowrap;
-    --webkit-backdrop-filter: blur(5px);
-    backdrop-filter: blur(5px);
     padding-top: 2rem;
     transition: all 0.3s ease;
   }

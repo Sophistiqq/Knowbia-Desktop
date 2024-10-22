@@ -1,41 +1,122 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { TrashBinSolid } from "flowbite-svelte-icons";
-  import { Tooltip } from "flowbite-svelte";
+  import {
+    TrashBinSolid,
+    CheckCircleSolid,
+    CloseCircleSolid,
+  } from "flowbite-svelte-icons";
+  import { Tooltip, Toast, Modal, Label, Input } from "flowbite-svelte";
   import { slide } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
 
-  type Assessment = {
+  interface Assessment {
     id: number;
     title: string;
     description: string;
-    questions: {
-      id: number;
-      type: string;
-      content: string;
-      required: boolean;
-      options?: string[];
-      correctAnswer?: number;
-      correctAnswers?: number[];
-      answer?: string;
-    }[];
-  };
+    questions: any;
+    timeLimit?: string | number;
+  }
 
+  let timeLimit = "60";
   let assessments: Assessment[] = [];
-  let expandedStates: boolean[] = []; // Track expanded states
+  let expandedStates: boolean[] = [];
   let showDeletePopup = false;
   let selectedAssessmentIndex: number | null = null;
+  let socket: WebSocket;
+  let toastMessage: any;
+  let distributeOptionsModal = false;
+  let distributeAssessmentModal = false;
 
   onMount(() => {
     loadSavedAssessments();
+    initializeWebSocket();
   });
 
+  function initializeWebSocket() {
+    if (socket && socket.readyState === WebSocket.OPEN) return;
+
+    socket = new WebSocket(`ws://localhost:8080/ws`);
+    socket.onopen = () => console.log("WebSocket is open now.");
+    socket.onclose = () => showToast("WebSocket connection closed", "error");
+    socket.onerror = (error) =>
+      showToast("WebSocket connection error", "error");
+  }
+
+  type Question = {
+    id: number;
+    type: string;
+    content: string;
+    required: boolean;
+    options?: string[];
+    correctAnswer?: number;
+    correctAnswers?: number[];
+    answer?: string;
+  };
+
+  function distributeAssessment(index: number) {
+    const assessment = assessments[index];
+
+    if (!assessment || !assessment.questions) {
+      showToast("Invalid assessment selected", "error");
+      return;
+    }
+
+    // Parse the questions if they are in string format
+    let questions: Question[];
+    try {
+      questions = JSON.parse(assessment.questions);
+    } catch (error) {
+      console.error("Error parsing questions:", error);
+      showToast("Failed to parse assessment questions.", "error");
+      return;
+    }
+
+    const assessmentData = {
+      type: "newAssessment",
+      assessment: {
+        title: assessment.title,
+        description: assessment.description,
+        questions: questions, // Parsed questions
+        timeLimit: timeLimit,
+      },
+    };
+
+    console.log("Distributing assessment", assessmentData);
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      try {
+        socket.send(JSON.stringify(assessmentData));
+        distributeAssessmentModal = false;
+        showToast("Assessment distributed successfully", "success");
+      } catch (error) {
+        console.error("Error sending assessment:", error);
+        showToast(
+          "Failed to distribute assessment. Please try again.",
+          "error",
+        );
+      }
+    } else {
+      showToast(
+        "Failed to distribute assessment. WebSocket is not open.",
+        "error",
+      );
+    }
+  }
+
+  function showToast(message: string, type: "success" | "error") {
+    toastMessage = { message, type };
+    setTimeout(() => (toastMessage = null), 3000);
+  }
+
   async function loadSavedAssessments() {
-    const response = await fetch(
-      "http://localhost:3000/assessments/assessments",
-    );
-    assessments = await response.json();
-    expandedStates = new Array(assessments.length).fill(false); // Initialize all to collapsed
+    try {
+      const response = await fetch(
+        "http://localhost:3000/assessments/assessments",
+      );
+      assessments = await response.json();
+      expandedStates = new Array(assessments.length).fill(false);
+    } catch (error) {
+      showToast("Failed to load assessments", "error");
+    }
   }
 
   async function deleteSavedAssessment() {
@@ -49,19 +130,28 @@
       if (response.ok) {
         assessments.splice(selectedAssessmentIndex, 1);
         expandedStates.splice(selectedAssessmentIndex, 1);
-        loadSavedAssessments(); // Reload the assessments
-        toggleDeletePopup(null); // Close the popup after deleting
+        toggleDeletePopup(null);
       }
     }
   }
 
   function toggleDescription(index: number) {
-    expandedStates[index] = !expandedStates[index]; // Toggle the state
+    expandedStates[index] = !expandedStates[index];
   }
 
   function toggleDeletePopup(index: number | null) {
     selectedAssessmentIndex = index;
     showDeletePopup = !showDeletePopup;
+  }
+
+  function toggleDistributeAssessmentModal(index: number) {
+    selectedAssessmentIndex = index;
+    distributeOptionsModal = true;
+  }
+
+  function confirmDistribution() {
+    distributeOptionsModal = false;
+    distributeAssessmentModal = true;
   }
 </script>
 
@@ -80,10 +170,7 @@
         </div>
 
         {#if expandedStates[index]}
-          <!-- Conditional rendering -->
-          <div class="description">
-            {@html assessment.description}
-          </div>
+          <div class="description">{@html assessment.description}</div>
         {/if}
 
         <div class="separator"></div>
@@ -91,34 +178,101 @@
           <button on:click={() => toggleDescription(index)}>
             {expandedStates[index] ? "Hide Details" : "Show Details"}
           </button>
-          <button>Start Assessment</button>
+          <button on:click={() => toggleDistributeAssessmentModal(index)}
+            >Distribute</button
+          >
         </div>
       </div>
     {/each}
   </div>
 </div>
 
+{#if toastMessage}
+  <Toast
+    color={toastMessage.type === "success"
+      ? "green"
+      : toastMessage.type === "error"
+        ? "red"
+        : "blue"}
+    position="top-right"
+    class="z-50 fixed top-4 right-4"
+  >
+    <svelte:fragment slot="icon">
+      {#if toastMessage.type === "success"}
+        <CheckCircleSolid class="w-5 h-5" />
+      {/if}
+      {#if toastMessage.type === "error"}
+        <CloseCircleSolid class="w-5 h-5" />
+      {/if}
+      <span class="sr-only">Notification icon</span>
+    </svelte:fragment>
+    {toastMessage.message}
+  </Toast>
+{/if}
+
 {#if showDeletePopup}
   <div
     class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
   >
-    <div class="bg-white p-4 rounded-lg">
+    <div class="bg-white p-4 rounded-lg border border-white shadow-lg">
       <h2 class="text-xl font-bold">
         Are you sure you want to delete this assessment?
       </h2>
       <div class="flex justify-center gap-4 mt-4">
         <button
           class="bg-red-500 text-white px-4 py-2 rounded-lg"
-          on:click={deleteSavedAssessment}
+          on:click={deleteSavedAssessment}>Yes</button
         >
-          Yes
-        </button>
         <button
           class="bg-gray-500 text-white px-4 py-2 rounded-lg"
-          on:click={() => toggleDeletePopup(null)}
+          on:click={() => toggleDeletePopup(null)}>No</button
         >
-          No
-        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if distributeOptionsModal}
+  <Modal open={distributeOptionsModal} size="md" autoclose={false}>
+    <div class="flex flex-col space-y-6">
+      <h3 class="text-xl font-medium">Set Assessment Options</h3>
+      <Label>
+        <span>Time Limit (in minutes)</span>
+        <Input type="number" bind:value={timeLimit} placeholder="60 Minutes" />
+      </Label>
+      <div class="flex justify-between">
+        <button
+          class="bg-green-500 text-white px-4 py-2 rounded"
+          on:click={confirmDistribution}>Continue</button
+        >
+        <button
+          class="bg-gray-500 text-white px-4 py-2 rounded"
+          on:click={() => (distributeOptionsModal = false)}>Close</button
+        >
+      </div>
+    </div>
+  </Modal>
+{/if}
+
+{#if distributeAssessmentModal}
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+  >
+    <div class="bg-white p-4 rounded-lg border border-white shadow-lg">
+      <h2 class="text-xl font-bold">
+        Are you sure you want to distribute this assessment?
+      </h2>
+      <p class="mt-2">Time limit: {timeLimit} minutes</p>
+      <div class="flex justify-center gap-4 mt-4">
+        <button
+          class="bg-green-500 text-white px-4 py-2 rounded-lg"
+          on:click={() => distributeAssessment(selectedAssessmentIndex)}
+          >Yes</button
+        >
+        <button
+          class="bg-gray-500 text-white px-4 py-2 rounded-lg"
+          on:click={() => (distributeAssessmentModal = false)}>No</button
+        >
       </div>
     </div>
   </div>
