@@ -3,14 +3,13 @@
   import { Tooltip } from "flowbite-svelte";
   import {
     GridSolid,
-    FilePenSolid,
     UsersGroupSolid,
     CaretLeftSolid,
     CaretRightSolid,
     ChartPieSolid,
-    GlobeSolid,
     ArchiveSolid,
     PaperPlaneSolid,
+    ArrowsRepeatOutline,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
 
@@ -45,7 +44,7 @@
 <div class="sidebar {sidebarHidden ? 'collapsed' : ''}">
   <div class="buttons-container">
     <div class="navigation-buttons">
-      <div class="sidebarControl">
+      <div class="sidebarControl flex flex-col justify-start items-start gap-4">
         <button id="sidebarControl" on:click={toggleSidebar}>
           {#if sidebarHidden}
             <CaretRightSolid />
@@ -54,6 +53,12 @@
           {/if}
         </button>
         <Tooltip placement="right">Toggle Sidebar</Tooltip>
+        <button id="refresh" on:click={() => location.reload()}>
+          <ArrowsRepeatOutline />
+        </button>
+        <Tooltip triggeredBy="#refresh" placement="right"
+          >Refresh if you have connectivity issues</Tooltip
+        >
       </div>
       <button on:click={() => handleNavigation("dashboard")} id="dashboard">
         <ChartPieSolid class="w-10 h-10" />
@@ -91,11 +96,11 @@
       >
         <ArchiveSolid class="w-10 h-10" />
         <span class="text {sidebarHidden ? 'hidden' : ''}"
-          >Manage Assessments</span
+          >Assessment Results</span
         >
       </button>
       <Tooltip triggeredBy="#manage-assessments" placement="right"
-        >Manage Assessments</Tooltip
+        >Assessment Results</Tooltip
       >
 
       <button
@@ -109,12 +114,6 @@
         >Student's Info</Tooltip
       >
 
-      <button on:click={() => handleNavigation("manageData")} id="manage-data">
-        <GlobeSolid class="w-10 h-10" />
-        <span class="text {sidebarHidden ? 'hidden' : ''}">Manage Data</span>
-      </button>
-      <Tooltip triggeredBy="#manage-data" placement="right">Manage Data</Tooltip
-      >
     </div>
   </div>
 </div>

@@ -1,0 +1,5 @@
+Student List: View Details Button and Edit Action Features
+Manage Data: Export the all data to CSV file, also import the data from CSV file
+Dashboard Charts: Display the data in the form of charts
+Assessment Results: Make the feature to view finished assessments results (Needs an intense reconfiguration here)
+DONE: Assessment Cheating Detection: Implement the feature to detect cheating in assessments

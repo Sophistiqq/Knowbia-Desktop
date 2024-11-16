@@ -56,3 +56,9 @@ body {
   background-attachment: fixed;
   background-repeat: no-repeat;
 }
+
+
+
+option {
+  background: var(--background-dark);
+}

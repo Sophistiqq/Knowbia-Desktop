@@ -155,11 +155,27 @@
     });
 
     if (result.success) {
-      registrationError = "";
+      registrationError = result.message;
+      clearForm();
       localStorage.removeItem("registrationData"); // Clear storage on success
     } else {
       registrationError = result.message;
     }
+  }
+
+  function clearForm() {
+    firstname = "";
+    lastname = "";
+    middlename = "";
+    email = "";
+    password = "";
+    confirm_password = "";
+    phone_number = "";
+    birthdate = "";
+    department = "";
+    security_question = "";
+    security_answer = "";
+    step = 1;
   }
 
   function saveToLocalStorage() {

@@ -15,10 +15,7 @@ export async function registerTeacher(teacherData) {
     return result;
   } catch (error) {
     console.error("Error registering teacher:", error);
-    return {
-      success: false,
-      message: "Registration failed. Please try again.",
-    };
+    return { error: error.message, success: false };
   }
 }
 

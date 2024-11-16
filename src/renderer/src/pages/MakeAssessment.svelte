@@ -72,7 +72,6 @@
 
     socket.onopen = function () {
       console.log("WebSocket is open now.");
-      showToast("WebSocket connection established", "success");
     };
 
     socket.onmessage = function (event) {
@@ -105,7 +104,7 @@
     const assessmentData = {
       type: "newAssessment",
       assessment: {
-        id: Date.now(),
+        id: assessmentId,
         title,
         description,
         questions: distributedQuestions,
@@ -116,6 +115,7 @@
     if (socket && socket.readyState === WebSocket.OPEN) {
       try {
         socket.send(JSON.stringify(assessmentData));
+        console.log("Assessment distributed successfully");
         showToast("Assessment distributed successfully", "success");
         distributeModal = false; // Close modal after success
       } catch (error) {
@@ -133,7 +133,7 @@
     }
   }
 
-  setInterval(initializeWebSocket, 30000); // Send a ping every 30 seconds
+  setInterval(initializeWebSocket, 20000); // Send a ping every 20 seconds
 
   // Editor config
   function initializeQuillEditor() {
@@ -308,9 +308,7 @@
         );
       }
       const result = await response.json();
-      if (!assessmentId) {
-        assessmentId = result.id;
-      }
+      assessmentId = result.id;
       showToast("Assessment saved successfully", "success");
       loadSavedAssessments();
     } catch (error) {
