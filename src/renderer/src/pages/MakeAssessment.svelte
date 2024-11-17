@@ -90,46 +90,47 @@
     };
   }
 
-  function distributeAssessment() {
-    // Create a deep copy of the questions
-    let distributedQuestions = JSON.parse(JSON.stringify(questions));
+  // First ensure we save before distribution if there's no ID
+  async function distributeAssessment() {
+    console.log(assessmentId);
+    try {
+      // Save assessment first if it hasn't been saved yet
+      if (!assessmentId) {
+        await saveAssessment();
+      }
 
-    // Shuffle questions if the shuffleQuestions toggle is true
-    if (shuffleQuestions) {
-      distributedQuestions = distributedQuestions.sort(
-        () => Math.random() - 0.5,
-      );
-    }
+      // Create a deep copy of the questions
+      let distributedQuestions = JSON.parse(JSON.stringify(questions));
 
-    const assessmentData = {
-      type: "newAssessment",
-      assessment: {
-        id: assessmentId,
-        title,
-        description,
-        questions: distributedQuestions,
-        timeLimit,
-      },
-    };
+      // Shuffle questions if the shuffleQuestions toggle is true
+      if (shuffleQuestions) {
+        distributedQuestions = distributedQuestions.sort(
+          () => Math.random() - 0.5,
+        );
+      }
 
-    if (socket && socket.readyState === WebSocket.OPEN) {
-      try {
+      const assessmentData = {
+        type: "newAssessment",
+        assessment: {
+          id: assessmentId,
+          title,
+          description,
+          questions: distributedQuestions,
+          timeLimit,
+        },
+      };
+
+      if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(JSON.stringify(assessmentData));
         console.log("Assessment distributed successfully");
         showToast("Assessment distributed successfully", "success");
-        distributeModal = false; // Close modal after success
-      } catch (error) {
-        console.error("Error sending assessment:", error);
-        showToast(
-          "Failed to distribute assessment. Please try again.",
-          "error",
-        );
+        distributeModal = false;
+      } else {
+        throw new Error("WebSocket is not open");
       }
-    } else {
-      showToast(
-        "Failed to distribute assessment. WebSocket is not open.",
-        "error",
-      );
+    } catch (error) {
+      console.error("Error distributing assessment:", error);
+      showToast("Failed to distribute assessment. Please try again.", "error");
     }
   }
 
@@ -282,7 +283,7 @@
     URL.revokeObjectURL(url);
   }
 
-  // Modify the save function to save assessments with unique keys
+  // Modified save function to return the saved assessment ID
   async function saveAssessment() {
     const assessmentData = { title, description, questions };
     console.log("Saving assessment:", assessmentData);
@@ -307,13 +308,16 @@
           },
         );
       }
+
       const result = await response.json();
-      assessmentId = result.id;
+      assessmentId = result.id; // Update the assessmentId
       showToast("Assessment saved successfully", "success");
       loadSavedAssessments();
+      return result.id;
     } catch (error) {
       console.error("Error saving assessment:", error);
       showToast("Failed to save assessment", "error");
+      throw error; // Propagate error to calling function
     }
   }
 

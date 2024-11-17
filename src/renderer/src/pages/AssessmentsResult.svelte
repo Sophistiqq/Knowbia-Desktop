@@ -20,9 +20,6 @@
   function connectWebSocket() {
     socket = new WebSocket(`ws://${serverIp}:${serverPort}/ws`);
 
-    socket.onopen = () => {
-      console.log("WebSocket connection established");
-    };
 
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
@@ -30,13 +27,9 @@
       // Handle receiving active assessments
       if (message.type === "activeAssessments") {
         assessments = message.assessments; // Update assessments array
-        console.log("Assessments: ", assessments);
       }
     };
 
-    socket.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
   }
 
   // Fetch assessment results from backend
@@ -48,7 +41,6 @@
       );
       studentResults = await response.json();
       selectedAssessment = assessments.find((a) => a.id === assessmentId);
-      console.log("Student Results: ", studentResults, assessmentId);
       console.log("Selected Assessment: ", selectedAssessment);
     } catch (error) {
       console.error("Failed to fetch student results: ", error);
@@ -63,6 +55,14 @@
       );
       finishedAssessments = await response.json();
       console.log("Finished Assessments: ", finishedAssessments);
+      // if an assessment appeared in active assessments, remove it from finished assessments
+      console.log("Assessments: ", assessments);
+      assessments.forEach((assessment) => {
+        finishedAssessments = finishedAssessments.filter(
+          (a) => a.assessment_id !== assessment.id,
+        );
+      });
+
     } catch (error) {
       console.error("Failed to fetch finished assessments: ", error);
     }
@@ -105,7 +105,11 @@
   <ul>
     {#each finishedAssessments as assessment}
       <li>
-        <button on:click={() => fetchStudentResults(assessment.id)}>
+        <button on:click={() => {
+          studentResults = assessment.results;
+          selectedAssessment = assessment;
+          console.log("Selected Assessment: ", selectedAssessment);
+        }}>
           {assessment.title}
         </button>
       </li>

@@ -131,6 +131,7 @@
         assessments.splice(selectedAssessmentIndex, 1);
         expandedStates.splice(selectedAssessmentIndex, 1);
         toggleDeletePopup(null);
+        loadSavedAssessments();
       }
     }
   }
