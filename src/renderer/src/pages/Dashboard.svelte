@@ -1,8 +1,52 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
+  import { onMount } from "svelte";
 
-  let savedAssessments = 145;
+  let totalAssessments = 0;
+  let registeredStudents = 0;
+  let takers = 0;
+  let totalOfRecords = 0;
+  let numberOfDistributedAssessments = 0;
+  onMount(() => {
+    getDashboardData();
+    getTotalSubmittedRecords();
+    getHighestRankings();
+  });
+
+  function getHighestRankings() {
+    fetch("http://localhost:3000/assessments/rankings")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  }
+
+  function getTotalSubmittedRecords() {
+    fetch("http://localhost:3000/assessments/finished")
+      .then((res) => res.json())
+      .then((data) => {
+        totalOfRecords = data.reduce(
+          (acc: any, assessment: { results: string | any[] }) =>
+            acc + assessment.results.length,
+          0,
+        );
+        numberOfDistributedAssessments = data.length;
+        console.log(totalOfRecords);
+      });
+  }
+
+  function getDashboardData() {
+    fetch("http://localhost:3000/assessments/dashboard")
+      .then((res) => res.json())
+      .then((data) => {
+        // Process the data
+        totalAssessments = data.assessments.length;
+        registeredStudents = data.students.length; // Assuming "connected" means total students
+        takers = data.results.length; // Assuming "takers" means results recorded
+        totalOfRecords = takers; // Assuming all takers finished
+      });
+  }
 </script>
 
 <h1 id="page-title">Dashboard</h1>
@@ -12,15 +56,16 @@
   <div class="overview-wrapper">
     <div class="total-assessments">
       <h5>Saved Assessments</h5>
-      <p>{savedAssessments}</p>
+      <p>{totalAssessments}</p>
     </div>
     <div class="distributed-assessments">
       <h5>Distributed Assessments</h5>
-      <p>60</p>
+      <p>{numberOfDistributedAssessments}</p>
     </div>
     <div class="finished-assessments">
       <h5>Finished Assessments</h5>
       <p>60</p>
+      <!-- Replace with dynamic value if available -->
     </div>
   </div>
 </div>
@@ -32,16 +77,12 @@
   <h4>Student Activity Overview</h4>
   <div class="overview-wrapper">
     <div class="connected-students">
-      <h5>Connected</h5>
-      <p>60</p>
-    </div>
-    <div class="assessment-takers">
-      <h5>Takers</h5>
-      <p>60</p>
+      <h5>Registered</h5>
+      <p>{registeredStudents}</p>
     </div>
     <div class="finished-students">
-      <h5>Finished</h5>
-      <p>60</p>
+      <h5>Total of Submitted Records</h5>
+      <p>{totalOfRecords}</p>
     </div>
   </div>
 </div>
@@ -58,7 +99,6 @@
     border: 1px solid var(--border);
     backdrop-filter: blur(10px);
     border-radius: 0.5rem;
-    box-shadow: var(--shadow);
   }
   .statistics,
   .student-activity-overview {
@@ -92,7 +132,6 @@
       backdrop-filter: blur(10px);
       color: var(--text);
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
       & > p {
         font-size: 1.5rem;
         font-weight: 700;

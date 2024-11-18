@@ -2,7 +2,6 @@
   export let navigate: (page: string) => void;
   import { Tooltip } from "flowbite-svelte";
   import {
-    GridSolid,
     UsersGroupSolid,
     CaretLeftSolid,
     CaretRightSolid,
@@ -65,20 +64,6 @@
         <span class="text {sidebarHidden ? 'hidden' : ''}">Dashboard</span>
       </button>
       <Tooltip triggeredBy="#dashboard" placement="right">Dashboard</Tooltip>
-
-      <!-- Saved Assessments Page -->
-      <button
-        on:click={() => handleNavigation("savedassessments")}
-        id="saved-assessments"
-      >
-        <GridSolid class="w-10 h-10" />
-        <span class="text {sidebarHidden ? 'hidden' : ''}"
-          >Saved Assessments</span
-        >
-      </button>
-      <Tooltip triggeredBy="#saved-assessments" placement="right"
-        >Saved Assessments</Tooltip
-      >
 
       <button on:click={() => handleNavigation("quizzes")} id="quizzes">
         <PaperPlaneSolid class="w-10 h-10" />
