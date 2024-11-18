@@ -28,7 +28,7 @@
     "@fontsource/rubik": "^5.1.0",
     "@types/quill": "^2.0.14",
     "bits-ui": "^0.21.15",
-    "chart.js": "^4.4.4",
+    "chart.js": "^4.4.6",
     "electron-reloader": "^1.2.3",
     "electron-store": "^10.0.0",
     "electron-toolkit": "^1.0.24",
