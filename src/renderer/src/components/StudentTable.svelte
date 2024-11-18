@@ -31,10 +31,6 @@
     });
   };
 
-  // Prevent event bubbling for action buttons
-  const handleActionClick = (e: Event) => {
-    e.stopPropagation();
-  };
 </script>
 
 <table class="student-table">
@@ -102,11 +98,12 @@
     color: var(--text-dark);
     transition: background-color 0.3s;
     cursor: pointer;
+    border: 1px solid var(--text-dark);
   }
 
   td {
     background-color: var(--background);
-    border: 3px solid var(--border);
+    border: 1px solid var(--border);
     cursor: pointer;
     text-wrap: wrap;
   }
@@ -133,17 +130,12 @@
     white-space: nowrap;
   }
 
-  .view-btn,
   .edit-btn,
   .delete-btn {
     padding: 0.25rem 0.75rem;
     border-radius: 0.25rem;
     transition: background-color 0.3s;
     border: 1px solid var(--border);
-  }
-
-  .view-btn {
-    background-color: var(--background);
   }
 
   .edit-btn {
@@ -153,10 +145,6 @@
   .delete-btn {
     background-color: var(--background);
     color: #ef4444;
-  }
-
-  .view-btn:hover {
-    background-color: var(--hover);
   }
 
   .edit-btn:hover {

@@ -138,7 +138,7 @@
   title="Student Details"
   bind:open={modalOpen}
   autoclose
-  class="modal-container"
+  class="modal-container bg-white bg-opacity-10 backdrop-filter backdrop-blur-lg border border-gray-200 rounded-lg shadow-lg"
 >
   {#if selectedStudent}
     <div class="modal-header text-xl font-bold">

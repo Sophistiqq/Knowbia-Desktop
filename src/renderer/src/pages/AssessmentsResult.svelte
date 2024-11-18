@@ -171,31 +171,32 @@
   }
 
   thead {
-    color: var(--secondary);
-    background-color: var(--background);
+    color: var(--text);
+    background-color: var(--hover);
   }
 
   th,
   td {
-    padding: 1rem; /* Increased padding for better spacing */
-    border: 1px solid var(--border);
-    cursor: pointer; /* Add cursor pointer to indicate clickable headers */
-  }
-
-  td {
-    background-color: var(--background-2);
     padding: 1rem;
-    border: 3px solid var(--border);
-    cursor: pointer;
-    text-wrap: wrap; /* Ensure text wraps */
+    border: 1px solid var(--border);
   }
 
   th {
     text-align: center;
     background: transparent;
-    color: var(--text);
-    transition: background-color 0.3s; /* Smooth transition */
+    color: var(--text-dark);
+    transition: background-color 0.3s;
+    cursor: pointer;
+    border: 1px solid var(--text-dark);
   }
+
+  td {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-wrap: wrap;
+  }
+
 
   th:hover {
     background-color: var(--primary); /* Highlight on hover */

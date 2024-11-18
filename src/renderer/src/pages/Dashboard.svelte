@@ -62,7 +62,7 @@
     datasets: [
       {
         label: "Assessments Overview",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        backgroundColor: "rgba(75, 192, 192, 0.7)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
         hoverBackgroundColor: "rgba(75, 192, 192, 0.4)",
@@ -132,10 +132,10 @@
 
       // Process the data for the chart
       const students = [
-        ...new Set(data.map((record) => record.student_number)),
+        ...new Set(data.map((record: { student_number: any; }) => record.student_number)),
       ];
       const assessments = [
-        ...new Set(data.map((record) => record.assessment_id)),
+        ...new Set(data.map((record: { assessment_id: any; }) => record.assessment_id)),
       ];
 
       // Sort assessments and create labels
@@ -146,7 +146,7 @@
       const datasets = students.map((student, index) => {
         const studentData = sortedAssessments.map((assessmentId) => {
           const record = data.find(
-            (r) =>
+            (r: { student_number: unknown; assessment_id: unknown; }) =>
               r.student_number === student && r.assessment_id === assessmentId,
           );
           return record ? record.score : null;
@@ -217,7 +217,7 @@
       <p>{numberOfDistributedAssessments}</p>
     </div>
     <div class="finished-students">
-      <h5>Total of Submitted Records</h5>
+      <h5>Submitted Records</h5>
       <p>{totalOfRecords}</p>
     </div>
     <div class="connected-students">
