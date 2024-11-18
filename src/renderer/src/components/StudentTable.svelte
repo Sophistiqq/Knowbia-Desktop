@@ -5,35 +5,35 @@
     lastName: string;
     email: string;
     section: string;
-  }> = []; // Accept students array as a prop
-  export let onStudentClick: any; // Function to handle row clicks
+  }> = [];
 
-  // State to track sorting
+  export let onStudentClick: (student: any) => void;
+  export let onEditClick: (student: any) => void;
+  export let onDeleteClick: (student: any) => void;
+
   let sortKey: string = "";
   let sortDirection: "asc" | "desc" = "asc";
 
   const sortBy = (key: string) => {
-    // Toggle sort direction if the same key is clicked
     if (sortKey === key) {
       sortDirection = sortDirection === "asc" ? "desc" : "asc";
     } else {
       sortKey = key;
-      sortDirection = "asc"; // Reset to ascending if a new key is clicked
+      sortDirection = "asc";
     }
 
-    // Sort students array based on sortKey and sortDirection
     students = [...students].sort((a, b) => {
       const aValue = a[sortKey];
       const bValue = b[sortKey];
-
-      if (aValue < bValue) {
-        return sortDirection === "asc" ? -1 : 1;
-      }
-      if (aValue > bValue) {
-        return sortDirection === "asc" ? 1 : -1;
-      }
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
       return 0;
     });
+  };
+
+  // Prevent event bubbling for action buttons
+  const handleActionClick = (e: Event) => {
+    e.stopPropagation();
   };
 </script>
 
@@ -49,15 +49,26 @@
     </tr>
   </thead>
   <tbody>
-    {#each students as student (student)}
+    {#each students as student (student.studentNumber)}
       <tr on:click={() => onStudentClick(student)}>
         <td>{student.studentNumber}</td>
         <td>{student.firstName}</td>
         <td>{student.lastName}</td>
         <td class="email">{student.email}</td>
         <td>{student.section}</td>
-        <td>
-          <button on:click={() => onStudentClick(student)}>View Details</button>
+        <td class="actions">
+          <button
+            class="edit-btn"
+            on:click|stopPropagation={() => onEditClick(student)}
+          >
+            Edit
+          </button>
+          <button
+            class="delete-btn"
+            on:click|stopPropagation={() => onDeleteClick(student)}
+          >
+            Delete
+          </button>
         </td>
       </tr>
     {/each}
@@ -81,45 +92,78 @@
 
   th,
   td {
-    padding: 1rem; /* Increased padding for better spacing */
-    border: 1px solid var(--border);
-    cursor: pointer; /* Add cursor pointer to indicate clickable headers */
-  }
-
-  td {
-    background-color: var(--background);
     padding: 1rem;
-    border: 3px solid var(--border);
-    cursor: pointer;
-    text-wrap: wrap; /* Ensure text wraps */
-  }
-
-  td.email {
-    max-width: 200px; /* Adjust this value as needed */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border: 1px solid var(--border);
   }
 
   th {
     text-align: center;
     background: transparent;
     color: var(--text-dark);
-    transition: background-color 0.3s; /* Smooth transition */
+    transition: background-color 0.3s;
+    cursor: pointer;
+  }
+
+  td {
+    background-color: var(--background);
+    border: 3px solid var(--border);
+    cursor: pointer;
+    text-wrap: wrap;
+  }
+
+  td.email {
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   th:hover {
-    background-color: var(--hover); /* Highlight on hover */
+    background-color: var(--hover);
   }
 
   tbody tr:hover {
-    background-color: var(--active); /* Highlight on hover */
+    background-color: var(--active);
   }
 
-  button {
-    color: var(--text);
-    border: none;
-    cursor: pointer;
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .view-btn,
+  .edit-btn,
+  .delete-btn {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
     transition: background-color 0.3s;
+    border: 1px solid var(--border);
+  }
+
+  .view-btn {
+    background-color: var(--background);
+  }
+
+  .edit-btn {
+    background-color: var(--background);
+  }
+
+  .delete-btn {
+    background-color: var(--background);
+    color: #ef4444;
+  }
+
+  .view-btn:hover {
+    background-color: var(--hover);
+  }
+
+  .edit-btn:hover {
+    background-color: var(--hover);
+  }
+
+  .delete-btn:hover {
+    background-color: #fee2e2;
   }
 </style>
