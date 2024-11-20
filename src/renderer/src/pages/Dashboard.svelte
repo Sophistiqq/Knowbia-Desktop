@@ -61,7 +61,7 @@
     labels: ["Assessments", "Registered", "Takers", "Records"],
     datasets: [
       {
-        label: "Assessments Overview",
+        label: "Overview",
         backgroundColor: "rgba(75, 192, 192, 0.7)",
         borderColor: "rgba(75, 192, 192, 1)",
         borderWidth: 1,
@@ -175,7 +175,6 @@
     }
   }
 
-  // ... (previous fetch functions)
   async function getHighestRankings() {
     const res = await fetch("http://localhost:3000/assessments/rankings");
     const data = await res.json();
@@ -232,7 +231,7 @@
   transition:slide={{ easing: cubicInOut, delay: 0 }}
 >
   <div class="chart-section">
-    <h4>Assessments Overview</h4>
+    <h4>System's Data Overview</h4>
     <div class="chart-wrapper">
       <Bar data={chartData} options={chartOptions} />
     </div>

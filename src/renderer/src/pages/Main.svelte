@@ -5,8 +5,8 @@
     MakeAssessment,
     StudentsInfo,
     Dashboard,
-    SavedAssessments,
     ManageAssessments,
+    AssessmentResults
   } from "../pages/";
   import "../assets/tailwind.css";
   import TopBar from "../components/TopBar.svelte";
@@ -17,7 +17,7 @@
     quizzes: MakeAssessment,
     studentsInfo: StudentsInfo,
     dashboard: Dashboard,
-    savedassessments: SavedAssessments,
+    assessmentResults: AssessmentResults,
     makeassessment: MakeAssessment,
     manageassessments: ManageAssessments,
   };

@@ -20,7 +20,6 @@
   function connectWebSocket() {
     socket = new WebSocket(`ws://${serverIp}:${serverPort}/ws`);
 
-
     socket.onmessage = (event) => {
       const message = JSON.parse(event.data);
 
@@ -29,7 +28,6 @@
         assessments = message.assessments; // Update assessments array
       }
     };
-
   }
 
   // Fetch assessment results from backend
@@ -62,7 +60,6 @@
           (a) => a.assessment_id !== assessment.id,
         );
       });
-
     } catch (error) {
       console.error("Failed to fetch finished assessments: ", error);
     }
@@ -84,7 +81,7 @@
     return `${hours} ${month} ${day}, ${year}`;
   }
 </script>
-
+<h1>Assessment Results</h1>
 <div class="active-assessments-wrapper">
   <h2 class="text-lg font-bold">Ongoing Assessments</h2>
   <div class="separator"></div>
@@ -105,11 +102,13 @@
   <ul>
     {#each finishedAssessments as assessment}
       <li>
-        <button on:click={() => {
-          studentResults = assessment.results;
-          selectedAssessment = assessment;
-          console.log("Selected Assessment: ", selectedAssessment);
-        }}>
+        <button
+          on:click={() => {
+            studentResults = assessment.results;
+            selectedAssessment = assessment;
+            console.log("Selected Assessment: ", selectedAssessment);
+          }}
+        >
           {assessment.title}
         </button>
       </li>
@@ -145,6 +144,18 @@
 </div>
 
 <style lang="scss">
+
+  h1 {
+    margin-bottom: 2rem;
+    color: var(--text);
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: var(--background);
+    width: fit-content;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+  }
   .active-assessments-wrapper,
   .finised-assessments-wrapper,
   .results-display {
@@ -197,7 +208,6 @@
     text-wrap: wrap;
   }
 
-
   th:hover {
     background-color: var(--primary); /* Highlight on hover */
   }
@@ -206,8 +216,7 @@
     background-color: rgba(255, 255, 255, 0.1);
   }
   .separator {
-    height: 2px;
-    background: var(--text);
-    margin-block: 0.5rem;
+    height: 1px;
+    background: var(--border);
   }
 </style>

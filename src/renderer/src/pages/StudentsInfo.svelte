@@ -224,7 +224,7 @@
     background: var(--background);
     width: fit-content;
     padding: 1rem;
-    border: 1px solid var(--text);
+    border: 1px solid var(--border);
     border-radius: 0.5rem;
   }
 

@@ -8,6 +8,7 @@
     ChartPieSolid,
     ArchiveSolid,
     PaperPlaneSolid,
+    CogSolid,
     ArrowsRepeatOutline,
   } from "flowbite-svelte-icons";
   import { onMount } from "svelte";
@@ -77,6 +78,19 @@
 
       <button
         on:click={() => handleNavigation("manageassessments")}
+        id="manage-quizzes"
+      >
+        <CogSolid class="w-10 h-10" />
+        <span class="text {sidebarHidden ? 'hidden' : ''}"
+          >Manage Assessments</span
+        >
+      </button>
+      <Tooltip triggeredBy="#manage-quizzes" placement="right"
+        >Manage Assessments</Tooltip
+      >
+
+      <button
+        on:click={() => handleNavigation("assessmentResults")}
         id="manage-assessments"
       >
         <ArchiveSolid class="w-10 h-10" />
@@ -98,7 +112,6 @@
       <Tooltip triggeredBy="#studentsInfo" placement="right"
         >Student's Info</Tooltip
       >
-
     </div>
   </div>
 </div>

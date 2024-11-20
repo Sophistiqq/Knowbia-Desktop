@@ -15,7 +15,7 @@
   import "quill/dist/quill.bubble.css";
   import { slide } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
-  let socket: WebSocket;
+
 
   let toastMessage: {
     message: string;
@@ -60,35 +60,12 @@
 
   onMount(() => {
     loadSavedAssessments();
-    initializeWebSocket();
+
     initializeQuillEditor();
   });
 
   // ---------- Distribute Assessment Functions -----------
-  function initializeWebSocket() {
-    let ip = window.location.hostname;
-    console.log("Connecting to WebSocket at:", ip);
-    socket = new WebSocket(`ws://localhost:8080/ws`);
 
-    socket.onopen = function () {
-      console.log("WebSocket is open now.");
-    };
-
-    socket.onmessage = function (event) {
-      console.log(`Message from server: ${event.data}`);
-    };
-
-    socket.onclose = function () {
-      console.log("WebSocket is closed now.");
-      showToast("WebSocket connection closed", "error");
-      // Optional: Implement reconnection logic here
-    };
-
-    socket.onerror = function (error) {
-      console.error("WebSocket error:", error);
-      showToast("WebSocket connection error", "error");
-    };
-  }
 
   // First ensure we save before distribution if there's no ID
   async function distributeAssessment() {
@@ -110,23 +87,25 @@
       }
 
       const assessmentData = {
-        type: "newAssessment",
-        assessment: {
-          id: assessmentId,
-          title,
-          description,
-          questions: distributedQuestions,
-          timeLimit,
-        },
+        id: assessmentId,
+        title,
+        description,
+        questions: distributedQuestions,
+        timeLimit,
       };
 
-      if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(assessmentData));
+      const response = await fetch("http://localhost:3000/distribution/assessments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(assessmentData),
+      });
+
+      if (response.ok) {
         console.log("Assessment distributed successfully");
         showToast("Assessment distributed successfully", "success");
         distributeModal = false;
       } else {
-        throw new Error("WebSocket is not open");
+        throw new Error("Failed to distribute assessment");
       }
     } catch (error) {
       console.error("Error distributing assessment:", error);
@@ -134,7 +113,7 @@
     }
   }
 
-  setInterval(initializeWebSocket, 20000); // Send a ping every 20 seconds
+
 
   // Editor config
   function initializeQuillEditor() {
@@ -538,7 +517,7 @@
     <button on:click={saveAssessment} class="save-assessment">Save</button>
   </div>
   <button on:click={saveAssessmentAsFile} class="add-question"
-    >Save as JSON</button
+    >Save as File</button
   >
 </div>
 
