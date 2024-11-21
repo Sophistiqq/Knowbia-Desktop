@@ -16,7 +16,6 @@
   import { slide } from "svelte/transition";
   import { cubicInOut } from "svelte/easing";
 
-
   let toastMessage: {
     message: string;
     type: "success" | "error";
@@ -66,9 +65,19 @@
 
   // ---------- Distribute Assessment Functions -----------
 
-
   // First ensure we save before distribution if there's no ID
+  function validateAssessment() {
+    if (!title.trim() || !description.trim()) {
+      showToast("Title and description are required", "error");
+      return false;
+    }
+    return true;
+  }
+
   async function distributeAssessment() {
+    if (!validateAssessment()) {
+      return;
+    }
     console.log(assessmentId);
     try {
       // Save assessment first if it hasn't been saved yet
@@ -94,26 +103,27 @@
         timeLimit,
       };
 
-      const response = await fetch("http://localhost:3000/distribution/assessments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(assessmentData),
-      });
-
-      if (response.ok) {
-        console.log("Assessment distributed successfully");
+      const response = await fetch(
+        "http://localhost:3000/distribution/assessments",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(assessmentData),
+        },
+      );
+      const data = await response.json();
+      if (data.success) {
         showToast("Assessment distributed successfully", "success");
         distributeModal = false;
+        distributeModal = false;
       } else {
-        throw new Error("Failed to distribute assessment");
+        showToast(data.message, "error");
       }
     } catch (error) {
       console.error("Error distributing assessment:", error);
       showToast("Failed to distribute assessment. Please try again.", "error");
     }
   }
-
-
 
   // Editor config
   function initializeQuillEditor() {

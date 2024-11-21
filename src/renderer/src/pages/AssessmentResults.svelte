@@ -1,33 +1,28 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  let socket: WebSocket;
   let assessments = [];
   let selectedAssessment = null;
   let studentResults = [];
 
-  // WebSocket server config
-  let serverIp = "localhost";
-  let serverPort = 8080;
   let finishedAssessments = [];
 
   onMount(() => {
     // Establish WebSocket connection and request active assessments
-    connectWebSocket();
+    fetchActiveAssessments();
     fetchFinishedAssessments();
   });
 
-  function connectWebSocket() {
-    socket = new WebSocket(`ws://${serverIp}:${serverPort}/ws`);
-
-    socket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-
-      // Handle receiving active assessments
-      if (message.type === "activeAssessments") {
-        assessments = message.assessments; // Update assessments array
-      }
-    };
+  async function fetchActiveAssessments() {
+    try {
+      const response = await fetch(
+        "http://localhost:3000/distribution/assessments",
+      );
+      const data = await response.json();
+      assessments = data.assessments;
+    } catch (error) {
+      console.error("Failed to fetch active assessments: ", error);
+    }
   }
 
   // Fetch assessment results from backend
@@ -81,6 +76,7 @@
     return `${hours} ${month} ${day}, ${year}`;
   }
 </script>
+
 <h1>Assessment Results</h1>
 <div class="active-assessments-wrapper">
   <h2 class="text-lg font-bold">Ongoing Assessments</h2>
@@ -144,7 +140,6 @@
 </div>
 
 <style lang="scss">
-
   h1 {
     margin-bottom: 2rem;
     color: var(--text);
@@ -165,12 +160,27 @@
     gap: 1rem;
     color: var(--text);
     background-color: var(--background);
-    border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 1rem;
     h2 {
       margin-bottom: 0.5rem;
     }
+  }
+  button {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--button-background);
+    color: var(--button-text);
+    border: 1px solid var(--border);
+    border-radius: 0.2rem;
+    text-align: left;
+    cursor: pointer;
+    width: fit-content;
+    transition:
+      background-color 0.3s,
+      color 0.3s;
   }
   table {
     width: 100%;
