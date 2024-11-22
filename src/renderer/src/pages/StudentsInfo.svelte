@@ -181,7 +181,7 @@
       <Button color="alternative" on:click={() => (editModalOpen = false)}
         >Cancel</Button
       >
-      <Button color="primary" on:click={handleEdit}>Save Changes</Button>
+      <Button color="alternative" on:click={handleEdit}>Save Changes</Button>
     </div>
   {/if}
 </Modal>

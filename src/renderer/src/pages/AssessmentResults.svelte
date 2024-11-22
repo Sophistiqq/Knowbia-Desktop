@@ -161,6 +161,7 @@
     color: var(--text);
     background-color: var(--background);
     border-radius: 0.5rem;
+    border: 1px solid var(--border);
     padding: 1rem;
     h2 {
       margin-bottom: 0.5rem;

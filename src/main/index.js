@@ -11,6 +11,8 @@ try {
   // Ignore
 }
 
+// disable hardware acceleration
+app.disableHardwareAcceleration();
 
 function createWindow() {
   // Create the browser window.
