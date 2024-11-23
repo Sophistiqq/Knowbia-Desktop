@@ -81,35 +81,43 @@
 <div class="active-assessments-wrapper">
   <h2 class="text-lg font-bold">Ongoing Assessments</h2>
   <div class="separator"></div>
-  <ul>
-    {#each assessments as assessment}
-      <li>
-        <button on:click={() => fetchStudentResults(assessment.id)}>
-          {assessment.title}
-        </button>
-      </li>
-    {/each}
-  </ul>
+  {#if assessments.length > 0}
+    <ul>
+      {#each assessments as assessment}
+        <li>
+          <button on:click={() => fetchStudentResults(assessment.id)}>
+            {assessment.title}
+          </button>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    <p>No Ongoing Assessment</p>
+  {/if}
 </div>
 
 <div class="finised-assessments-wrapper">
   <!-- Finished Assessments List -->
   <h2 class="text-lg font-bold">Finished Assessments</h2>
-  <ul>
-    {#each finishedAssessments as assessment}
-      <li>
-        <button
-          on:click={() => {
-            studentResults = assessment.results;
-            selectedAssessment = assessment;
-            console.log("Selected Assessment: ", selectedAssessment);
-          }}
-        >
-          {assessment.title}
-        </button>
-      </li>
-    {/each}
-  </ul>
+  {#if finishedAssessments.length > 0}
+    <ul>
+      {#each finishedAssessments as assessment}
+        <li>
+          <button
+            on:click={() => {
+              studentResults = assessment.results;
+              selectedAssessment = assessment;
+              console.log("Selected Assessment: ", selectedAssessment);
+            }}
+          >
+            {assessment.title}
+          </button>
+        </li>
+      {/each}
+    </ul>
+  {:else}
+    <p>No Finished Assessment</p>
+  {/if}
 </div>
 <div class="results-display">
   {#if selectedAssessment}

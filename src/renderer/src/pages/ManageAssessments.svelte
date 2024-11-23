@@ -3,7 +3,7 @@
 
   // Types for better type safety
   type Assessment = {
-    id: string;
+    assessment_id: any;
     title: string;
   };
 
@@ -15,14 +15,23 @@
 
   let assessments: Assessment[] = [];
   let restrictedUsers: RestrictedUser[] = [];
+  let finishedAssessments: Assessment[] = [];
   let showModal = false;
-  let modalType: "restrictedUsers" | "cancelAssessment" | null = null;
+  let modalType:
+    | "restrictedUsers"
+    | "cancelAssessment"
+    | "deleteFinishedAssessment"
+    | null = null;
   let selectedAssessment: Assessment | null = null;
   let selectedUser: RestrictedUser | null = null;
 
   // Fetch assessments and restricted users on mount
   onMount(async () => {
-    await Promise.all([fetchAssessments(), fetchRestrictedUsers()]);
+    await Promise.all([
+      fetchAssessments(),
+      fetchRestrictedUsers(),
+      fetchFinishedAssessments(),
+    ]);
   });
 
   // Fetch active assessments
@@ -31,6 +40,7 @@
       const res = await fetch("http://localhost:3000/distribution/assessments");
       const data = await res.json();
       assessments = data.assessments;
+      console.log(assessments);
     } catch (error) {
       console.error("Failed to fetch assessments", error);
     }
@@ -48,9 +58,52 @@
     }
   }
 
-  // Open modal for specific action
+  // Fetch finished assessments
+  async function fetchFinishedAssessments() {
+    try {
+      const res = await fetch("http://localhost:3000/assessments/finished");
+      const data = await res.json();
+      finishedAssessments = data;
+      console.log(finishedAssessments);
+    } catch (error) {
+      console.error("Failed to fetch finished assessments", error);
+    }
+  }
+
+  // Delete a finished assessment
+  async function deleteFinishedAssessment() {
+    if (!selectedAssessment) return;
+    console.log("Deleting assessment", selectedAssessment);
+    try {
+      const res = await fetch(
+        "http://localhost:3000/assessments/deleteFinished",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            assessmentId: selectedAssessment.assessment_id,
+          }),
+        },
+      );
+
+      const data = await res.json();
+      console.log(data);
+      if (data.success) {
+        // Remove the deleted assessment from the list
+        finishedAssessments = finishedAssessments.filter(
+          (a) => a.assessment_id !== selectedAssessment?.assessment_id,
+        );
+        closeModal();
+      }
+    } catch (error) {
+      console.error("Failed to delete finished assessment", error);
+    }
+  }
+
   function openModal(
-    type: "restrictedUsers" | "cancelAssessment",
+    type: "restrictedUsers" | "cancelAssessment" | "deleteFinishedAssessment",
     data?: Assessment | RestrictedUser,
   ) {
     modalType = type;
@@ -60,6 +113,8 @@
       selectedAssessment = data as Assessment;
     } else if (type === "restrictedUsers") {
       selectedUser = data as RestrictedUser;
+    } else if (type === "deleteFinishedAssessment") {
+      selectedAssessment = data as Assessment;
     }
   }
 
@@ -81,14 +136,14 @@
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ assessmentId: selectedAssessment.id }),
+        body: JSON.stringify({ assessmentId: selectedAssessment.assessment_id }),
       });
 
       const data = await res.json();
       if (data.success) {
         // Remove the cancelled assessment from the list
         assessments = assessments.filter(
-          (a) => a.id !== selectedAssessment?.id,
+          (a) => a.assessment_id !== selectedAssessment?.assessment_id,
         );
         closeModal();
       }
@@ -166,7 +221,26 @@
     {/if}
   </section>
 
-  <!-- Modal -->
+  <!-- Finished Assessments Section -->
+  <section class="finished-assessments-section">
+    <h2>Finished Assessments</h2>
+    {#if finishedAssessments.length > 0}
+      {#each finishedAssessments as assessment}
+        <div class="assessment-item">
+          <span>{assessment.title}</span>
+          <button
+            class="delete-btn"
+            on:click={() => openModal("deleteFinishedAssessment", assessment)}
+          >
+            Delete Assessment
+          </button>
+        </div>
+      {/each}
+    {:else}
+      <p>No finished assessments</p>
+    {/if}
+  </section>
+
   {#if showModal}
     <button class="modal-backdrop" on:click={closeModal}>
       <button class="modal" on:click|stopPropagation>
@@ -189,6 +263,18 @@
           </p>
           <div class="modal-actions">
             <button class="confirm-btn" on:click={unrestrictUser}
+              >Confirm</button
+            >
+            <button class="cancel-btn" on:click={closeModal}>Cancel</button>
+          </div>
+        {:else if modalType === "deleteFinishedAssessment"}
+          <h3>Delete Finished Assessment</h3>
+          <p>
+            Are you sure you want to delete the finished assessment<br
+            />"{selectedAssessment?.title}"?
+          </p>
+          <div class="modal-actions">
+            <button class="confirm-btn" on:click={deleteFinishedAssessment}
               >Confirm</button
             >
             <button class="cancel-btn" on:click={closeModal}>Cancel</button>
@@ -223,7 +309,8 @@
   }
 
   .assessments-section,
-  .restricted-users-section {
+  .restricted-users-section,
+  .finished-assessments-section {
     margin-bottom: 1rem;
     padding: 1rem;
     border: 1px solid var(--border);
@@ -245,7 +332,8 @@
   }
 
   .cancel-btn,
-  .unrestrict-btn {
+  .unrestrict-btn,
+  .delete-btn {
     background-color: var(--button-background);
     color: var(--button-text);
     border: 1px solid var(--border);
