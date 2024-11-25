@@ -4,11 +4,14 @@
   let assessments = [];
   let selectedAssessment = null;
   let studentResults = [];
-
   let finishedAssessments = [];
 
+  // Modal state
+  let showModal = false;
+  let selectedRecord = null;
+  let editScore = "";
+
   onMount(() => {
-    // Establish WebSocket connection and request active assessments
     fetchActiveAssessments();
     fetchFinishedAssessments();
   });
@@ -25,8 +28,6 @@
     }
   }
 
-  // Fetch assessment results from backend
-
   async function fetchStudentResults(assessmentId: number) {
     try {
       const response = await fetch(
@@ -40,7 +41,6 @@
     }
   }
 
-  // Fetch finished assessments from backend
   async function fetchFinishedAssessments() {
     try {
       const response = await fetch(
@@ -48,8 +48,6 @@
       );
       finishedAssessments = await response.json();
       console.log("Finished Assessments: ", finishedAssessments);
-      // if an assessment appeared in active assessments, remove it from finished assessments
-      console.log("Assessments: ", assessments);
       assessments.forEach((assessment) => {
         finishedAssessments = finishedAssessments.filter(
           (a) => a.assessment_id !== assessment.id,
@@ -59,10 +57,9 @@
       console.error("Failed to fetch finished assessments: ", error);
     }
   }
+
   function formatDate(isoString: string) {
     const date = new Date(isoString);
-
-    // Extract parts of the date
     const hours = date.toLocaleString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
@@ -70,10 +67,74 @@
     });
     const day = date.getDate();
     const month = date.toLocaleString("en-US", { month: "short" });
-    const year = date.getFullYear().toString().slice(-2); // Last 2 digits of the year
-
-    // Return the formatted string in the desired order
+    const year = date.getFullYear().toString().slice(-2);
     return `${hours} ${month} ${day}, ${year}`;
+  }
+
+  function openModal(record) {
+    selectedRecord = record;
+    editScore = record.score.toString();
+    showModal = true;
+  }
+
+  function closeModal() {
+    showModal = false;
+    selectedRecord = null;
+    editScore = "";
+  }
+
+  async function updateScore() {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/assessments/results/${selectedRecord.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ score: parseFloat(editScore) }),
+        },
+      );
+
+      if (response.ok) {
+        // Update the local state
+        studentResults = studentResults.map((result) =>
+          result.id === selectedRecord.id
+            ? { ...result, score: parseFloat(editScore) }
+            : result,
+        );
+        closeModal();
+      } else {
+        console.error("Failed to update score");
+      }
+    } catch (error) {
+      console.error("Error updating score:", error);
+    }
+  }
+
+  async function deleteRecord() {
+    if (confirm("Are you sure you want to delete this record?")) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/assessments/results/${selectedRecord.id}`,
+          {
+            method: "DELETE",
+          },
+        );
+
+        if (response.ok) {
+          // Remove the record from local state
+          studentResults = studentResults.filter(
+            (result) => result.id !== selectedRecord.id,
+          );
+          closeModal();
+        } else {
+          console.error("Failed to delete record");
+        }
+      } catch (error) {
+        console.error("Error deleting record:", error);
+      }
+    }
   }
 </script>
 
@@ -97,7 +158,6 @@
 </div>
 
 <div class="finised-assessments-wrapper">
-  <!-- Finished Assessments List -->
   <h2 class="text-lg font-bold">Finished Assessments</h2>
   {#if finishedAssessments.length > 0}
     <ul>
@@ -119,6 +179,7 @@
     <p>No Finished Assessment</p>
   {/if}
 </div>
+
 <div class="results-display">
   {#if selectedAssessment}
     <h2 class="text-lg font-bold">Results for: {selectedAssessment.title}</h2>
@@ -133,7 +194,7 @@
       </thead>
       <tbody>
         {#each studentResults as result}
-          <tr>
+          <tr on:click={() => openModal(result)}>
             <td>{result.student_number}</td>
             <td>{result.lastName}</td>
             <td>{result.score}</td>
@@ -146,6 +207,36 @@
     <p>No assessment selected</p>
   {/if}
 </div>
+
+{#if showModal}
+  <div class="modal-overlay">
+    <div class="modal">
+      <h2>Edit Result</h2>
+      <div class="modal-content">
+        <p>Student: {selectedRecord.student_number}</p>
+        <p>Name: {selectedRecord.lastName}</p>
+        <div class="input-group">
+          <label for="score">Score:</label>
+          <input
+            type="number"
+            id="score"
+            bind:value={editScore}
+            min="0"
+            max="100"
+            step="0.1"
+          />
+        </div>
+        <div class="button-group">
+          <button class="save-btn" on:click={updateScore}>Save Changes</button>
+          <button class="delete-btn" on:click={deleteRecord}
+            >Delete Record</button
+          >
+          <button class="cancel-btn" on:click={closeModal}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{/if}
 
 <style lang="scss">
   h1 {
@@ -237,5 +328,85 @@
   .separator {
     height: 1px;
     background: var(--border);
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal {
+    background: var(--background);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    min-width: 300px;
+    max-width: 500px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+  }
+
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    input {
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 0.25rem;
+      background: var(--background);
+      color: var(--text);
+    }
+  }
+
+  .button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+
+    button {
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        background-color: var(--hover);
+      }
+    }
+
+    .save-btn {
+      color: white;
+    }
+
+    .delete-btn {
+      color: white;
+    }
+
+    .cancel-btn {
+      color: var(--button-text);
+    }
+  }
+
+  tbody tr {
+    cursor: pointer;
   }
 </style>
