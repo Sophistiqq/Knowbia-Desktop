@@ -2,17 +2,12 @@
   import { onMount } from "svelte";
   import { registerTeacher } from "../scripts/registerTeacher.js";
   import { Icon } from "svelte-icons-pack";
-
-  import { CloseCircleSolid } from "flowbite-svelte-icons";
   import { Toast } from "flowbite-svelte";
   import {
-    FaSolidUser,
     FaAddressCard,
     FaEnvelope,
     FaSolidKey,
     FaAddressBook,
-    FaCalendar,
-    FaSolidPeopleGroup,
     FaSolidQuestion,
     FaCircleQuestion,
     FaEye,
@@ -29,8 +24,6 @@
   let confirm_password = "";
 
   let phone_number = "";
-  let birthdate = "";
-  let department = "";
   let security_question = "";
   let security_answer = "";
 
@@ -125,8 +118,6 @@
 
     return (
       isValidPhoneNumber &&
-      birthdate.trim().length > 0 &&
-      department.trim().length > 0 &&
       security_question.trim().length > 0 &&
       security_answer.trim().length > 0
     );
@@ -148,8 +139,6 @@
       email,
       password,
       phone_number,
-      birthdate,
-      department,
       security_question,
       security_answer,
     });
@@ -171,8 +160,6 @@
     password = "";
     confirm_password = "";
     phone_number = "";
-    birthdate = "";
-    department = "";
     security_question = "";
     security_answer = "";
     step = 1;
@@ -187,8 +174,6 @@
       password,
       confirm_password,
       phone_number,
-      birthdate,
-      department,
       security_question,
       security_answer,
       step,
@@ -209,8 +194,6 @@
       password = data.password || "";
       confirm_password = data.confirm_password || "";
       phone_number = data.phone_number || "";
-      birthdate = data.birthdate || "";
-      department = data.department || "";
       security_question = data.security_question || "";
       security_answer = data.security_answer || "";
 
@@ -340,38 +323,6 @@
             pattern="^(09|\+639)\d{9}$"
             required
           />
-        </div>
-      </div>
-      <div class="input_fields">
-        <label for="birthdate">Birthdate</label>
-        <div class="inputs">
-          <Icon src={FaCalendar} />
-          <input
-            type="date"
-            id="birthdate"
-            bind:value={birthdate}
-            on:input={debouncedInputChange}
-            required
-          />
-        </div>
-      </div>
-      <div class="input_fields">
-        <label for="department">Department</label>
-        <div class="inputs">
-          <Icon src={FaSolidPeopleGroup} />
-          <select
-            id="department"
-            bind:value={department}
-            on:change={onInputChange}
-            placeholder="Select a department"
-            required
-          >
-            <option value="" disabled>Select a department</option>
-            <option value="IT">ICS</option>
-            <option value="HR">IDK</option>
-            <option value="Finance">IDC</option>
-            <option value="Marketing">IDGAF</option>
-          </select>
         </div>
       </div>
       <div class="input_fields">
@@ -576,8 +527,7 @@
       background-color: var(--active);
     }
   }
-  #security_question,
-  #department {
+  #security_question {
     width: 100%;
     padding: 0.5rem;
     border: none;

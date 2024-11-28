@@ -192,7 +192,7 @@
             class="cancel-btn"
             on:click={() => openModal("cancelAssessment", assessment)}
           >
-            Cancel Assessment
+            Stop Assessment
           </button>
         </div>
       {/each}
