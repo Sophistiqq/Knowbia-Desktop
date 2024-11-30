@@ -141,7 +141,6 @@
 <h1>Assessment Results</h1>
 <div class="active-assessments-wrapper">
   <h2 class="text-lg font-bold">Ongoing Assessments</h2>
-  <div class="separator"></div>
   {#if assessments.length > 0}
     <ul>
       {#each assessments as assessment}
