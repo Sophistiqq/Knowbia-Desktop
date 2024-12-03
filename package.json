@@ -1,5 +1,5 @@
 {
-  "name": "knowbia",
+  "name": "Knowbia",
   "version": "1.0.0",
   "description": "An Electron application with Svelte",
   "main": "./out/main/index.js",

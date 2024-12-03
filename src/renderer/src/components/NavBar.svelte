@@ -158,7 +158,6 @@
     border-left: 4px solid var(--text);
     &:hover {
       background-color: var(--hover);
-      color: var(--text-hover);
       box-shadow: 0 0 10px 10px rgba(100, 100, 100, 0.1);
       transform: scale(1.1);
       border-radius: 0 1rem 1rem 0;

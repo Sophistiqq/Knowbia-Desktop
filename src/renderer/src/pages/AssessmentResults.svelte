@@ -5,17 +5,16 @@
   let selectedAssessment = null;
   let studentResults = [];
   let finishedAssessments = [];
-
   // Modal state
   let showModal = false;
   let selectedRecord = null;
   let editScore = "";
-
   onMount(() => {
     fetchActiveAssessments();
     fetchFinishedAssessments();
   });
 
+  // Fetch active assessments
   async function fetchActiveAssessments() {
     try {
       const response = await fetch(
@@ -71,7 +70,7 @@
     return `${hours} ${month} ${day}, ${year}`;
   }
 
-  function openModal(record) {
+  function openModal(record: { score: { toString: () => string } }) {
     selectedRecord = record;
     editScore = record.score.toString();
     showModal = true;
@@ -323,10 +322,6 @@
 
   tbody tr:hover {
     background-color: rgba(255, 255, 255, 0.1);
-  }
-  .separator {
-    height: 1px;
-    background: var(--border);
   }
 
   .modal-overlay {

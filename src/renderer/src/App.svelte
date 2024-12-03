@@ -216,7 +216,7 @@
     .inputs {
       display: flex;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.3);
+      background: var(--background);
       align-items: center;
       border: 1px solid var(--border);
       padding: 0.3rem 1rem;

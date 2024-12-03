@@ -130,15 +130,16 @@
   async function cancelAssessment() {
     if (!selectedAssessment) return;
 
+    console.table("Selected Assessment:", selectedAssessment);
     try {
       const res = await fetch("http://localhost:3000/distribution/cancel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ assessmentId: selectedAssessment.assessment_id }),
+        body: JSON.stringify({ id: selectedAssessment.id }),
       });
-
+      console.log("id: ", selectedAssessment.id);
       const data = await res.json();
       if (data.success) {
         // Remove the cancelled assessment from the list

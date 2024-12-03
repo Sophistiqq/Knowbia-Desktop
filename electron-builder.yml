@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: knowbia
+productName: Knowbia
 directories:
   buildResources: build
 files:
@@ -30,8 +30,6 @@ dmg:
 linux:
   target:
     - AppImage
-    - snap
-    - deb
   maintainer: electronjs.org
   category: Utility
 appImage:

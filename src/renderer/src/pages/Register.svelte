@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { registerTeacher } from "../scripts/registerTeacher.js";
+  import { registerTeacher } from "../scripts/registerTeacher";
   import { Icon } from "svelte-icons-pack";
   import { Toast } from "flowbite-svelte";
   import {
@@ -113,13 +113,8 @@
   }
 
   function validateStep2() {
-    const phonePattern = /^(09|\+639)\d{9}$/;
-    const isValidPhoneNumber = phonePattern.test(phone_number);
-
     return (
-      isValidPhoneNumber &&
-      security_question.trim().length > 0 &&
-      security_answer.trim().length > 0
+      security_question.trim().length > 0 && security_answer.trim().length > 0
     );
   }
 
@@ -132,6 +127,7 @@
       return;
     }
 
+    console.log("Phone number:", phone_number); // Log the phone number
     const result = await registerTeacher({
       firstname,
       lastname,
@@ -321,6 +317,7 @@
             bind:value={phone_number}
             on:input={debouncedInputChange}
             pattern="^(09|\+639)\d{9}$"
+            title="Phone number should start with 09 or +639 and followed by 9 digits"
             required
           />
         </div>
@@ -444,7 +441,7 @@
     .inputs {
       display: flex;
       justify-content: space-between;
-      background: rgba(255, 255, 255, 0.3);
+      background: var(--background);
       align-items: center;
       border: 1px solid var(--border);
       padding: 0.3rem 1rem;

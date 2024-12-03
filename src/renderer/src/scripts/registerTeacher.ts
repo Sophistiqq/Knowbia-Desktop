@@ -1,7 +1,5 @@
-/**
- * @param {any} teacherData
- */
-export async function registerTeacher(teacherData) {
+export async function registerTeacher(teacherData: any) {
+  console.table(teacherData);
   try {
     const response = await fetch("http://localhost:3000/teacher/register", {
       method: "POST",

@@ -1,7 +1,6 @@
 <script lang="ts">
   import NavBar from "../components/NavBar.svelte";
   import {
-    Classes,
     MakeAssessment,
     StudentsInfo,
     Dashboard,
@@ -13,7 +12,6 @@
   import NotificationsSide from "../components/NotificationsSide.svelte";
 
   const pages = {
-    classes: Classes,
     quizzes: MakeAssessment,
     studentsInfo: StudentsInfo,
     dashboard: Dashboard,
@@ -22,7 +20,7 @@
     manageassessments: ManageAssessments,
   };
 
-  let currentPage = "classes";
+  let currentPage = "dashboard";
 
   function navigate(page: string) {
     currentPage = page;
